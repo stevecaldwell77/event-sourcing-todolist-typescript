@@ -1,0 +1,28 @@
+{
+  "name": "aap-scratch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
+    "@types/node": "^14.0.5",
+    "@types/uuid": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^3.0.1",
+    "@typescript-eslint/parser": "^3.0.1",
+    "eslint": "^7.1.0",
+    "eslint-config-archereducation": "^4.7.0",
+    "prettier": "^2.0.5",
+    "prettier-config-archereducation": "^1.0.0",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "ts:watch": "tsc --watch"
+  },
+  "dependencies": {
+    "nanoid": "^3.1.9",
+    "uuid": "^8.1.0"
+  }
+}
