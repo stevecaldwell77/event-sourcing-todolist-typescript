@@ -1,4 +1,4 @@
-import { EntityEvent } from './event';
+import { EntityEvent } from 'src/interfaces/entity-event';
 import {
     EventListCreated,
     EventListItemCreated,

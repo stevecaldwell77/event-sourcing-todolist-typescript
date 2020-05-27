@@ -1,15 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { EntityType, EventName } from 'src/lib/enums';
-
-export interface EntityEvent {
-    readonly eventId: string;
-    readonly eventTimestamp: number;
-    readonly eventName: EventName;
-    readonly eventRevision: number;
-    readonly entity: EntityType;
-    readonly entityId: string;
-    readonly eventUserId: string;
-}
+import { EntityEvent } from 'src/interfaces/entity-event';
 
 export const makeEvent = (params: {
     eventId?: string;

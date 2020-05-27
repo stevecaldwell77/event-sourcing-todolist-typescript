@@ -1,5 +1,6 @@
 import { EntityType, EventName } from 'src/lib/enums';
-import { EntityEvent, makeEvent } from 'src/entities/event';
+import { EntityEvent } from 'src/interfaces/entity-event';
+import { makeEvent } from 'src/shared/make-event';
 
 export interface EventListCreated extends EntityEvent {
     readonly payload: {

@@ -1,4 +1,4 @@
-import { EntityEvent } from 'src/entities/event';
+import { EntityEvent } from 'src/interfaces/entity-event';
 import { TodoList, makeTodoList } from '../entities/todo-list';
 
 export default async (params: {
