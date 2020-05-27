@@ -1,10 +1,10 @@
 import { TodoList, getItem } from '../todo-list';
 import {
-    EventListCreated,
-    EventListItemCreated,
-    EventListItemCompleted,
-    EventListItemUncompleted,
-    EventListItemMoved,
+    makeEventListCreated,
+    makeEventListItemCreated,
+    makeEventListItemCompleted,
+    makeEventListItemUncompleted,
+    makeEventListItemMoved,
 } from './events';
 
 const createList = (params: {
@@ -13,7 +13,7 @@ const createList = (params: {
     listId: string;
     title: string;
 }) =>
-    new EventListCreated({
+    makeEventListCreated({
         ...params,
         eventRevision: params.listRevision + 1,
     });
@@ -30,7 +30,7 @@ const createListItem = (params: {
     if (currentItemIds.includes(itemId))
         throw new Error(`list item ${list.listId}.${itemId} already exists`);
 
-    return new EventListItemCreated({
+    return makeEventListItemCreated({
         userId: params.userId,
         eventRevision: params.listRevision + 1,
         listId: list.listId,
@@ -49,7 +49,7 @@ const completeListItem = (params: {
     const item = getItem(list, itemId);
     if (item.completed)
         throw new Error(`list item ${list.listId}.${itemId} already completed`);
-    return new EventListItemCompleted({
+    return makeEventListItemCompleted({
         userId: params.userId,
         eventRevision: params.listRevision + 1,
         listId: list.listId,
@@ -67,7 +67,7 @@ const uncompleteListItem = (params: {
     const item = getItem(list, itemId);
     if (!item.completed)
         throw new Error(`list item ${list.listId}.${itemId} not completed`);
-    return new EventListItemUncompleted({
+    return makeEventListItemUncompleted({
         userId: params.userId,
         eventRevision: params.listRevision + 1,
         listId: list.listId,
@@ -88,7 +88,7 @@ const moveListItem = (params: {
     const numItems = list.items.length;
     if (newPosition <= 0) throw new Error('newPosition must be greater than 0');
     if (newPosition > numItems) throw new Error('newPosition is out of bounds');
-    return new EventListItemMoved({
+    return makeEventListItemMoved({
         userId: params.userId,
         eventRevision: params.listRevision + 1,
         listId: list.listId,

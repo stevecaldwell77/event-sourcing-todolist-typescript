@@ -1,10 +1,15 @@
-import { Event } from './event';
+import { EntityEvent } from './event';
 import {
     EventListCreated,
     EventListItemCreated,
     EventListItemCompleted,
     EventListItemUncompleted,
     EventListItemMoved,
+    isEventListCreated,
+    isEventListItemCreated,
+    isEventListItemCompleted,
+    isEventListItemUncompleted,
+    isEventListItemMoved,
 } from './todo-list/events';
 import * as commands from './todo-list/commands';
 
@@ -73,23 +78,24 @@ const applyItemMoved = (
     return list;
 };
 
-const applyEvent = (prev: TodoList | undefined, event: Event): TodoList => {
-    if (event instanceof EventListCreated) return newList(event);
+const applyEvent = (
+    prev: TodoList | undefined,
+    event: EntityEvent,
+): TodoList => {
+    if (isEventListCreated(event)) return newList(event);
     if (!prev)
         throw new Error('cannot apply non-create event without previous list');
-    if (event instanceof EventListItemCreated)
-        return applyItemCreated(prev, event);
-    if (event instanceof EventListItemCompleted)
-        return applyItemCompleted(prev, event);
-    if (event instanceof EventListItemUncompleted)
+    if (isEventListItemCreated(event)) return applyItemCreated(prev, event);
+    if (isEventListItemCompleted(event)) return applyItemCompleted(prev, event);
+    if (isEventListItemUncompleted(event))
         return applyItemUncompleted(prev, event);
-    if (event instanceof EventListItemMoved) return applyItemMoved(prev, event);
+    if (isEventListItemMoved(event)) return applyItemMoved(prev, event);
     throw new Error('Unknown event');
 };
 
 const makeTodoList = (
     prev: TodoList | undefined,
-    events: Event[],
+    events: EntityEvent[],
 ): TodoList => {
     const list = events.reduce(applyEvent, prev);
     if (!list) throw new Error('Unexpected error');
