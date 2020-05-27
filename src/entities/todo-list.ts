@@ -74,7 +74,7 @@ const applyItemMoved = (
     list: TodoList,
     event: EventListItemMoved,
 ): TodoList => {
-    console.log('tbd: moving items not implemented');
+    console.log(`tbd: moving items not implemented (event ${event.eventId})`);
     return list;
 };
 
