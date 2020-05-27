@@ -8,24 +8,24 @@ import {
 } from './events';
 
 interface CommandParams {
-    userId: string;
+    commandUserId: string;
     list: TodoList;
 }
 
 const eventBasics = (params: CommandParams) => ({
-    userId: params.userId,
+    eventUserId: params.commandUserId,
     eventRevision: params.list.revision + 1,
     listId: params.list.listId,
 });
 
 const createList = (params: {
-    userId: string;
+    commandUserId: string;
     owner: string;
     listId: string;
     title: string;
 }) => [
     makeEventListCreated({
-        userId: params.userId,
+        eventUserId: params.commandUserId,
         eventRevision: 1,
         listId: params.listId,
         title: params.title,

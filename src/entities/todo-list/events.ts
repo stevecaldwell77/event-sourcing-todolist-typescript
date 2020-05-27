@@ -38,7 +38,7 @@ interface TodoListEventFactoryParams {
     eventTimestamp?: number;
     eventRevision: number;
     listId: string;
-    userId: string;
+    eventUserId: string;
 }
 
 const makeTodoListEvent = (

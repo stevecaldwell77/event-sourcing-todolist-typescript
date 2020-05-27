@@ -8,7 +8,7 @@ test('makeTodoList: initial', (t) => {
     const todoList = makeTodoList(
         undefined,
         commands.createList({
-            userId: '1',
+            commandUserId: '1',
             listId,
             owner: '1',
             title: 'Test List',

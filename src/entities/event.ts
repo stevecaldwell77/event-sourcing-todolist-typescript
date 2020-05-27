@@ -8,7 +8,7 @@ export interface EntityEvent {
     readonly eventRevision: number;
     readonly entity: EntityType;
     readonly entityId: string;
-    readonly userId: string;
+    readonly eventUserId: string;
 }
 
 export const makeEvent = (params: {
@@ -18,7 +18,7 @@ export const makeEvent = (params: {
     eventRevision: number;
     entity: EntityType;
     entityId: string;
-    userId: string;
+    eventUserId: string;
 }): EntityEvent => ({
     ...params,
     eventId: params.eventId || uuid(),
