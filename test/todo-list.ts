@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
-import { makeTodoList, commands } from '../src/entities/todo-list';
-import getId from '../src/util/get-id';
+import getId from 'src/util/get-id';
+import { makeTodoList, commands } from 'src/entities/todo-list';
 
 test('makeTodoList: initial', (t) => {
     const listId = getId();

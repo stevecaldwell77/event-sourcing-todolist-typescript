@@ -1,5 +1,5 @@
-import { Role } from '../lib/enums';
-import { EntityEvent } from './event';
+import { Role } from 'src/lib/enums';
+import { EntityEvent } from 'src/entities/event';
 import { EventUserCreated, isEventUserCreated } from './user/events';
 import * as commands from './user/commands';
 
