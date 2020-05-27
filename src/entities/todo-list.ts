@@ -1,3 +1,4 @@
+import { Event } from './event';
 import {
     EventListCreated,
     EventListItemCreated,
