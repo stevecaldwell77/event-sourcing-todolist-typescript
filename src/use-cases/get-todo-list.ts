@@ -9,5 +9,6 @@ export default async (params: {
 }): Promise<TodoList | undefined> => {
     const { listId, getTodoListSourceData } = params;
     const { snapshot, events } = await getTodoListSourceData(listId);
+    // TODO: authenticate
     return makeTodoList(snapshot, events);
 };

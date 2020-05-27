@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { EntityType, EventName } from './enums';
+import { EntityType, EventName } from 'src/lib/enums';
 
 export interface EntityEvent {
     readonly eventId: string;

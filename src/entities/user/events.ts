@@ -1,9 +1,10 @@
+import { Role, EntityType, EventName } from 'src/lib/enums';
 import { EntityEvent, makeEvent } from '../event';
-import { EntityType, EventName } from '../enums';
 
 export interface EventUserCreated extends EntityEvent {
     readonly payload: {
         email: string;
+        roles: Role[];
     };
 }
 
@@ -12,6 +13,7 @@ export const makeEventUserCreated = (params: {
     userId: string;
     email: string;
     eventRevision: number;
+    roles: Role[];
 }): EventUserCreated => ({
     ...makeEvent({
         eventName: EventName.USER_CREATED,
@@ -22,6 +24,7 @@ export const makeEventUserCreated = (params: {
     }),
     payload: {
         email: params.email,
+        roles: params.roles,
     },
 });
 

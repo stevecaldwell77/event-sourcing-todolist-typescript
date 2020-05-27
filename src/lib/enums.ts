@@ -1,3 +1,7 @@
+export enum Role {
+    ADMIN = 'ADMIN',
+}
+
 export enum EntityType {
     TodoList = 'TodoList',
     User = 'User',

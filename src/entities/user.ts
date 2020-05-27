@@ -1,3 +1,4 @@
+import { Role } from '../lib/enums';
 import { EntityEvent } from './event';
 import { EventUserCreated, isEventUserCreated } from './user/events';
 import * as commands from './user/commands';
@@ -6,12 +7,14 @@ export interface User {
     userId: string;
     email: string;
     revision: number;
+    roles: Role[];
 }
 
 const newUser = (event: EventUserCreated): User => ({
     revision: 1,
     userId: event.entityId,
     email: event.payload.email,
+    roles: event.payload.roles,
 });
 
 const applyEvent = (prev: User | undefined, event: EntityEvent): User => {
