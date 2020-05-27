@@ -21,6 +21,7 @@ interface Item {
 
 export interface TodoList {
     listId: string;
+    owner: string;
     revision: number;
     title: string;
     items: Item[];
@@ -36,6 +37,7 @@ export const getItem = (list: TodoList, itemId: string): Item => {
 const newList = (event: EventListCreated): TodoList => ({
     revision: 1,
     listId: event.entityId,
+    owner: event.payload.owner,
     title: event.payload.title,
     items: [],
 });

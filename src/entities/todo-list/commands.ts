@@ -20,15 +20,18 @@ const eventBasics = (params: CommandParams) => ({
 
 const createList = (params: {
     userId: string;
+    owner: string;
     listId: string;
     title: string;
-}) =>
+}) => [
     makeEventListCreated({
         userId: params.userId,
         eventRevision: 1,
         listId: params.listId,
         title: params.title,
-    });
+        owner: params.owner,
+    }),
+];
 
 const createListItem = (
     params: CommandParams & {
@@ -41,11 +44,13 @@ const createListItem = (
     if (currentItemIds.includes(itemId))
         throw new Error(`list item ${list.listId}.${itemId} already exists`);
 
-    return makeEventListItemCreated({
-        ...eventBasics(params),
-        itemId,
-        text: params.text,
-    });
+    return [
+        makeEventListItemCreated({
+            ...eventBasics(params),
+            itemId,
+            text: params.text,
+        }),
+    ];
 };
 
 const completeListItem = (
@@ -57,10 +62,12 @@ const completeListItem = (
     const item = getItem(list, itemId);
     if (item.completed)
         throw new Error(`list item ${list.listId}.${itemId} already completed`);
-    return makeEventListItemCompleted({
-        ...eventBasics(params),
-        itemId,
-    });
+    return [
+        makeEventListItemCompleted({
+            ...eventBasics(params),
+            itemId,
+        }),
+    ];
 };
 
 const uncompleteListItem = (
@@ -72,10 +79,12 @@ const uncompleteListItem = (
     const item = getItem(list, itemId);
     if (!item.completed)
         throw new Error(`list item ${list.listId}.${itemId} not completed`);
-    return makeEventListItemUncompleted({
-        ...eventBasics(params),
-        itemId,
-    });
+    return [
+        makeEventListItemUncompleted({
+            ...eventBasics(params),
+            itemId,
+        }),
+    ];
 };
 
 const moveListItem = (
@@ -90,11 +99,13 @@ const moveListItem = (
     const numItems = list.items.length;
     if (newPosition <= 0) throw new Error('newPosition must be greater than 0');
     if (newPosition > numItems) throw new Error('newPosition is out of bounds');
-    return makeEventListItemMoved({
-        ...eventBasics(params),
-        itemId,
-        newPosition,
-    });
+    return [
+        makeEventListItemMoved({
+            ...eventBasics(params),
+            itemId,
+            newPosition,
+        }),
+    ];
 };
 
 export {

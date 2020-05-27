@@ -3,6 +3,7 @@ import { EntityType, EventName } from '../enums';
 
 export interface EventListCreated extends EntityEvent {
     readonly payload: {
+        owner: string;
         title: string;
     };
 }
@@ -50,13 +51,14 @@ const makeTodoListEvent = (
     });
 
 export const makeEventListCreated = (
-    params: TodoListEventFactoryParams & { title: string },
+    params: TodoListEventFactoryParams & { owner: string; title: string },
 ): EventListCreated => ({
     ...makeTodoListEvent({
         ...params,
         eventName: EventName.LIST_CREATED,
     }),
     payload: {
+        owner: params.owner,
         title: params.title,
     },
 });
