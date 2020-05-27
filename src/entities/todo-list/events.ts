@@ -2,9 +2,15 @@ import { Event } from '../event';
 import { EntityType } from '../enums';
 
 class EventTodoList extends Event {
-    constructor(params: { userId: string; eventName: string; listId: string }) {
+    constructor(params: {
+        userId: string;
+        eventName: string;
+        eventRevision: number;
+        listId: string;
+    }) {
         super({
             eventName: params.eventName,
+            eventRevision: params.eventRevision,
             entity: EntityType.TodoList,
             entityId: params.listId,
             userId: params.userId,
@@ -17,7 +23,12 @@ class EventListCreated extends EventTodoList {
         title: string;
     };
 
-    constructor(params: { userId: string; listId: string; title: string }) {
+    constructor(params: {
+        userId: string;
+        eventRevision: number;
+        listId: string;
+        title: string;
+    }) {
         super({
             eventName: 'LIST_CREATED',
             ...params,
@@ -34,6 +45,7 @@ class EventListItemCreated extends EventTodoList {
 
     constructor(params: {
         userId: string;
+        eventRevision: number;
         listId: string;
         itemId: string;
         text: string;
@@ -54,7 +66,12 @@ class EventListItemCompleted extends EventTodoList {
         itemId: string;
     };
 
-    constructor(params: { userId: string; listId: string; itemId: string }) {
+    constructor(params: {
+        userId: string;
+        eventRevision: number;
+        listId: string;
+        itemId: string;
+    }) {
         super({
             eventName: 'LIST_ITEM_COMPLETED',
             ...params,
@@ -68,7 +85,12 @@ class EventListItemUncompleted extends EventTodoList {
         itemId: string;
     };
 
-    constructor(params: { userId: string; listId: string; itemId: string }) {
+    constructor(params: {
+        userId: string;
+        eventRevision: number;
+        listId: string;
+        itemId: string;
+    }) {
         super({
             eventName: 'LIST_ITEM_UNCOMPLETED',
             ...params,
@@ -85,6 +107,7 @@ class EventListItemMoved extends EventTodoList {
 
     constructor(params: {
         userId: string;
+        eventRevision: number;
         listId: string;
         itemId: string;
         newPosition: number;

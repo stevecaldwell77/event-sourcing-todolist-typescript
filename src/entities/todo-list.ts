@@ -15,6 +15,7 @@ interface Item {
 
 export interface TodoList {
     listId: string;
+    revision: number;
     title: string;
     items: Item[];
 }
@@ -27,6 +28,7 @@ export const getItem = (list: TodoList, itemId: string): Item => {
 };
 
 const newList = (event: EventListCreated): TodoList => ({
+    revision: 1,
     listId: event.entityId,
     title: event.payload.title,
     items: [],
@@ -84,10 +86,15 @@ const applyEvent = (prev: TodoList | undefined, event: Event): TodoList => {
     throw new Error('Unknown event');
 };
 
-const getTodoList = (prev: TodoList | undefined, events: Event[]): TodoList => {
+const makeTodoList = (
+    prev: TodoList | undefined,
+    events: Event[],
+): TodoList => {
     const list = events.reduce(applyEvent, prev);
     if (!list) throw new Error('Unexpected error');
+    const lastEvent = events[events.length - 1];
+    list.revision = lastEvent.eventRevision;
     return list;
 };
 
-export { getTodoList, commands };
+export { makeTodoList, commands };

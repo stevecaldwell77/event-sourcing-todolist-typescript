@@ -9,12 +9,18 @@ import {
 
 const createList = (params: {
     userId: string;
+    listRevision: number;
     listId: string;
     title: string;
-}) => new EventListCreated(params);
+}) =>
+    new EventListCreated({
+        ...params,
+        eventRevision: params.listRevision + 1,
+    });
 
 const createListItem = (params: {
     userId: string;
+    listRevision: number;
     list: TodoList;
     itemId: string;
     text: string;
@@ -26,6 +32,7 @@ const createListItem = (params: {
 
     return new EventListItemCreated({
         userId: params.userId,
+        eventRevision: params.listRevision + 1,
         listId: list.listId,
         itemId,
         text: params.text,
@@ -34,6 +41,7 @@ const createListItem = (params: {
 
 const completeListItem = (params: {
     userId: string;
+    listRevision: number;
     list: TodoList;
     itemId: string;
 }) => {
@@ -43,6 +51,7 @@ const completeListItem = (params: {
         throw new Error(`list item ${list.listId}.${itemId} already completed`);
     return new EventListItemCompleted({
         userId: params.userId,
+        eventRevision: params.listRevision + 1,
         listId: list.listId,
         itemId,
     });
@@ -50,6 +59,7 @@ const completeListItem = (params: {
 
 const uncompleteListItem = (params: {
     userId: string;
+    listRevision: number;
     list: TodoList;
     itemId: string;
 }) => {
@@ -59,6 +69,7 @@ const uncompleteListItem = (params: {
         throw new Error(`list item ${list.listId}.${itemId} not completed`);
     return new EventListItemUncompleted({
         userId: params.userId,
+        eventRevision: params.listRevision + 1,
         listId: list.listId,
         itemId,
     });
@@ -66,6 +77,7 @@ const uncompleteListItem = (params: {
 
 const moveListItem = (params: {
     userId: string;
+    listRevision: number;
     list: TodoList;
     itemId: string;
     newPosition: number;
@@ -78,6 +90,7 @@ const moveListItem = (params: {
     if (newPosition > numItems) throw new Error('newPosition is out of bounds');
     return new EventListItemMoved({
         userId: params.userId,
+        eventRevision: params.listRevision + 1,
         listId: list.listId,
         itemId,
         newPosition,
