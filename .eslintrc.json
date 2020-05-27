@@ -13,5 +13,9 @@
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
+  },
+  "rules": {
+    "node/no-missing-import": "off",
+    "import/no-unresolved": "off"
   }
 }
