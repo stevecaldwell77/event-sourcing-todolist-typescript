@@ -5,6 +5,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",
+    "@types/lodash": "^4.14.153",
     "@types/node": "^14.0.5",
     "@types/uuid": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^3.0.1",
@@ -25,6 +26,7 @@
     "test": "ava"
   },
   "dependencies": {
+    "lodash": "^4.17.15",
     "nanoid": "^3.1.9",
     "uuid": "^8.1.0"
   },
