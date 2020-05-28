@@ -1,3 +1,4 @@
+import { assert } from '@sindresorhus/is';
 import { EventName } from 'src/lib/enums';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { Role } from 'src/shared/authorization';
@@ -18,8 +19,12 @@ const makeEvent = (params: UserEventParams & { role: Role }): Event => ({
     },
 });
 
-const isEvent = (event: EntityEvent): event is Event =>
-    event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event => {
+    if (event.eventName !== eventName) return false;
+    assert.plainObject((event as Event).payload);
+    assert.string((event as Event).payload.role);
+    return true;
+};
 
 export {
     // eslint-disable-next-line no-undef

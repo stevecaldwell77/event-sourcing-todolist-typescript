@@ -1,3 +1,4 @@
+import { assert } from '@sindresorhus/is';
 import { EventName } from 'src/lib/enums';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { TodoListEventParams, makeTodoListEvent } from '../events';
@@ -21,8 +22,13 @@ const makeEvent = (
     },
 });
 
-const isEvent = (event: EntityEvent): event is Event =>
-    event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event => {
+    if (event.eventName !== eventName) return false;
+    assert.plainObject((event as Event).payload);
+    assert.string((event as Event).payload.owner);
+    assert.string((event as Event).payload.title);
+    return true;
+};
 
 export {
     // eslint-disable-next-line no-undef
