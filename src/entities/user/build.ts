@@ -33,7 +33,7 @@ const applyEvent = (prev: User | undefined, event: EntityEvent): User => {
         throw new Error('cannot apply non-create event without previous user');
     if (isEventUserRoleAdded(event)) return handleRoleAdded(prev, event);
     if (isEventUserRoleRemoved(event)) return handleRoleRemoved(prev, event);
-    throw new Error('Unknown event');
+    throw new Error(`Unknown event ${event.eventName}`);
 };
 
 export default (prev: User | undefined, events: EntityEvent[]): User =>

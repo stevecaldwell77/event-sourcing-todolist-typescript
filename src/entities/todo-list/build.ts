@@ -71,7 +71,7 @@ const applyEvent = (
     if (isEventListItemUncompleted(event))
         return applyItemUncompleted(prev, event);
     if (isEventListItemMoved(event)) return applyItemMoved(prev, event);
-    throw new Error('Unknown event');
+    throw new Error(`Unknown event ${event.eventName}`);
 };
 
 export default (prev: TodoList | undefined, events: EntityEvent[]): TodoList =>
