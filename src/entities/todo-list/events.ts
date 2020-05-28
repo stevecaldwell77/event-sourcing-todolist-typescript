@@ -44,21 +44,20 @@ interface TodoListEventParams {
 }
 
 const makeTodoListEvent = (
-    params: TodoListEventParams & { eventName: EventName },
+    params: TodoListEventParams,
+    eventName: EventName,
 ): EntityEvent =>
     makeEvent({
         ...params,
         entity: EntityType.TodoList,
         entityId: params.listId,
+        eventName,
     });
 
 export const makeEventListCreated = (
     params: TodoListEventParams & { owner: string; title: string },
 ): EventListCreated => ({
-    ...makeTodoListEvent({
-        ...params,
-        eventName: EventName.LIST_CREATED,
-    }),
+    ...makeTodoListEvent(params, EventName.LIST_CREATED),
     payload: {
         owner: params.owner,
         title: params.title,
@@ -68,10 +67,7 @@ export const makeEventListCreated = (
 export const makeEventListItemCreated = (
     params: TodoListEventParams & { itemId: string; text: string },
 ): EventListItemCreated => ({
-    ...makeTodoListEvent({
-        ...params,
-        eventName: EventName.LIST_ITEM_CREATED,
-    }),
+    ...makeTodoListEvent(params, EventName.LIST_ITEM_CREATED),
     payload: {
         itemId: params.itemId,
         text: params.text,
@@ -81,10 +77,7 @@ export const makeEventListItemCreated = (
 export const makeEventListItemCompleted = (
     params: TodoListEventParams & { itemId: string },
 ): EventListItemCompleted => ({
-    ...makeTodoListEvent({
-        ...params,
-        eventName: EventName.LIST_ITEM_COMPLETED,
-    }),
+    ...makeTodoListEvent(params, EventName.LIST_ITEM_COMPLETED),
     payload: {
         itemId: params.itemId,
     },
@@ -93,10 +86,7 @@ export const makeEventListItemCompleted = (
 export const makeEventListItemUncompleted = (
     params: TodoListEventParams & { itemId: string },
 ): EventListItemUncompleted => ({
-    ...makeTodoListEvent({
-        ...params,
-        eventName: EventName.LIST_ITEM_UNCOMPLETED,
-    }),
+    ...makeTodoListEvent(params, EventName.LIST_ITEM_UNCOMPLETED),
     payload: {
         itemId: params.itemId,
     },
@@ -108,10 +98,7 @@ export const makeEventListItemMoved = (
         newPosition: number;
     },
 ): EventListItemMoved => ({
-    ...makeTodoListEvent({
-        ...params,
-        eventName: EventName.LIST_ITEM_MOVED,
-    }),
+    ...makeTodoListEvent(params, EventName.LIST_ITEM_MOVED),
     payload: {
         itemId: params.itemId,
         newPosition: params.newPosition,
