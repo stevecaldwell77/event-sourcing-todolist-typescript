@@ -1,7 +1,3 @@
-import {
-    Permission,
-    assertRequestorHasPermission,
-} from 'src/shared/authorization';
 import { EventStore } from 'src/interfaces/event-store';
 import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/shared/agent';
@@ -20,7 +16,6 @@ export default async (params: {
     email: string;
 }): Promise<User> => {
     const { eventStore, agent, userId, email } = params;
-    assertRequestorHasPermission(agent, Permission.CREATE_USER);
     await assertNotExists(eventStore, userId);
 
     const events = commands.createUser({

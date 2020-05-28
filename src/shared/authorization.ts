@@ -7,13 +7,14 @@ export enum Role {
 
 export enum Permission {
     CREATE_USER = 'CREATE_USER',
+    MANAGE_USER_ROLES = 'MANAGE_USER_ROLES',
 }
 
 const rolePermissions: Record<Role, Permission[]> = {
-    [Role.ADMIN]: [Permission.CREATE_USER],
+    [Role.ADMIN]: [Permission.CREATE_USER, Permission.MANAGE_USER_ROLES],
 };
 
-export const requestorHasPermission = (
+export const agentHasPermission = (
     agent: Agent,
     permission: Permission,
 ): boolean => {
@@ -25,12 +26,9 @@ export const requestorHasPermission = (
     return false;
 };
 
-export const assertRequestorHasPermission = (
+export const assertAgentHasPermission = (
     agent: Agent,
     permission: Permission,
 ): void => {
-    assert(
-        requestorHasPermission(agent, permission),
-        `${permission} NOT ALLOWED`,
-    );
+    assert(agentHasPermission(agent, permission), `${permission} NOT ALLOWED`);
 };
