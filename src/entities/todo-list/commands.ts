@@ -10,7 +10,6 @@ import {
 
 interface CommandParams {
     agent: Agent;
-    commandUserId: string;
     list: TodoList;
 }
 
