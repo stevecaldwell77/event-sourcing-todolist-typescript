@@ -27,3 +27,29 @@ test('successful creation', async (t) => {
     t.is(events.length, 1, 'one event saved');
     t.true(isEventUserCreated(events[0]), 'UserCreated event saved');
 });
+
+test('error on duplicate', async (t) => {
+    const userId = getId();
+    const email = 'jdoe@example.com';
+
+    await createUser({
+        eventStore,
+        agent: systemAgent,
+        email,
+        userId,
+    });
+
+    await t.throwsAsync(
+        () =>
+            createUser({
+                eventStore,
+                agent: systemAgent,
+                email,
+                userId,
+            }),
+        {
+            message: /User [a-z]+ already exists/,
+        },
+        'error thrown when trying to create duplicate user',
+    );
+});
