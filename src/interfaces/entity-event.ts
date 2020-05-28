@@ -7,5 +7,5 @@ export interface EntityEvent {
     readonly eventRevision: number;
     readonly entity: EntityType;
     readonly entityId: string;
-    readonly eventUserId: string;
+    readonly agentId: string;
 }

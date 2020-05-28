@@ -1,17 +1,15 @@
 import { Role } from 'src/shared/authorization';
+import { Agent } from 'src/shared/agent';
 import { makeEventUserCreated } from './events';
 
 const createUser = (params: {
-    commandUserId: string;
+    agent: Agent;
     userId: string;
     email: string;
     roles: Role[];
 }) => [
     makeEventUserCreated({
-        eventUserId: params.commandUserId,
-        userId: params.userId,
-        email: params.email,
-        roles: params.roles,
+        ...params,
         eventRevision: 1,
     }),
 ];

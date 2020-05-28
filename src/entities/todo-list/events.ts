@@ -1,3 +1,4 @@
+import { Agent } from 'src/shared/agent';
 import { EntityType, EventName } from 'src/lib/enums';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { makeEvent } from 'src/shared/make-event';
@@ -39,7 +40,7 @@ interface TodoListEventFactoryParams {
     eventTimestamp?: number;
     eventRevision: number;
     listId: string;
-    eventUserId: string;
+    agent: Agent;
 }
 
 const makeTodoListEvent = (

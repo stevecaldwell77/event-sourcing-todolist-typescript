@@ -1,3 +1,4 @@
+import { Agent } from 'src/shared/agent';
 import { TodoList, getItem } from '../todo-list';
 import {
     makeEventListCreated,
@@ -8,28 +9,26 @@ import {
 } from './events';
 
 interface CommandParams {
+    agent: Agent;
     commandUserId: string;
     list: TodoList;
 }
 
 const eventBasics = (params: CommandParams) => ({
-    eventUserId: params.commandUserId,
+    agent: params.agent,
     eventRevision: params.list.revision + 1,
     listId: params.list.listId,
 });
 
 const createList = (params: {
-    commandUserId: string;
+    agent: Agent;
     owner: string;
     listId: string;
     title: string;
 }) => [
     makeEventListCreated({
-        eventUserId: params.commandUserId,
+        ...params,
         eventRevision: 1,
-        listId: params.listId,
-        title: params.title,
-        owner: params.owner,
     }),
 ];
 

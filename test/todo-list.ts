@@ -2,13 +2,15 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { makeTodoList, commands } from 'src/entities/todo-list';
+import { systemAgent } from 'src/shared/agent';
 
 test('makeTodoList: initial', (t) => {
+    const agent = systemAgent;
     const listId = getId();
     const todoList = makeTodoList(
         undefined,
         commands.createList({
-            commandUserId: '1',
+            agent,
             listId,
             owner: '1',
             title: 'Test List',

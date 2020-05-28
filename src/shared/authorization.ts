@@ -1,11 +1,8 @@
 import assert from 'assert';
+import { Agent } from 'src/shared/agent';
 
 export enum Role {
     ADMIN = 'ADMIN',
-}
-
-export interface HasRole {
-    roles: Role[];
 }
 
 export enum Permission {
@@ -17,10 +14,10 @@ const rolePermissions: Record<Role, Permission[]> = {
 };
 
 export const requestorHasPermission = (
-    requestor: HasRole,
+    agent: Agent,
     permission: Permission,
 ): boolean => {
-    for (const role of requestor.roles) {
+    for (const role of agent.roles) {
         const permissions = rolePermissions[role];
         if (permissions && permissions.includes(permission)) return true;
     }
@@ -29,11 +26,11 @@ export const requestorHasPermission = (
 };
 
 export const assertRequestorHasPermission = (
-    requestor: HasRole,
+    agent: Agent,
     permission: Permission,
 ): void => {
     assert(
-        requestorHasPermission(requestor, permission),
+        requestorHasPermission(agent, permission),
         `${permission} NOT ALLOWED`,
     );
 };

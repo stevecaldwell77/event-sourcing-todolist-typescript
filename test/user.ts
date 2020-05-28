@@ -3,14 +3,15 @@ import test from 'ava';
 import { Role } from 'src/shared/authorization';
 import getId from 'src/util/get-id';
 import { makeUser, commands } from 'src/entities/user';
-import createUser from 'src/use-cases/create-user';
+import { systemAgent } from 'src/shared/agent';
 
 test('createUser()', (t) => {
+    const agent = systemAgent;
     const userId = getId();
     const user = makeUser(
         undefined,
         commands.createUser({
-            commandUserId: '1',
+            agent,
             userId,
             email: 'jdoe@gmail.com',
             roles: [Role.ADMIN],

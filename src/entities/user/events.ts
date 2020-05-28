@@ -2,6 +2,7 @@ import { EntityType, EventName } from 'src/lib/enums';
 import { Role } from 'src/shared/authorization';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { makeEvent } from 'src/shared/make-event';
+import { Agent } from 'src/shared/agent';
 
 export interface EventUserCreated extends EntityEvent {
     readonly payload: {
@@ -11,7 +12,7 @@ export interface EventUserCreated extends EntityEvent {
 }
 
 export const makeEventUserCreated = (params: {
-    eventUserId: string;
+    agent: Agent;
     userId: string;
     email: string;
     eventRevision: number;
@@ -22,7 +23,7 @@ export const makeEventUserCreated = (params: {
         eventRevision: params.eventRevision,
         entity: EntityType.User,
         entityId: params.userId,
-        eventUserId: params.eventUserId,
+        agent: params.agent,
     }),
     payload: {
         email: params.email,
