@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
-import { Role } from 'src/lib/enums';
+import { Role } from 'src/authorization';
 import getId from 'src/util/get-id';
 import { makeUser, commands } from 'src/entities/user';
 

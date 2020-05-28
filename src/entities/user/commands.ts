@@ -1,4 +1,4 @@
-import { Role } from 'src/lib/enums';
+import { Role } from 'src/authorization';
 import { makeEventUserCreated } from './events';
 
 const createUser = (params: {
