@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { EntityType } from 'src/lib/enums';
 import { User } from 'src/entities/user';
@@ -10,8 +11,17 @@ class EventStoreInMemory extends EventStore {
     async saveEvent(event: EntityEvent): Promise<void> {
         const { entity, entityId } = event;
         const entityKey = `${entity}#${entityId}`;
-        this.events[entityKey] = this.events[entityKey] || [];
-        this.events[entityKey].push(event);
+        const events = this.events[entityKey] || [];
+        const lastEvent = events[events.length - 1];
+        const expectedRevision = lastEvent ? lastEvent.eventRevision + 1 : 1;
+        assert.strictEqual(
+            event.eventRevision,
+            expectedRevision,
+            'out of order event',
+        );
+
+        events.push(event);
+        this.events[entityKey] = events;
     }
 
     async saveEvents(events: EntityEvent[]): Promise<void> {
