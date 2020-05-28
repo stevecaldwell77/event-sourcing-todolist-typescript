@@ -2,21 +2,24 @@
 import test from 'ava';
 import getUser from 'src/use-cases/get-user';
 import EventStoreInMemory from 'src/event-store/in-memory';
-import initializeUser from 'test/helpers/initialize-user';
 import { systemAgent } from 'src/shared/agent';
 import { newUser } from 'src/entities/user';
 import getId from 'src/util/get-id';
+import createUser from 'src/use-cases/create-user';
 
 const eventStore = new EventStoreInMemory();
 
 test('successful fetch', async (t) => {
-    const { events, userId, email } = initializeUser();
-    await eventStore.saveEvents(events);
+    const userId = getId();
+    const email = 'jdoe@example.com';
+    await createUser({ eventStore, agent: systemAgent, userId, email });
+
     const result = await getUser({
         eventStore,
         agent: systemAgent,
         userId,
     });
+
     t.deepEqual(
         result,
         newUser({
