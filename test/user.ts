@@ -1,10 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
-import { Role } from 'src/authorization';
+import { Role } from 'src/shared/authorization';
 import getId from 'src/util/get-id';
 import { makeUser, commands } from 'src/entities/user';
+import createUser from 'src/use-cases/create-user';
 
-test('makeUser: initial', (t) => {
+test('createUser()', (t) => {
     const userId = getId();
     const user = makeUser(
         undefined,

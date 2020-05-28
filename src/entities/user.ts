@@ -1,4 +1,4 @@
-import { Role } from 'src/authorization';
+import { Role } from 'src/shared/authorization';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { EventUserCreated, isEventUserCreated } from './user/events';
 import * as commands from './user/commands';

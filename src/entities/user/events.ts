@@ -1,5 +1,5 @@
 import { EntityType, EventName } from 'src/lib/enums';
-import { Role } from 'src/authorization';
+import { Role } from 'src/shared/authorization';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { makeEvent } from 'src/shared/make-event';
 

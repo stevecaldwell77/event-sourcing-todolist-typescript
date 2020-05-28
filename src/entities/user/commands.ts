@@ -1,4 +1,4 @@
-import { Role } from 'src/authorization';
+import { Role } from 'src/shared/authorization';
 import { makeEventUserCreated } from './events';
 
 const createUser = (params: {
