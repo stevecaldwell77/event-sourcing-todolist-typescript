@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
 import getId from 'src/util/get-id';
-import { makeTodoList, commands, getItem } from 'src/entities/todo-list';
+import { buildTodoList, commands, getItem } from 'src/entities/todo-list';
 import { User, newUser } from 'src/entities/user';
 import { EntityEvent } from 'src/interfaces/entity-event';
 
@@ -17,7 +17,7 @@ const runSetup = () => {
         owner: user.userId,
         title: 'My Test List',
     });
-    const list = makeTodoList(undefined, events);
+    const list = buildTodoList(undefined, events);
     return { events, user, listId, list };
 };
 
@@ -26,7 +26,7 @@ const addItem = (
     user: User,
     itemText = `My Test Item ${getId()}`,
 ) => {
-    const list = makeTodoList(undefined, events);
+    const list = buildTodoList(undefined, events);
     const itemId = getId();
     events.push(
         ...commands.createListItem({
@@ -62,7 +62,7 @@ test('createListItem()', (t) => {
     const itemText = 'My Test Item';
     const itemId = addItem(events, user, itemText);
 
-    list = makeTodoList(list, events);
+    list = buildTodoList(list, events);
     t.deepEqual(
         list.items,
         [
@@ -85,7 +85,7 @@ test('item completion', (t) => {
     const itemId2 = addItem(events, user);
     const itemId3 = addItem(events, user);
 
-    list = makeTodoList(list, events);
+    list = buildTodoList(list, events);
     events.push(
         ...commands.completeListItem({
             agent: user,
@@ -94,7 +94,7 @@ test('item completion', (t) => {
         }),
     );
 
-    list = makeTodoList(list, events);
+    list = buildTodoList(list, events);
     events.push(
         ...commands.completeListItem({
             agent: user,
@@ -103,7 +103,7 @@ test('item completion', (t) => {
         }),
     );
 
-    list = makeTodoList(list, events);
+    list = buildTodoList(list, events);
     t.false(getItem(list, itemId1).completed, 'item1 not completed');
     t.true(getItem(list, itemId2).completed, 'item2 completed');
     t.true(getItem(list, itemId3).completed, 'item3 completed');
@@ -116,6 +116,6 @@ test('item completion', (t) => {
         }),
     );
 
-    list = makeTodoList(list, events);
+    list = buildTodoList(list, events);
     t.false(getItem(list, itemId2).completed, 'item2 un-completed');
 });

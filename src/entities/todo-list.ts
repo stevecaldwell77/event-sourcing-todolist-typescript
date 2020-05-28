@@ -1,16 +1,4 @@
-import { EntityEvent } from 'src/interfaces/entity-event';
-import {
-    EventListCreated,
-    EventListItemCreated,
-    EventListItemCompleted,
-    EventListItemUncompleted,
-    EventListItemMoved,
-    isEventListCreated,
-    isEventListItemCreated,
-    isEventListItemCompleted,
-    isEventListItemUncompleted,
-    isEventListItemMoved,
-} from './todo-list/events';
+import buildTodoList from './todo-list/build';
 import * as commands from './todo-list/commands';
 
 interface Item {
@@ -34,76 +22,16 @@ export const getItem = (list: TodoList, itemId: string): Item => {
     return item;
 };
 
-const newList = (event: EventListCreated): TodoList => ({
+const newList = (params: {
+    listId: string;
+    owner: string;
+    title: string;
+}): TodoList => ({
     revision: 1,
-    listId: event.entityId,
-    owner: event.payload.owner,
-    title: event.payload.title,
+    listId: params.listId,
+    owner: params.owner,
+    title: params.title,
     items: [],
 });
 
-const applyItemCreated = (
-    list: TodoList,
-    event: EventListItemCreated,
-): TodoList => {
-    list.items.push({
-        itemId: event.payload.itemId,
-        text: event.payload.text,
-        completed: false,
-    });
-    return list;
-};
-
-const applyItemCompleted = (
-    list: TodoList,
-    event: EventListItemCompleted,
-): TodoList => {
-    const item = getItem(list, event.payload.itemId);
-    item.completed = true;
-    return list;
-};
-
-const applyItemUncompleted = (
-    list: TodoList,
-    event: EventListItemUncompleted,
-): TodoList => {
-    const item = getItem(list, event.payload.itemId);
-    item.completed = false;
-    return list;
-};
-
-const applyItemMoved = (
-    list: TodoList,
-    event: EventListItemMoved,
-): TodoList => {
-    console.log(`tbd: moving items not implemented (event ${event.eventId})`);
-    return list;
-};
-
-const applyEvent = (
-    prev: TodoList | undefined,
-    event: EntityEvent,
-): TodoList => {
-    if (isEventListCreated(event)) return newList(event);
-    if (!prev)
-        throw new Error('cannot apply non-create event without previous list');
-    if (isEventListItemCreated(event)) return applyItemCreated(prev, event);
-    if (isEventListItemCompleted(event)) return applyItemCompleted(prev, event);
-    if (isEventListItemUncompleted(event))
-        return applyItemUncompleted(prev, event);
-    if (isEventListItemMoved(event)) return applyItemMoved(prev, event);
-    throw new Error('Unknown event');
-};
-
-const makeTodoList = (
-    prev: TodoList | undefined,
-    events: EntityEvent[],
-): TodoList => {
-    const list = events.reduce(applyEvent, prev);
-    if (!list) throw new Error('Unexpected error');
-    const lastEvent = events[events.length - 1];
-    list.revision = lastEvent.eventRevision;
-    return list;
-};
-
-export { makeTodoList, commands };
+export { buildTodoList, commands, newList };

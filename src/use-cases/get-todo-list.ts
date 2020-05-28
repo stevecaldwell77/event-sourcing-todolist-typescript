@@ -1,5 +1,5 @@
 import { EntityEvent } from 'src/interfaces/entity-event';
-import { TodoList, makeTodoList } from '../entities/todo-list';
+import { TodoList, buildTodoList } from '../entities/todo-list';
 
 export default async (params: {
     listId: string;
@@ -10,5 +10,5 @@ export default async (params: {
     const { listId, getTodoListSourceData } = params;
     const { snapshot, events } = await getTodoListSourceData(listId);
     // TODO: authenticate
-    return makeTodoList(snapshot, events);
+    return buildTodoList(snapshot, events);
 };
