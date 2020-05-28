@@ -2,40 +2,33 @@ import { Agent } from 'src/shared/agent';
 import { EntityType, EventName } from 'src/lib/enums';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { makeEvent } from 'src/shared/make-event';
+import {
+    EventListCreated,
+    isEventListCreated,
+    makeEventListCreated,
+} from './events/list-created';
+import {
+    EventListItemCreated,
+    isEventListItemCreated,
+    makeEventListItemCreated,
+} from './events/list-item-created';
+import {
+    EventListItemCompleted,
+    isEventListItemCompleted,
+    makeEventListItemCompleted,
+} from './events/list-item-completed';
+import {
+    EventListItemUncompleted,
+    isEventListItemUncompleted,
+    makeEventListItemUncompleted,
+} from './events/list-item-uncompleted';
+import {
+    EventListItemMoved,
+    isEventListItemMoved,
+    makeEventListItemMoved,
+} from './events/list-item-moved';
 
-export interface EventListCreated extends EntityEvent {
-    readonly payload: {
-        owner: string;
-        title: string;
-    };
-}
-export interface EventListItemCreated extends EntityEvent {
-    readonly payload: {
-        itemId: string;
-        text: string;
-    };
-}
-
-export interface EventListItemCompleted extends EntityEvent {
-    readonly payload: {
-        itemId: string;
-    };
-}
-
-export interface EventListItemUncompleted extends EntityEvent {
-    readonly payload: {
-        itemId: string;
-    };
-}
-
-export interface EventListItemMoved extends EntityEvent {
-    readonly payload: {
-        itemId: string;
-        newPosition: number;
-    };
-}
-
-interface TodoListEventParams {
+export interface TodoListEventParams {
     eventId?: string;
     eventTimestamp?: number;
     eventRevision: number;
@@ -43,7 +36,7 @@ interface TodoListEventParams {
     agent: Agent;
 }
 
-const makeTodoListEvent = (
+export const makeTodoListEvent = (
     params: TodoListEventParams,
     eventName: EventName,
 ): EntityEvent =>
@@ -54,76 +47,20 @@ const makeTodoListEvent = (
         eventName,
     });
 
-export const makeEventListCreated = (
-    params: TodoListEventParams & { owner: string; title: string },
-): EventListCreated => ({
-    ...makeTodoListEvent(params, EventName.LIST_CREATED),
-    payload: {
-        owner: params.owner,
-        title: params.title,
-    },
-});
-
-export const makeEventListItemCreated = (
-    params: TodoListEventParams & { itemId: string; text: string },
-): EventListItemCreated => ({
-    ...makeTodoListEvent(params, EventName.LIST_ITEM_CREATED),
-    payload: {
-        itemId: params.itemId,
-        text: params.text,
-    },
-});
-
-export const makeEventListItemCompleted = (
-    params: TodoListEventParams & { itemId: string },
-): EventListItemCompleted => ({
-    ...makeTodoListEvent(params, EventName.LIST_ITEM_COMPLETED),
-    payload: {
-        itemId: params.itemId,
-    },
-});
-
-export const makeEventListItemUncompleted = (
-    params: TodoListEventParams & { itemId: string },
-): EventListItemUncompleted => ({
-    ...makeTodoListEvent(params, EventName.LIST_ITEM_UNCOMPLETED),
-    payload: {
-        itemId: params.itemId,
-    },
-});
-
-export const makeEventListItemMoved = (
-    params: TodoListEventParams & {
-        itemId: string;
-        newPosition: number;
-    },
-): EventListItemMoved => ({
-    ...makeTodoListEvent(params, EventName.LIST_ITEM_MOVED),
-    payload: {
-        itemId: params.itemId,
-        newPosition: params.newPosition,
-    },
-});
-
-export const isEventListCreated = (
-    event: EntityEvent,
-): event is EventListCreated => event.eventName === EventName.LIST_CREATED;
-
-export const isEventListItemCreated = (
-    event: EntityEvent,
-): event is EventListItemCreated =>
-    event.eventName === EventName.LIST_ITEM_CREATED;
-
-export const isEventListItemCompleted = (
-    event: EntityEvent,
-): event is EventListItemCompleted =>
-    event.eventName === EventName.LIST_ITEM_COMPLETED;
-
-export const isEventListItemUncompleted = (
-    event: EntityEvent,
-): event is EventListItemCompleted =>
-    event.eventName === EventName.LIST_ITEM_UNCOMPLETED;
-
-export const isEventListItemMoved = (
-    event: EntityEvent,
-): event is EventListItemMoved => event.eventName === EventName.LIST_ITEM_MOVED;
+export {
+    EventListCreated,
+    EventListItemCompleted,
+    EventListItemCreated,
+    EventListItemMoved,
+    EventListItemUncompleted,
+    isEventListCreated,
+    isEventListItemCompleted,
+    isEventListItemCreated,
+    isEventListItemMoved,
+    isEventListItemUncompleted,
+    makeEventListCreated,
+    makeEventListItemCompleted,
+    makeEventListItemCreated,
+    makeEventListItemMoved,
+    makeEventListItemUncompleted,
+};
