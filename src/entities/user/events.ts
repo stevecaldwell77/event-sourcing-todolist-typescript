@@ -31,27 +31,20 @@ interface UserEventParams {
 }
 
 const makeUserEvent = (
-    params: UserEventParams & { eventName: EventName },
+    params: UserEventParams,
+    eventName: EventName,
 ): EntityEvent =>
     makeEvent({
         ...params,
+        eventName,
         entity: EntityType.User,
         entityId: params.userId,
     });
 
-export const makeEventUserCreated = (params: {
-    agent: Agent;
-    userId: string;
-    email: string;
-    eventRevision: number;
-}): EventUserCreated => ({
-    ...makeEvent({
-        eventName: EventName.USER_CREATED,
-        eventRevision: params.eventRevision,
-        entity: EntityType.User,
-        entityId: params.userId,
-        agent: params.agent,
-    }),
+export const makeEventUserCreated = (
+    params: UserEventParams & { email: string },
+): EventUserCreated => ({
+    ...makeUserEvent(params, EventName.USER_CREATED),
     payload: {
         email: params.email,
     },
@@ -60,10 +53,7 @@ export const makeEventUserCreated = (params: {
 export const makeEventUserRoleAdded = (
     params: UserEventParams & { role: Role },
 ): EventUserRoleAdded => ({
-    ...makeUserEvent({
-        ...params,
-        eventName: EventName.USER_ROLE_ADDED,
-    }),
+    ...makeUserEvent(params, EventName.USER_ROLE_ADDED),
     payload: {
         role: params.role,
     },
@@ -72,10 +62,7 @@ export const makeEventUserRoleAdded = (
 export const makeEventUserRoleRemoved = (
     params: UserEventParams & { role: Role },
 ): EventUserRoleRemoved => ({
-    ...makeUserEvent({
-        ...params,
-        eventName: EventName.USER_ROLE_REMOVED,
-    }),
+    ...makeUserEvent(params, EventName.USER_ROLE_REMOVED),
     payload: {
         role: params.role,
     },
