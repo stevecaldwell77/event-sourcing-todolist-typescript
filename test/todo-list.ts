@@ -119,3 +119,26 @@ test('item completion', (t) => {
     list = buildTodoList(list, events);
     t.false(getItem(list, itemId2).completed, 'item2 un-completed');
 });
+
+test('permisssions', (t) => {
+    const { list } = runSetup();
+
+    const otherUser = newUser({
+        userId: getId(),
+        email: 'other@example.com',
+    });
+
+    t.throws(
+        () =>
+            commands.createListItem({
+                agent: otherUser,
+                itemId: getId(),
+                list,
+                text: 'My Item',
+            }),
+        {
+            message: 'LIST USER MISMATCH',
+        },
+        "a user is not allowed to create items on a different user's list",
+    );
+});

@@ -1,5 +1,7 @@
+import assert from 'assert';
 import { Agent } from 'src/shared/agent';
 import { TodoList, getItem } from '../todo-list';
+import { User } from '../user';
 import {
     makeEventListCreated,
     makeEventListItemCreated,
@@ -12,6 +14,12 @@ interface CommandParams {
     agent: Agent;
     list: TodoList;
 }
+
+const assertAgentPermissions = (agent: Agent, list: TodoList) => {
+    const { owner } = list;
+    const userIdMatches = (agent as User).userId === owner;
+    assert(userIdMatches, 'LIST USER MISMATCH');
+};
 
 const eventBasics = (params: CommandParams) => ({
     agent: params.agent,
@@ -37,7 +45,9 @@ const createListItem = (
         text: string;
     },
 ) => {
-    const { list, itemId } = params;
+    const { list, agent, itemId } = params;
+    assertAgentPermissions(agent, list);
+
     const currentItemIds = list.items.map((i) => i.itemId);
     if (currentItemIds.includes(itemId))
         throw new Error(`list item ${list.listId}.${itemId} already exists`);
@@ -56,10 +66,13 @@ const completeListItem = (
         itemId: string;
     },
 ) => {
-    const { list, itemId } = params;
+    const { list, agent, itemId } = params;
+    assertAgentPermissions(agent, list);
+
     const item = getItem(list, itemId);
     if (item.completed)
         throw new Error(`list item ${list.listId}.${itemId} already completed`);
+
     return [
         makeEventListItemCompleted({
             ...eventBasics(params),
@@ -73,10 +86,13 @@ const uncompleteListItem = (
         itemId: string;
     },
 ) => {
-    const { list, itemId } = params;
+    const { list, agent, itemId } = params;
+    assertAgentPermissions(agent, list);
+
     const item = getItem(list, itemId);
     if (!item.completed)
         throw new Error(`list item ${list.listId}.${itemId} not completed`);
+
     return [
         makeEventListItemUncompleted({
             ...eventBasics(params),
@@ -91,12 +107,15 @@ const moveListItem = (
         newPosition: number;
     },
 ) => {
-    const { list, itemId, newPosition } = params;
+    const { list, agent, itemId, newPosition } = params;
+    assertAgentPermissions(agent, list);
+
     // asserts item existence
     getItem(list, itemId);
     const numItems = list.items.length;
     if (newPosition <= 0) throw new Error('newPosition must be greater than 0');
     if (newPosition > numItems) throw new Error('newPosition is out of bounds');
+
     return [
         makeEventListItemMoved({
             ...eventBasics(params),
