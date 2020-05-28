@@ -3,7 +3,7 @@ import {
     assertRequestorHasPermission,
 } from 'src/shared/authorization';
 import { EventStore } from 'src/interfaces/event-store';
-import { User, makeUser, commands } from 'src/entities/user';
+import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/shared/agent';
 
 const assertNotExists = async (eventStore: EventStore, userId: string) => {
@@ -31,5 +31,5 @@ export default async (params: {
 
     await eventStore.saveEvents(events);
 
-    return makeUser(undefined, events);
+    return buildUser(undefined, events);
 };

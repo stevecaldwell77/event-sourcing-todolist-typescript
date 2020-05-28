@@ -1,5 +1,5 @@
 import { EventStore } from 'src/interfaces/event-store';
-import { User, makeUser } from 'src/entities/user';
+import { User, buildUser } from 'src/entities/user';
 import { Agent } from 'src/shared/agent';
 
 export default async (params: {
@@ -9,5 +9,5 @@ export default async (params: {
 }): Promise<User | undefined> => {
     const { userId, eventStore } = params;
     const { snapshot, events } = await eventStore.getUserSourceData(userId);
-    return makeUser(snapshot, events);
+    return buildUser(snapshot, events);
 };

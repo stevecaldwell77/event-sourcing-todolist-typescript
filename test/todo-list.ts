@@ -2,18 +2,14 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { makeTodoList, commands, getItem } from 'src/entities/todo-list';
-import { User } from 'src/entities/user';
+import { User, newUser } from 'src/entities/user';
 import { EntityEvent } from 'src/interfaces/entity-event';
 
-const createTestUser = (): User => ({
-    userId: getId(),
-    email: 'jdoe@gmail.com',
-    revision: 1,
-    roles: [],
-});
-
 const runSetup = () => {
-    const user = createTestUser();
+    const user = newUser({
+        userId: getId(),
+        email: 'jdoe@gmail.com',
+    });
     const listId = getId();
     const events: EntityEvent[] = commands.createList({
         agent: user,
