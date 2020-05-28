@@ -1,4 +1,4 @@
-import { EventStore } from 'src/interfaces/event-store';
+import EventStore from 'src/event-store/event-store';
 import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/shared/agent';
 

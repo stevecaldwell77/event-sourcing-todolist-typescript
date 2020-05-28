@@ -2,30 +2,23 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { buildUser, newUser, commands } from 'src/entities/user';
-import { systemAgent } from 'src/shared/agent';
 import { Role } from 'src/shared/authorization';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import initializeUser from 'test/helpers/initialize-user';
 
 const runSetup = () => {
-    const userId = getId();
-    const agent = systemAgent;
-    const events: EntityEvent[] = commands.createUser({
-        agent,
-        userId,
-        email: 'jdoe@gmail.com',
-    });
+    const { events, userId, agent, email } = initializeUser();
     const user = buildUser(undefined, events);
-    return { events, agent, userId, user };
+    return { events, agent, userId, user, email };
 };
 
 test('createUser()', (t) => {
-    const { userId, user } = runSetup();
+    const { userId, user, email } = runSetup();
     t.deepEqual(
         user,
         {
             userId,
             revision: 1,
-            email: 'jdoe@gmail.com',
+            email,
             roles: [],
         },
         'inital user created correctly',
