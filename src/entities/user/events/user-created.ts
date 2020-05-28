@@ -4,21 +4,25 @@ import { UserEventParams, makeUserEvent } from '../events';
 
 const eventName = EventName.USER_CREATED;
 
-export interface EventUserCreated extends EntityEvent {
+interface Event extends EntityEvent {
     readonly payload: {
         email: string;
     };
 }
 
-export const makeEventUserCreated = (
-    params: UserEventParams & { email: string },
-): EventUserCreated => ({
+const makeEvent = (params: UserEventParams & { email: string }): Event => ({
     ...makeUserEvent(params, eventName),
     payload: {
         email: params.email,
     },
 });
 
-export const isEventUserCreated = (
-    event: EntityEvent,
-): event is EventUserCreated => event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event =>
+    event.eventName === eventName;
+
+export {
+    // eslint-disable-next-line no-undef
+    Event as EventUserCreated,
+    isEvent as isEventUserCreated,
+    makeEvent as makeEventUserCreated,
+};

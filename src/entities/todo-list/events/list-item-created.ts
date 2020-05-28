@@ -4,16 +4,16 @@ import { TodoListEventParams, makeTodoListEvent } from '../events';
 
 const eventName = EventName.LIST_ITEM_CREATED;
 
-export interface EventListItemCreated extends EntityEvent {
+interface Event extends EntityEvent {
     readonly payload: {
         itemId: string;
         text: string;
     };
 }
 
-export const makeEventListItemCreated = (
+const makeEvent = (
     params: TodoListEventParams & { itemId: string; text: string },
-): EventListItemCreated => ({
+): Event => ({
     ...makeTodoListEvent(params, eventName),
     payload: {
         itemId: params.itemId,
@@ -21,6 +21,12 @@ export const makeEventListItemCreated = (
     },
 });
 
-export const isEventListItemCreated = (
-    event: EntityEvent,
-): event is EventListItemCreated => event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event =>
+    event.eventName === eventName;
+
+export {
+    // eslint-disable-next-line no-undef
+    Event as EventListItemCreated,
+    isEvent as isEventListItemCreated,
+    makeEvent as makeEventListItemCreated,
+};

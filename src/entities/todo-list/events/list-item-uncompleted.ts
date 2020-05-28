@@ -4,21 +4,27 @@ import { TodoListEventParams, makeTodoListEvent } from '../events';
 
 const eventName = EventName.LIST_ITEM_UNCOMPLETED;
 
-export interface EventListItemUncompleted extends EntityEvent {
+interface Event extends EntityEvent {
     readonly payload: {
         itemId: string;
     };
 }
 
-export const makeEventListItemUncompleted = (
+const makeEvent = (
     params: TodoListEventParams & { itemId: string },
-): EventListItemUncompleted => ({
+): Event => ({
     ...makeTodoListEvent(params, eventName),
     payload: {
         itemId: params.itemId,
     },
 });
 
-export const isEventListItemUncompleted = (
-    event: EntityEvent,
-): event is EventListItemUncompleted => event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event =>
+    event.eventName === eventName;
+
+export {
+    // eslint-disable-next-line no-undef
+    Event as EventListItemUncompleted,
+    isEvent as isEventListItemUncompleted,
+    makeEvent as makeEventListItemUncompleted,
+};

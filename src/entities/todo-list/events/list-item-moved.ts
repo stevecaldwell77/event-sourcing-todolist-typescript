@@ -4,19 +4,19 @@ import { TodoListEventParams, makeTodoListEvent } from '../events';
 
 const eventName = EventName.LIST_ITEM_MOVED;
 
-export interface EventListItemMoved extends EntityEvent {
+interface Event extends EntityEvent {
     readonly payload: {
         itemId: string;
         newPosition: number;
     };
 }
 
-export const makeEventListItemMoved = (
+const makeEvent = (
     params: TodoListEventParams & {
         itemId: string;
         newPosition: number;
     },
-): EventListItemMoved => ({
+): Event => ({
     ...makeTodoListEvent(params, eventName),
     payload: {
         itemId: params.itemId,
@@ -24,6 +24,12 @@ export const makeEventListItemMoved = (
     },
 });
 
-export const isEventListItemMoved = (
-    event: EntityEvent,
-): event is EventListItemMoved => event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event =>
+    event.eventName === eventName;
+
+export {
+    // eslint-disable-next-line no-undef
+    Event as EventListItemMoved,
+    isEvent as isEventListItemMoved,
+    makeEvent as makeEventListItemMoved,
+};

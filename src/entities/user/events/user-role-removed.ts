@@ -5,21 +5,25 @@ import { UserEventParams, makeUserEvent } from '../events';
 
 const eventName = EventName.USER_ROLE_REMOVED;
 
-export interface EventUserRoleRemoved extends EntityEvent {
+interface Event extends EntityEvent {
     readonly payload: {
         role: Role;
     };
 }
 
-export const makeEventUserRoleRemoved = (
-    params: UserEventParams & { role: Role },
-): EventUserRoleRemoved => ({
+const makeEvent = (params: UserEventParams & { role: Role }): Event => ({
     ...makeUserEvent(params, eventName),
     payload: {
         role: params.role,
     },
 });
 
-export const isEventUserRoleRemoved = (
-    event: EntityEvent,
-): event is EventUserRoleRemoved => event.eventName === eventName;
+const isEvent = (event: EntityEvent): event is Event =>
+    event.eventName === eventName;
+
+export {
+    // eslint-disable-next-line no-undef
+    Event as EventUserRoleRemoved,
+    isEvent as isEventUserRoleRemoved,
+    makeEvent as makeEventUserRoleRemoved,
+};
