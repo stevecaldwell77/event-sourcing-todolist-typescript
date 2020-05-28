@@ -35,7 +35,7 @@ export interface EventListItemMoved extends EntityEvent {
     };
 }
 
-interface TodoListEventFactoryParams {
+interface TodoListEventParams {
     eventId?: string;
     eventTimestamp?: number;
     eventRevision: number;
@@ -44,7 +44,7 @@ interface TodoListEventFactoryParams {
 }
 
 const makeTodoListEvent = (
-    params: TodoListEventFactoryParams & { eventName: EventName },
+    params: TodoListEventParams & { eventName: EventName },
 ): EntityEvent =>
     makeEvent({
         ...params,
@@ -53,7 +53,7 @@ const makeTodoListEvent = (
     });
 
 export const makeEventListCreated = (
-    params: TodoListEventFactoryParams & { owner: string; title: string },
+    params: TodoListEventParams & { owner: string; title: string },
 ): EventListCreated => ({
     ...makeTodoListEvent({
         ...params,
@@ -66,7 +66,7 @@ export const makeEventListCreated = (
 });
 
 export const makeEventListItemCreated = (
-    params: TodoListEventFactoryParams & { itemId: string; text: string },
+    params: TodoListEventParams & { itemId: string; text: string },
 ): EventListItemCreated => ({
     ...makeTodoListEvent({
         ...params,
@@ -79,7 +79,7 @@ export const makeEventListItemCreated = (
 });
 
 export const makeEventListItemCompleted = (
-    params: TodoListEventFactoryParams & { itemId: string },
+    params: TodoListEventParams & { itemId: string },
 ): EventListItemCompleted => ({
     ...makeTodoListEvent({
         ...params,
@@ -91,7 +91,7 @@ export const makeEventListItemCompleted = (
 });
 
 export const makeEventListItemUncompleted = (
-    params: TodoListEventFactoryParams & { itemId: string },
+    params: TodoListEventParams & { itemId: string },
 ): EventListItemUncompleted => ({
     ...makeTodoListEvent({
         ...params,
@@ -103,7 +103,7 @@ export const makeEventListItemUncompleted = (
 });
 
 export const makeEventListItemMoved = (
-    params: TodoListEventFactoryParams & {
+    params: TodoListEventParams & {
         itemId: string;
         newPosition: number;
     },

@@ -22,7 +22,7 @@ export interface EventUserRoleRemoved extends EntityEvent {
     };
 }
 
-interface UserEventFactoryParams {
+interface UserEventParams {
     eventId?: string;
     eventTimestamp?: number;
     eventRevision: number;
@@ -31,7 +31,7 @@ interface UserEventFactoryParams {
 }
 
 const makeUserEvent = (
-    params: UserEventFactoryParams & { eventName: EventName },
+    params: UserEventParams & { eventName: EventName },
 ): EntityEvent =>
     makeEvent({
         ...params,
@@ -58,7 +58,7 @@ export const makeEventUserCreated = (params: {
 });
 
 export const makeEventUserRoleAdded = (
-    params: UserEventFactoryParams & { role: Role },
+    params: UserEventParams & { role: Role },
 ): EventUserRoleAdded => ({
     ...makeUserEvent({
         ...params,
@@ -70,7 +70,7 @@ export const makeEventUserRoleAdded = (
 });
 
 export const makeEventUserRoleRemoved = (
-    params: UserEventFactoryParams & { role: Role },
+    params: UserEventParams & { role: Role },
 ): EventUserRoleRemoved => ({
     ...makeUserEvent({
         ...params,
