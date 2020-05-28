@@ -1,5 +1,6 @@
 import { uniq } from 'lodash';
 import { EntityEvent } from 'src/interfaces/entity-event';
+import buildEntity from 'src/util/build-entity';
 import { User, newUser } from '../user';
 import {
     EventUserCreated,
@@ -35,12 +36,5 @@ const applyEvent = (prev: User | undefined, event: EntityEvent): User => {
     throw new Error('Unknown event');
 };
 
-const buildUser = (prev: User | undefined, events: EntityEvent[]): User => {
-    const user = events.reduce(applyEvent, prev);
-    if (!user) throw new Error('Unexpected error');
-    const lastEvent = events[events.length - 1];
-    user.revision = lastEvent.eventRevision;
-    return user;
-};
-
-export default buildUser;
+export default (prev: User | undefined, events: EntityEvent[]): User =>
+    buildEntity(prev, events, applyEvent);
