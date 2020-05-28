@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
-import { Role } from 'src/shared/authorization';
 import getId from 'src/util/get-id';
 import { makeUser, commands } from 'src/entities/user';
 import { systemAgent } from 'src/shared/agent';
@@ -14,7 +13,6 @@ test('createUser()', (t) => {
             agent,
             userId,
             email: 'jdoe@gmail.com',
-            roles: [Role.ADMIN],
         }),
     );
     t.deepEqual(
@@ -23,7 +21,7 @@ test('createUser()', (t) => {
             userId,
             revision: 1,
             email: 'jdoe@gmail.com',
-            roles: [Role.ADMIN],
+            roles: [],
         },
         'inital user created correctly',
     );

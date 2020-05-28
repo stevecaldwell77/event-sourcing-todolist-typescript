@@ -27,7 +27,6 @@ export default async (params: {
         agent,
         userId,
         email,
-        roles: [],
     });
 
     await eventStore.saveEvents(events);
