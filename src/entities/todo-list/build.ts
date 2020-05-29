@@ -58,7 +58,9 @@ const applyItemUncompleted: EventHandler<TodoList> = (list, event) => {
 const applyItemMoved: EventHandler<TodoList> = (list, event) => {
     if (!list) throw new Error('applyItemMoved: no list');
     assertIsValidEventListItemMoved(event);
+
     console.log(`tbd: moving items not implemented (event ${event.eventId})`);
+
     return list;
 };
 
