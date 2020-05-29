@@ -1,7 +1,6 @@
 import { uniq } from 'lodash';
 import { EventName } from 'src/lib/enums';
 import {
-    EntityEvent,
     EventHandler,
     EventMapper,
     buildEntityFromEvents,
@@ -42,5 +41,4 @@ const eventMapper: EventMapper<User> = {
     [EventName.USER_ROLE_REMOVED]: handleUserRoleRemoved,
 };
 
-export default (prev: User | undefined, events: EntityEvent[]): User =>
-    buildEntityFromEvents(eventMapper, prev, events);
+export default buildEntityFromEvents(eventMapper);

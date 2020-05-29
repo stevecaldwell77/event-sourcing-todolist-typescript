@@ -1,6 +1,5 @@
 import { EventName } from 'src/lib/enums';
 import {
-    EntityEvent,
     EventHandler,
     EventMapper,
     buildEntityFromEvents,
@@ -66,5 +65,4 @@ const eventMapper: EventMapper<TodoList> = {
     [EventName.LIST_ITEM_MOVED]: applyItemMoved,
 };
 
-export default (prev: TodoList | undefined, events: EntityEvent[]): TodoList =>
-    buildEntityFromEvents(eventMapper, prev, events);
+export default buildEntityFromEvents(eventMapper);

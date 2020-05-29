@@ -46,9 +46,7 @@ const applyEvent = <K>(eventMapper: EventMapper<K>) => (
 
 export const buildEntityFromEvents = <K extends HasRevision>(
     eventMapper: EventMapper<K>,
-    prev: K | undefined,
-    events: EntityEvent[],
-): K => {
+) => (prev: K | undefined, events: EntityEvent[]): K => {
     const entity = events.reduce(applyEvent(eventMapper), prev);
     if (!entity) throw new Error('Unexpected error');
     const lastEvent = events[events.length - 1];
