@@ -6,11 +6,9 @@ import {
     buildEntityFromEvents,
 } from 'src/entities/entity-event';
 import { User, newUser } from '../user';
-import {
-    assertIsValidEventUserCreated,
-    assertIsValidEventUserRoleAdded,
-    assertIsValidEventUserRoleRemoved,
-} from './events';
+import { assertIsValidEventUserCreated } from './events/user-created';
+import { assertIsValidEventUserRoleAdded } from './events/user-role-added';
+import { assertIsValidEventUserRoleRemoved } from './events/user-role-removed';
 
 const handleUserCreated: EventHandler<User> = (user, event) => {
     if (user) throw new Error('handleUserCreated: user should not exist');

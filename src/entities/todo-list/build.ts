@@ -5,13 +5,11 @@ import {
     buildEntityFromEvents,
 } from 'src/entities/entity-event';
 import { TodoList, newList, getItem } from '../todo-list';
-import {
-    assertIsValidEventListCreated,
-    assertIsValidEventListItemCompleted,
-    assertIsValidEventListItemCreated,
-    assertIsValidEventListItemMoved,
-    assertIsValidEventListItemUncompleted,
-} from './events';
+import { assertIsValidEventListCreated } from './events/list-created';
+import { assertIsValidEventListItemCreated } from './events/list-item-created';
+import { assertIsValidEventListItemCompleted } from './events/list-item-completed';
+import { assertIsValidEventListItemUncompleted } from './events/list-item-uncompleted';
+import { assertIsValidEventListItemMoved } from './events/list-item-moved';
 
 const applyListCreated: EventHandler<TodoList> = (list, event) => {
     if (list) throw new Error('applyListCreated: list should not exist');
