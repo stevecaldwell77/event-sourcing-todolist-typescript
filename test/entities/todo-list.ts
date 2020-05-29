@@ -62,7 +62,7 @@ test('createListItem()', (t) => {
     const itemText = 'My Test Item';
     const itemId = addItem(events, user, itemText);
 
-    list = buildTodoList(list, events);
+    list = buildTodoList(undefined, events);
     t.deepEqual(
         list.items,
         [
@@ -85,7 +85,7 @@ test('item completion', (t) => {
     const itemId2 = addItem(events, user);
     const itemId3 = addItem(events, user);
 
-    list = buildTodoList(list, events);
+    list = buildTodoList(undefined, events);
     events.push(
         ...commands.completeListItem({
             agent: user,
@@ -94,7 +94,7 @@ test('item completion', (t) => {
         }),
     );
 
-    list = buildTodoList(list, events);
+    list = buildTodoList(undefined, events);
     events.push(
         ...commands.completeListItem({
             agent: user,
@@ -103,7 +103,7 @@ test('item completion', (t) => {
         }),
     );
 
-    list = buildTodoList(list, events);
+    list = buildTodoList(undefined, events);
     t.false(getItem(list, itemId1).completed, 'item1 not completed');
     t.true(getItem(list, itemId2).completed, 'item2 completed');
     t.true(getItem(list, itemId3).completed, 'item3 completed');
@@ -116,7 +116,7 @@ test('item completion', (t) => {
         }),
     );
 
-    list = buildTodoList(list, events);
+    list = buildTodoList(undefined, events);
     t.false(getItem(list, itemId2).completed, 'item2 un-completed');
 });
 

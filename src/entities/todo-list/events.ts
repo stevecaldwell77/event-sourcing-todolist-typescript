@@ -5,26 +5,31 @@ import { makeEvent } from 'src/shared/make-event';
 import {
     EventListCreated,
     isEventListCreated,
+    assertIsValidEventListCreated,
     makeEventListCreated,
 } from './events/list-created';
 import {
     EventListItemCreated,
     isEventListItemCreated,
+    assertIsValidEventListItemCreated,
     makeEventListItemCreated,
 } from './events/list-item-created';
 import {
     EventListItemCompleted,
     isEventListItemCompleted,
+    assertIsValidEventListItemCompleted,
     makeEventListItemCompleted,
 } from './events/list-item-completed';
 import {
     EventListItemUncompleted,
     isEventListItemUncompleted,
+    assertIsValidEventListItemUncompleted,
     makeEventListItemUncompleted,
 } from './events/list-item-uncompleted';
 import {
     EventListItemMoved,
     isEventListItemMoved,
+    assertIsValidEventListItemMoved,
     makeEventListItemMoved,
 } from './events/list-item-moved';
 
@@ -48,6 +53,11 @@ export const makeTodoListEvent = (
     });
 
 export {
+    assertIsValidEventListCreated,
+    assertIsValidEventListItemCompleted,
+    assertIsValidEventListItemCreated,
+    assertIsValidEventListItemMoved,
+    assertIsValidEventListItemUncompleted,
     EventListCreated,
     EventListItemCompleted,
     EventListItemCreated,
