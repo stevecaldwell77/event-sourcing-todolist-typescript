@@ -1,16 +1,17 @@
 import { uniq } from 'lodash';
 import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/entities/entity-event';
-import buildEntity from 'src/util/build-entity';
+import {
+    EntityEvent,
+    EventHandler,
+    EventMapper,
+    buildEntityFromEvents,
+} from 'src/entities/entity-event';
 import { User, newUser } from '../user';
 import {
     assertIsValidEventUserCreated,
     assertIsValidEventUserRoleAdded,
     assertIsValidEventUserRoleRemoved,
 } from './events';
-
-type EventHandler<K> = (prev: K | undefined, event: EntityEvent) => K;
-type EventMapper<K> = Partial<Record<EventName, EventHandler<K>>>;
 
 const handleUserCreated: EventHandler<User> = (user, event) => {
     if (user) throw new Error('handleUserCreated: user should not exist');
@@ -41,11 +42,5 @@ const eventMapper: EventMapper<User> = {
     [EventName.USER_ROLE_REMOVED]: handleUserRoleRemoved,
 };
 
-const applyEvent = (prev: User | undefined, event: EntityEvent): User => {
-    const handler = eventMapper[event.eventName];
-    if (!handler) throw new Error(`Unknown event ${event.eventName}`);
-    return handler(prev, event);
-};
-
 export default (prev: User | undefined, events: EntityEvent[]): User =>
-    buildEntity(prev, events, applyEvent);
+    buildEntityFromEvents(eventMapper, prev, events);

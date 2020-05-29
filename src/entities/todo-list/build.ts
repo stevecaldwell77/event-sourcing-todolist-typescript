@@ -1,6 +1,10 @@
 import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/entities/entity-event';
-import buildEntity from 'src/util/build-entity';
+import {
+    EntityEvent,
+    EventHandler,
+    EventMapper,
+    buildEntityFromEvents,
+} from 'src/entities/entity-event';
 import { TodoList, newList, getItem } from '../todo-list';
 import {
     assertIsValidEventListCreated,
@@ -9,9 +13,6 @@ import {
     assertIsValidEventListItemMoved,
     assertIsValidEventListItemUncompleted,
 } from './events';
-
-type EventHandler<K> = (prev: K | undefined, event: EntityEvent) => K;
-type EventMapper<K> = Partial<Record<EventName, EventHandler<K>>>;
 
 const applyListCreated: EventHandler<TodoList> = (list, event) => {
     if (list) throw new Error('applyListCreated: list should not exist');
@@ -65,14 +66,5 @@ const eventMapper: EventMapper<TodoList> = {
     [EventName.LIST_ITEM_MOVED]: applyItemMoved,
 };
 
-const applyEvent = (
-    prev: TodoList | undefined,
-    event: EntityEvent,
-): TodoList => {
-    const handler = eventMapper[event.eventName];
-    if (!handler) throw new Error(`Unknown event ${event.eventName}`);
-    return handler(prev, event);
-};
-
 export default (prev: TodoList | undefined, events: EntityEvent[]): TodoList =>
-    buildEntity(prev, events, applyEvent);
+    buildEntityFromEvents(eventMapper, prev, events);
