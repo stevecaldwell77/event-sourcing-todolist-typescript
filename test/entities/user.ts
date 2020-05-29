@@ -31,8 +31,7 @@ test('adding and removing roles', (t) => {
     const { agent } = setup;
     let { user } = setup;
 
-    let events: EntityEvent[] = [];
-    events = commands.addRoleToUser({
+    let events = commands.addRoleToUser({
         agent,
         user,
         role: Role.ADMIN,
