@@ -41,7 +41,7 @@ export const makeTodoListEvent = (
 ): EntityEvent =>
     makeEvent({
         ...params,
-        entity: EntityType.TodoList,
+        entityType: EntityType.TodoList,
         entityId: params.listId,
         eventName,
     });

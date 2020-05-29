@@ -11,8 +11,8 @@ class EventStoreInMemory extends EventStore {
     private todoLists: Record<string, TodoList> = {};
 
     async saveEvent(event: EntityEvent): Promise<void> {
-        const { entity, entityId } = event;
-        const entityKey = `${entity}#${entityId}`;
+        const { entityType, entityId } = event;
+        const entityKey = `${entityType}#${entityId}`;
         const events = this.events[entityKey] || [];
         const lastEvent = events[events.length - 1];
         const expectedRevision = lastEvent ? lastEvent.eventRevision + 1 : 1;

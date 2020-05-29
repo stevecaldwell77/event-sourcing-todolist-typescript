@@ -7,7 +7,7 @@ export interface EntityEvent {
     readonly eventTimestamp: number;
     readonly eventName: EventName;
     readonly eventRevision: number;
-    readonly entity: EntityType;
+    readonly entityType: EntityType;
     readonly entityId: string;
     readonly agentId: string;
 }
@@ -21,7 +21,7 @@ export interface EventParams {
     eventTimestamp?: number;
     eventName: EventName;
     eventRevision: number;
-    entity: EntityType;
+    entityType: EntityType;
     entityId: string;
     agent: Agent;
 }

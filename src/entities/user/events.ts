@@ -30,7 +30,7 @@ export const makeUserEvent = (
     makeEvent({
         ...params,
         eventName,
-        entity: EntityType.User,
+        entityType: EntityType.User,
         entityId: params.userId,
     });
 

@@ -20,9 +20,11 @@ interface Payload {
 }
 
 const makeEvent = (
-    params: Omit<EventParams, 'entity' | 'eventName'> & { payload: Payload },
+    params: Omit<EventParams, 'entityType' | 'eventName'> & {
+        payload: Payload;
+    },
 ): Event => ({
-    ...makeBaseEvent({ ...params, entity: entityType, eventName }),
+    ...makeBaseEvent({ ...params, entityType, eventName }),
     payload: params.payload,
 });
 
