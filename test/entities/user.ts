@@ -4,6 +4,7 @@ import getId from 'src/util/get-id';
 import { buildUser, newUser, commands } from 'src/entities/user';
 import { Role } from 'src/entities/authorization';
 import initializeUser from 'test/helpers/initialize-user';
+import { EntityEvent } from 'src/entities/entity-event';
 
 const runSetup = () => {
     const { events, userId, agent, email } = initializeUser();
@@ -27,29 +28,26 @@ test('createUser()', (t) => {
 
 test('adding and removing roles', (t) => {
     const setup = runSetup();
-    const { agent, events } = setup;
+    const { agent } = setup;
     let { user } = setup;
 
-    events.push(
-        ...commands.addRoleToUser({
-            agent,
-            user,
-            role: Role.ADMIN,
-        }),
-    );
+    let events: EntityEvent[] = [];
+    events = commands.addRoleToUser({
+        agent,
+        user,
+        role: Role.ADMIN,
+    });
 
-    user = buildUser(undefined, events);
+    user = buildUser(user, events);
     t.deepEqual(user.roles, [Role.ADMIN], 'admin role added to user');
 
-    events.push(
-        ...commands.removeRoleFromUser({
-            agent,
-            user,
-            role: Role.ADMIN,
-        }),
-    );
+    events = commands.removeRoleFromUser({
+        agent,
+        user,
+        role: Role.ADMIN,
+    });
 
-    user = buildUser(undefined, events);
+    user = buildUser(user, events);
     t.deepEqual(user.roles, [], 'admin role revoved from user');
 });
 
