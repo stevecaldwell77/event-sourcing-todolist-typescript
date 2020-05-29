@@ -1,4 +1,4 @@
-import { Role } from 'src/shared/authorization';
+import { Role } from 'src/entities/authorization';
 import buildUser from './user/build';
 import * as commands from './user/commands';
 

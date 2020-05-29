@@ -2,7 +2,7 @@
 import test from 'ava';
 import getUser from 'src/use-cases/get-user';
 import EventStoreInMemory from 'src/event-store/in-memory';
-import { systemAgent } from 'src/shared/agent';
+import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import getId from 'src/util/get-id';
 import createUser from 'src/use-cases/create-user';

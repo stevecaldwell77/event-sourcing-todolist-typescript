@@ -1,5 +1,5 @@
 import getId from 'src/util/get-id';
-import { systemAgent, Agent } from 'src/shared/agent';
+import { systemAgent, Agent } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
 import { commands } from 'src/entities/user';
 

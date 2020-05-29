@@ -5,7 +5,7 @@ import {
     EventParams,
     makeEvent as makeBaseEvent,
 } from 'src/entities/entity-event';
-import { Role } from 'src/shared/authorization';
+import { Role } from 'src/entities/authorization';
 
 const entityType = EntityType.User;
 const eventName = EventName.USER_ROLE_ADDED;

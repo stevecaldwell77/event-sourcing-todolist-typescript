@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { EntityType, EventName } from 'src/lib/enums';
-import { Agent, getAgentId } from 'src/shared/agent';
+import { Agent, getAgentId } from 'src/entities/agent';
 
 export interface EntityEvent {
     readonly eventId: string;

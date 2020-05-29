@@ -2,7 +2,7 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { buildUser, newUser, commands } from 'src/entities/user';
-import { Role } from 'src/shared/authorization';
+import { Role } from 'src/entities/authorization';
 import initializeUser from 'test/helpers/initialize-user';
 
 const runSetup = () => {

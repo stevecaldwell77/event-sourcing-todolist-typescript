@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Agent } from 'src/shared/agent';
+import { Agent } from 'src/entities/agent';
 
 export enum Role {
     ADMIN = 'ADMIN',

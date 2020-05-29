@@ -1,4 +1,4 @@
-import { Role } from 'src/shared/authorization';
+import { Role } from 'src/entities/authorization';
 import { User } from 'src/entities/user';
 
 type SystemAgent = {

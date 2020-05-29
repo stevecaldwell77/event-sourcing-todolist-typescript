@@ -1,6 +1,6 @@
 import EventStore from 'src/event-store/event-store';
 import { User, buildUser, commands } from 'src/entities/user';
-import { Agent } from 'src/shared/agent';
+import { Agent } from 'src/entities/agent';
 
 const assertNotExists = async (eventStore: EventStore, userId: string) => {
     const { events } = await eventStore.getUserSourceData(userId);

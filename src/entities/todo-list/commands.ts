@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Agent } from 'src/shared/agent';
+import { Agent } from 'src/entities/agent';
 import { TodoList, getItem } from '../todo-list';
 import { User } from '../user';
 import { makeEventListCreated } from './events/list-created';

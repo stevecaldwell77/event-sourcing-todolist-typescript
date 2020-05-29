@@ -1,6 +1,6 @@
 import EventStore from 'src/event-store/event-store';
 import { User, buildUser } from 'src/entities/user';
-import { Agent } from 'src/shared/agent';
+import { Agent } from 'src/entities/agent';
 
 export default async (params: {
     eventStore: EventStore;

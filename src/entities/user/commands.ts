@@ -2,8 +2,8 @@ import {
     Role,
     Permission,
     assertAgentHasPermission,
-} from 'src/shared/authorization';
-import { Agent } from 'src/shared/agent';
+} from 'src/entities/authorization';
+import { Agent } from 'src/entities/agent';
 import { User } from 'src/entities/user';
 import { makeEventUserCreated } from './events/user-created';
 import { makeEventUserRoleAdded } from './events/user-role-added';

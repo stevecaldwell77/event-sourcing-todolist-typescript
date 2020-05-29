@@ -3,7 +3,7 @@ import test from 'ava';
 import EventStoreInMemory from 'src/event-store/in-memory';
 import createUser from 'src/use-cases/create-user';
 import getId from 'src/util/get-id';
-import { systemAgent } from 'src/shared/agent';
+import { systemAgent } from 'src/entities/agent';
 import { EntityType } from 'src/lib/enums';
 import { isEventUserCreated } from 'src/entities/user/events/user-created';
 
