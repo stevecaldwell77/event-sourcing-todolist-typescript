@@ -1,12 +1,14 @@
 import assert from 'assert';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 import { EntityType } from 'src/lib/enums';
 import { User } from 'src/entities/user';
+import { TodoList } from 'src/entities/todo-list';
 import EventStore from './event-store';
 
 class EventStoreInMemory extends EventStore {
     private events: Record<string, EntityEvent[]> = {};
     private users: Record<string, User> = {};
+    private todoLists: Record<string, TodoList> = {};
 
     async saveEvent(event: EntityEvent): Promise<void> {
         const { entity, entityId } = event;
@@ -38,6 +40,14 @@ class EventStoreInMemory extends EventStore {
         return allEvents.filter(
             (event) => event.eventRevision >= startingRevision,
         );
+    }
+
+    async saveTodoListSnapshot(list: TodoList): Promise<void> {
+        this.todoLists[list.listId] = list;
+    }
+
+    async getTodoListSnapshot(listId: string): Promise<TodoList | undefined> {
+        return this.todoLists[listId];
     }
 
     async saveUserSnapshot(user: User): Promise<void> {

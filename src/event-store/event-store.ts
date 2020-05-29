@@ -1,6 +1,7 @@
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 import { User } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
+import { TodoList } from 'src/entities/todo-list';
 
 abstract class EventStore {
     abstract async saveEvents(events: EntityEvent[]): Promise<void>;
@@ -10,6 +11,12 @@ abstract class EventStore {
         entityId: string,
         startingRevision: number,
     ): Promise<EntityEvent[]>;
+
+    abstract async saveTodoListSnapshot(list: TodoList): Promise<void>;
+
+    abstract async getTodoListSnapshot(
+        listId: string,
+    ): Promise<TodoList | undefined>;
 
     abstract async saveUserSnapshot(user: User): Promise<void>;
 
