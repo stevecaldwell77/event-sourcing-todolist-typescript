@@ -16,7 +16,7 @@ interface HasRevision {
     revision: number;
 }
 
-export const makeEvent = (params: {
+export interface EventParams {
     eventId?: string;
     eventTimestamp?: number;
     eventName: EventName;
@@ -24,7 +24,9 @@ export const makeEvent = (params: {
     entity: EntityType;
     entityId: string;
     agent: Agent;
-}): EntityEvent => ({
+}
+
+export const makeEvent = (params: EventParams): EntityEvent => ({
     ...params,
     eventId: params.eventId || uuid(),
     eventTimestamp: params.eventTimestamp || Date.now(),

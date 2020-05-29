@@ -1,8 +1,12 @@
 import is from '@sindresorhus/is';
-import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/entities/entity-event';
-import { UserEventParams, makeUserEvent } from '../events';
+import { EntityType, EventName } from 'src/lib/enums';
+import {
+    EntityEvent,
+    EventParams,
+    makeEvent as makeBaseEvent,
+} from 'src/entities/entity-event';
 
+const entityType = EntityType.User;
 const eventName = EventName.USER_CREATED;
 
 interface Event extends EntityEvent {
@@ -11,11 +15,15 @@ interface Event extends EntityEvent {
     };
 }
 
-const makeEvent = (params: UserEventParams & { email: string }): Event => ({
-    ...makeUserEvent(params, eventName),
-    payload: {
-        email: params.email,
-    },
+interface Payload {
+    email: string;
+}
+
+const makeEvent = (
+    params: Omit<EventParams, 'entity' | 'eventName'> & { payload: Payload },
+): Event => ({
+    ...makeBaseEvent({ ...params, entity: entityType, eventName }),
+    payload: params.payload,
 });
 
 const isEvent = (event: EntityEvent): event is Event =>

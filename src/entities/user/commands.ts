@@ -19,7 +19,11 @@ const createUser = (params: {
     assertAgentHasPermission(params.agent, Permission.CREATE_USER);
     return [
         makeEventUserCreated({
-            ...params,
+            agent: params.agent,
+            entityId: params.userId,
+            payload: {
+                email: params.email,
+            },
             eventRevision: 1,
         }),
     ];
