@@ -1,25 +1,30 @@
 import is from '@sindresorhus/is';
-import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/entities/entity-event';
-import { TodoListEventParams, makeTodoListEvent } from '../events';
+import { EntityType, EventName } from 'src/lib/enums';
+import {
+    EntityEvent,
+    EventParams,
+    makeEvent as makeBaseEvent,
+} from 'src/entities/entity-event';
 
+const entityType = EntityType.TodoList;
 const eventName = EventName.LIST_CREATED;
 
+interface Payload {
+    owner: string;
+    title: string;
+}
+
 interface Event extends EntityEvent {
-    readonly payload: {
-        owner: string;
-        title: string;
-    };
+    readonly payload: Payload;
 }
 
 const makeEvent = (
-    params: TodoListEventParams & { owner: string; title: string },
-): Event => ({
-    ...makeTodoListEvent(params, eventName),
-    payload: {
-        owner: params.owner,
-        title: params.title,
+    params: Omit<EventParams, 'entityType' | 'eventName'> & {
+        payload: Payload;
     },
+): Event => ({
+    ...makeBaseEvent({ ...params, entityType, eventName }),
+    payload: params.payload,
 });
 
 const isEvent = (event: EntityEvent): event is Event =>

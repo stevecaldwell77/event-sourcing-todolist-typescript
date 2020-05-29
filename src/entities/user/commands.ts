@@ -9,6 +9,17 @@ import { makeEventUserCreated } from './events/user-created';
 import { makeEventUserRoleAdded } from './events/user-role-added';
 import { makeEventUserRoleRemoved } from './events/user-role-removed';
 
+interface CommandParams {
+    agent: Agent;
+    user: User;
+}
+
+const eventBasics = (params: CommandParams) => ({
+    agent: params.agent,
+    eventRevision: params.user.revision + 1,
+    entityId: params.user.userId,
+});
+
 const createUser = (params: {
     agent: Agent;
     userId: string;
@@ -29,10 +40,8 @@ const addRoleToUser = (params: { agent: Agent; user: User; role: Role }) => {
     assertAgentHasPermission(params.agent, Permission.MANAGE_USER_ROLES);
     return [
         makeEventUserRoleAdded({
-            agent: params.agent,
-            entityId: params.user.userId,
+            ...eventBasics(params),
             payload: { role: params.role },
-            eventRevision: params.user.revision + 1,
         }),
     ];
 };
@@ -45,9 +54,7 @@ const removeRoleFromUser = (params: {
     assertAgentHasPermission(params.agent, Permission.MANAGE_USER_ROLES);
     return [
         makeEventUserRoleRemoved({
-            agent: params.agent,
-            entityId: params.user.userId,
-            eventRevision: params.user.revision + 1,
+            ...eventBasics(params),
             payload: { role: params.role },
         }),
     ];

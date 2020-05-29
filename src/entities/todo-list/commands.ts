@@ -2,13 +2,11 @@ import assert from 'assert';
 import { Agent } from 'src/shared/agent';
 import { TodoList, getItem } from '../todo-list';
 import { User } from '../user';
-import {
-    makeEventListCreated,
-    makeEventListItemCreated,
-    makeEventListItemCompleted,
-    makeEventListItemUncompleted,
-    makeEventListItemMoved,
-} from './events';
+import { makeEventListCreated } from './events/list-created';
+import { makeEventListItemCreated } from './events/list-item-created';
+import { makeEventListItemCompleted } from './events/list-item-completed';
+import { makeEventListItemUncompleted } from './events/list-item-uncompleted';
+import { makeEventListItemMoved } from './events/list-item-moved';
 
 interface CommandParams {
     agent: Agent;
@@ -24,7 +22,7 @@ const assertAgentPermissions = (agent: Agent, list: TodoList) => {
 const eventBasics = (params: CommandParams) => ({
     agent: params.agent,
     eventRevision: params.list.revision + 1,
-    listId: params.list.listId,
+    entityId: params.list.listId,
 });
 
 const createList = (params: {
@@ -34,7 +32,9 @@ const createList = (params: {
     title: string;
 }) => [
     makeEventListCreated({
-        ...params,
+        agent: params.agent,
+        entityId: params.listId,
+        payload: { owner: params.owner, title: params.title },
         eventRevision: 1,
     }),
 ];
@@ -55,8 +55,10 @@ const createListItem = (
     return [
         makeEventListItemCreated({
             ...eventBasics(params),
-            itemId,
-            text: params.text,
+            payload: {
+                itemId,
+                text: params.text,
+            },
         }),
     ];
 };
@@ -76,7 +78,7 @@ const completeListItem = (
     return [
         makeEventListItemCompleted({
             ...eventBasics(params),
-            itemId,
+            payload: { itemId },
         }),
     ];
 };
@@ -96,7 +98,7 @@ const uncompleteListItem = (
     return [
         makeEventListItemUncompleted({
             ...eventBasics(params),
-            itemId,
+            payload: { itemId },
         }),
     ];
 };
@@ -119,8 +121,10 @@ const moveListItem = (
     return [
         makeEventListItemMoved({
             ...eventBasics(params),
-            itemId,
-            newPosition,
+            payload: {
+                itemId,
+                newPosition,
+            },
         }),
     ];
 };
