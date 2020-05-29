@@ -1,5 +1,5 @@
 {
-  "name": "aap-scratch",
+  "name": "event-sourcing-todolist-typescript",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
