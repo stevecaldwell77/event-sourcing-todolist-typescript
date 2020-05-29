@@ -1,6 +1,5 @@
 import { EntityType, EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/interfaces/entity-event';
-import { makeEvent } from 'src/shared/make-event';
+import { EntityEvent, makeEvent } from 'src/entities/entity-event';
 import { Agent } from 'src/shared/agent';
 import {
     EventUserCreated,

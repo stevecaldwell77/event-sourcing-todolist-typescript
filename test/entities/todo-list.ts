@@ -3,7 +3,7 @@ import test from 'ava';
 import getId from 'src/util/get-id';
 import { buildTodoList, commands, getItem } from 'src/entities/todo-list';
 import { User, newUser } from 'src/entities/user';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 
 const runSetup = () => {
     const user = newUser({

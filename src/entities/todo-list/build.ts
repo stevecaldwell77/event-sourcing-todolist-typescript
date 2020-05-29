@@ -1,5 +1,5 @@
 import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from 'src/util/build-entity';
 import { TodoList, newList, getItem } from '../todo-list';
 import {

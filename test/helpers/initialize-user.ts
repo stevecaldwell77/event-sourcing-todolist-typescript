@@ -1,6 +1,6 @@
 import getId from 'src/util/get-id';
 import { systemAgent, Agent } from 'src/shared/agent';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 import { commands } from 'src/entities/user';
 
 const initializeUser = (

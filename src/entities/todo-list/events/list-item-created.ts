@@ -1,6 +1,6 @@
 import is from '@sindresorhus/is';
 import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 import { TodoListEventParams, makeTodoListEvent } from '../events';
 
 const eventName = EventName.LIST_ITEM_CREATED;

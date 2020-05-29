@@ -1,4 +1,4 @@
-import { EntityEvent } from 'src/interfaces/entity-event';
+import { EntityEvent } from 'src/entities/entity-event';
 
 interface HasRevision {
     revision: number;
