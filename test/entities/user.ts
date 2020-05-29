@@ -38,7 +38,7 @@ test('adding and removing roles', (t) => {
         }),
     );
 
-    user = buildUser(user, events);
+    user = buildUser(undefined, events);
     t.deepEqual(user.roles, [Role.ADMIN], 'admin role added to user');
 
     events.push(
@@ -49,7 +49,7 @@ test('adding and removing roles', (t) => {
         }),
     );
 
-    user = buildUser(user, events);
+    user = buildUser(undefined, events);
     t.deepEqual(user.roles, [], 'admin role revoved from user');
 });
 

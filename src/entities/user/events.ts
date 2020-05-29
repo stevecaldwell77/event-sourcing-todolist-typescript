@@ -5,16 +5,17 @@ import { Agent } from 'src/shared/agent';
 import {
     EventUserCreated,
     isEventUserCreated,
+    assertIsValidEventUserCreated,
     makeEventUserCreated,
 } from './events/user-created';
 import {
     EventUserRoleAdded,
-    isEventUserRoleAdded,
+    assertIsValidEventUserRoleAdded,
     makeEventUserRoleAdded,
 } from './events/user-role-added';
 import {
     EventUserRoleRemoved,
-    isEventUserRoleRemoved,
+    assertIsValidEventUserRoleRemoved,
     makeEventUserRoleRemoved,
 } from './events/user-role-removed';
 
@@ -41,9 +42,10 @@ export {
     EventUserCreated,
     EventUserRoleAdded,
     EventUserRoleRemoved,
+    assertIsValidEventUserCreated,
+    assertIsValidEventUserRoleAdded,
+    assertIsValidEventUserRoleRemoved,
     isEventUserCreated,
-    isEventUserRoleAdded,
-    isEventUserRoleRemoved,
     makeEventUserCreated,
     makeEventUserRoleAdded,
     makeEventUserRoleRemoved,

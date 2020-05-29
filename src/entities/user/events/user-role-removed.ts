@@ -1,4 +1,4 @@
-import { assert } from '@sindresorhus/is';
+import is from '@sindresorhus/is';
 import { EventName } from 'src/lib/enums';
 import { EntityEvent } from 'src/interfaces/entity-event';
 import { Role } from 'src/shared/authorization';
@@ -19,16 +19,18 @@ const makeEvent = (params: UserEventParams & { role: Role }): Event => ({
     },
 });
 
-const isEvent = (event: EntityEvent): event is Event => {
-    if (event.eventName !== eventName) return false;
-    assert.plainObject((event as Event).payload);
-    assert.string((event as Event).payload.role);
-    return true;
-};
+function assertIsValidEvent(event: EntityEvent): asserts event is Event {
+    if (event.eventName !== eventName)
+        throw new Error(`event does not have eventName of ${eventName}`);
+    if (!is.plainObject((event as Event).payload))
+        throw new Error('event missing payload');
+    if (!is.string((event as Event).payload.role))
+        throw new Error('event payload has invalid value for role');
+}
 
 export {
     // eslint-disable-next-line no-undef
     Event as EventUserRoleRemoved,
-    isEvent as isEventUserRoleRemoved,
+    assertIsValidEvent as assertIsValidEventUserRoleRemoved,
     makeEvent as makeEventUserRoleRemoved,
 };
