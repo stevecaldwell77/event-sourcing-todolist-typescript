@@ -14,6 +14,7 @@ import { assertIsValidEventListItemMoved } from './events/list-item-moved';
 const applyListCreated: EventHandler<TodoList> = (list, event) => {
     if (list) throw new Error('applyListCreated: list should not exist');
     assertIsValidEventListCreated(event);
+
     return newList({
         listId: event.entityId,
         owner: event.payload.owner,
@@ -24,27 +25,33 @@ const applyListCreated: EventHandler<TodoList> = (list, event) => {
 const applyItemCreated: EventHandler<TodoList> = (list, event) => {
     if (!list) throw new Error('applyItemCreated: no list');
     assertIsValidEventListItemCreated(event);
+
     list.items.push({
         itemId: event.payload.itemId,
         text: event.payload.text,
         completed: false,
     });
+
     return list;
 };
 
 const applyItemCompleted: EventHandler<TodoList> = (list, event) => {
     if (!list) throw new Error('applyItemCompleted: no list');
     assertIsValidEventListItemCompleted(event);
+
     const item = getItem(list, event.payload.itemId);
     item.completed = true;
+
     return list;
 };
 
 const applyItemUncompleted: EventHandler<TodoList> = (list, event) => {
     if (!list) throw new Error('applyItemUncompleted: no list');
     assertIsValidEventListItemUncompleted(event);
+
     const item = getItem(list, event.payload.itemId);
     item.completed = false;
+
     return list;
 };
 
