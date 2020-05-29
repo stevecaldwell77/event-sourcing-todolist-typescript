@@ -9,14 +9,12 @@ import {
 const entityType = EntityType.User;
 const eventName = EventName.USER_CREATED;
 
-interface Event extends EntityEvent {
-    readonly payload: {
-        email: string;
-    };
-}
-
 interface Payload {
     email: string;
+}
+
+interface Event extends EntityEvent {
+    readonly payload: Payload;
 }
 
 const makeEvent = (

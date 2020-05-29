@@ -5,7 +5,7 @@ import createUser from 'src/use-cases/create-user';
 import getId from 'src/util/get-id';
 import { systemAgent } from 'src/shared/agent';
 import { EntityType } from 'src/lib/enums';
-import { isEventUserCreated } from 'src/entities/user/events';
+import { isEventUserCreated } from 'src/entities/user/events/user-created';
 
 const eventStore = new EventStoreInMemory();
 

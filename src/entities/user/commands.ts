@@ -5,11 +5,9 @@ import {
 } from 'src/shared/authorization';
 import { Agent } from 'src/shared/agent';
 import { User } from 'src/entities/user';
-import {
-    makeEventUserCreated,
-    makeEventUserRoleAdded,
-    makeEventUserRoleRemoved,
-} from './events';
+import { makeEventUserCreated } from './events/user-created';
+import { makeEventUserRoleAdded } from './events/user-role-added';
+import { makeEventUserRoleRemoved } from './events/user-role-removed';
 
 const createUser = (params: {
     agent: Agent;
@@ -21,9 +19,7 @@ const createUser = (params: {
         makeEventUserCreated({
             agent: params.agent,
             entityId: params.userId,
-            payload: {
-                email: params.email,
-            },
+            payload: { email: params.email },
             eventRevision: 1,
         }),
     ];
@@ -34,9 +30,9 @@ const addRoleToUser = (params: { agent: Agent; user: User; role: Role }) => {
     return [
         makeEventUserRoleAdded({
             agent: params.agent,
-            userId: params.user.userId,
+            entityId: params.user.userId,
+            payload: { role: params.role },
             eventRevision: params.user.revision + 1,
-            role: params.role,
         }),
     ];
 };
@@ -50,9 +46,9 @@ const removeRoleFromUser = (params: {
     return [
         makeEventUserRoleRemoved({
             agent: params.agent,
-            userId: params.user.userId,
+            entityId: params.user.userId,
             eventRevision: params.user.revision + 1,
-            role: params.role,
+            payload: { role: params.role },
         }),
     ];
 };

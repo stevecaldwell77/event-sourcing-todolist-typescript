@@ -1,22 +1,30 @@
 import is from '@sindresorhus/is';
-import { EventName } from 'src/lib/enums';
-import { EntityEvent } from 'src/entities/entity-event';
+import { EntityType, EventName } from 'src/lib/enums';
+import {
+    EntityEvent,
+    EventParams,
+    makeEvent as makeBaseEvent,
+} from 'src/entities/entity-event';
 import { Role } from 'src/shared/authorization';
-import { UserEventParams, makeUserEvent } from '../events';
 
+const entityType = EntityType.User;
 const eventName = EventName.USER_ROLE_ADDED;
 
-interface Event extends EntityEvent {
-    readonly payload: {
-        role: Role;
-    };
+interface Payload {
+    role: Role;
 }
 
-const makeEvent = (params: UserEventParams & { role: Role }): Event => ({
-    ...makeUserEvent(params, eventName),
-    payload: {
-        role: params.role,
+interface Event extends EntityEvent {
+    readonly payload: Payload;
+}
+
+const makeEvent = (
+    params: Omit<EventParams, 'entityType' | 'eventName'> & {
+        payload: Payload;
     },
+): Event => ({
+    ...makeBaseEvent({ ...params, entityType, eventName }),
+    payload: params.payload,
 });
 
 function assertIsValidEvent(event: EntityEvent): asserts event is Event {
