@@ -2,9 +2,12 @@ import { v4 as uuid } from 'uuid';
 import { EntityType, EventName } from 'src/lib/enums';
 import { Agent, getAgentId } from 'src/entities/agent';
 
+const schemaVersion = 1;
+
 export interface EntityEvent {
     readonly eventId: string;
     readonly eventTimestamp: number;
+    readonly schemaVersion: number;
     readonly eventName: EventName;
     readonly eventRevision: number;
     readonly entityType: EntityType;
@@ -31,6 +34,7 @@ export const makeEvent = (params: EventParams): EntityEvent => ({
     eventId: params.eventId || uuid(),
     eventTimestamp: params.eventTimestamp || Date.now(),
     agentId: getAgentId(params.agent),
+    schemaVersion,
 });
 
 export type EventHandler<K> = (prev: K | undefined, event: EntityEvent) => K;
