@@ -31,22 +31,24 @@ test('adding and removing roles', (t) => {
     const { agent } = setup;
     let { user } = setup;
 
-    let events = commands.addRoleToUser({
-        agent,
+    user = buildUser(
         user,
-        role: Role.ADMIN,
-    });
-
-    user = buildUser(user, events);
+        commands.addRoleToUser({
+            agent,
+            user,
+            role: Role.ADMIN,
+        }),
+    );
     t.deepEqual(user.roles, [Role.ADMIN], 'admin role added to user');
 
-    events = commands.removeRoleFromUser({
-        agent,
+    user = buildUser(
         user,
-        role: Role.ADMIN,
-    });
-
-    user = buildUser(user, events);
+        commands.removeRoleFromUser({
+            agent,
+            user,
+            role: Role.ADMIN,
+        }),
+    );
     t.deepEqual(user.roles, [], 'admin role revoved from user');
 });
 
