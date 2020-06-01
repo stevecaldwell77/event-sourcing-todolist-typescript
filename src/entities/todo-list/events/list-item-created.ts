@@ -14,7 +14,7 @@ interface Payload {
     text: string;
 }
 
-interface Event extends EntityEvent {
+interface EventListItemCreated extends EntityEvent {
     readonly payload: Payload;
 }
 
@@ -22,28 +22,30 @@ const makeEvent = (
     params: Omit<EventParams, 'entityType' | 'eventName'> & {
         payload: Payload;
     },
-): Event => ({
+): EventListItemCreated => ({
     ...makeBaseEvent({ ...params, entityType, eventName }),
     payload: params.payload,
 });
 
-const isEvent = (event: EntityEvent): event is Event =>
+const isEvent = (event: EntityEvent): event is EventListItemCreated =>
     event.eventName === eventName;
 
-function assertIsValidEvent(event: EntityEvent): asserts event is Event {
+function assertIsValidEvent(
+    event: EntityEvent,
+): asserts event is EventListItemCreated {
     if (event.eventName !== eventName)
         throw new Error(`event does not have eventName of ${eventName}`);
-    if (!is.plainObject((event as Event).payload))
+    if (!is.plainObject((event as EventListItemCreated).payload))
         throw new Error('event missing payload');
-    if (!is.string((event as Event).payload.itemId))
+    if (!is.string((event as EventListItemCreated).payload.itemId))
         throw new Error('event payload has invalid value for itemId');
-    if (!is.string((event as Event).payload.text))
+    if (!is.string((event as EventListItemCreated).payload.text))
         throw new Error('event payload has invalid value for text');
 }
 
 export {
     // eslint-disable-next-line no-undef
-    Event as EventListItemCreated,
+    EventListItemCreated,
     isEvent as isEventListItemCreated,
     assertIsValidEvent as assertIsValidEventListItemCreated,
     makeEvent as makeEventListItemCreated,

@@ -14,7 +14,7 @@ interface Payload {
     role: Role;
 }
 
-interface Event extends EntityEvent {
+interface EventUserRoleAdded extends EntityEvent {
     readonly payload: Payload;
 }
 
@@ -22,23 +22,25 @@ const makeEvent = (
     params: Omit<EventParams, 'entityType' | 'eventName'> & {
         payload: Payload;
     },
-): Event => ({
+): EventUserRoleAdded => ({
     ...makeBaseEvent({ ...params, entityType, eventName }),
     payload: params.payload,
 });
 
-function assertIsValidEvent(event: EntityEvent): asserts event is Event {
+function assertIsValidEvent(
+    event: EntityEvent,
+): asserts event is EventUserRoleAdded {
     if (event.eventName !== eventName)
         throw new Error(`event does not have eventName of ${eventName}`);
-    if (!is.plainObject((event as Event).payload))
+    if (!is.plainObject((event as EventUserRoleAdded).payload))
         throw new Error('event missing payload');
-    if (!is.string((event as Event).payload.role))
+    if (!is.string((event as EventUserRoleAdded).payload.role))
         throw new Error('event payload has invalid value for role');
 }
 
 export {
     // eslint-disable-next-line no-undef
-    Event as EventUserRoleAdded,
+    EventUserRoleAdded,
     assertIsValidEvent as assertIsValidEventUserRoleAdded,
     makeEvent as makeEventUserRoleAdded,
 };
