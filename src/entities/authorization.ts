@@ -9,6 +9,7 @@ export enum Permission {
     CREATE_USER = 'CREATE_USER',
     READ_USERS = 'READ_USERS',
     MANAGE_USER_ROLES = 'MANAGE_USER_ROLES',
+    READ_LISTS = 'READ_LISTS',
 }
 
 const rolePermissions: Record<Role, Permission[]> = {
@@ -16,6 +17,7 @@ const rolePermissions: Record<Role, Permission[]> = {
         Permission.CREATE_USER,
         Permission.READ_USERS,
         Permission.MANAGE_USER_ROLES,
+        Permission.READ_LISTS,
     ],
 };
 

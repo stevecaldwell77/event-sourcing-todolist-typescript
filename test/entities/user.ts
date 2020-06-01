@@ -4,6 +4,7 @@ import getId from 'src/util/get-id';
 import { User, buildUser, newUser, commands } from 'src/entities/user';
 import { Role } from 'src/entities/authorization';
 import initializeUser from 'test/helpers/initialize-user';
+import getAdminUser from 'test/helpers/get-admin-user';
 
 const runSetup = () => {
     const { events, userId, agent, email } = initializeUser();
@@ -54,11 +55,7 @@ test('adding and removing roles', (t) => {
 });
 
 test('permissions: create user', (t) => {
-    const adminUser = newUser({
-        userId: getId(),
-        email: 'admin@example.com',
-    });
-    adminUser.roles = [Role.ADMIN];
+    const adminUser = getAdminUser();
 
     const nonAdminUser = newUser({
         userId: getId(),
@@ -91,12 +88,7 @@ test('permissions: create user', (t) => {
 });
 
 test('permissions: read user', (t) => {
-    const adminUser = newUser({
-        userId: getId(),
-        email: 'admin@example.com',
-    });
-    adminUser.roles = [Role.ADMIN];
-
+    const adminUser = getAdminUser();
     const { events: events1 } = initializeUser({ agent: adminUser });
     const { events: events2 } = initializeUser({ agent: adminUser });
 

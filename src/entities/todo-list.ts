@@ -1,5 +1,11 @@
 import { EntityType } from 'src/lib/enums';
-import buildTodoList from './todo-list/build';
+import {
+    Permission,
+    assertAgentHasPermission,
+} from 'src/entities/authorization';
+import { Agent, getUserId } from 'src/entities/agent';
+import { EntityEvent } from 'src/entities/entity-event';
+import buildEntity from './todo-list/build';
 import * as commands from './todo-list/commands';
 
 export const entityType = EntityType.TodoList;
@@ -36,5 +42,20 @@ const newList = (params: {
     title: params.title,
     items: [],
 });
+
+const assertAuthorized = (agent: Agent, list: TodoList): void => {
+    if (getUserId(agent) === list.owner) return;
+    assertAgentHasPermission(agent, Permission.READ_LISTS);
+};
+
+const buildTodoList = (
+    agent: Agent,
+    prev: TodoList | undefined,
+    events: EntityEvent[],
+) => {
+    const user = buildEntity(prev, events);
+    assertAuthorized(agent, user);
+    return user;
+};
 
 export { buildTodoList, commands, newList };
