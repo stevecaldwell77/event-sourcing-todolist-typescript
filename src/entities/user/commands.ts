@@ -25,7 +25,7 @@ const createUser = (params: {
     userId: string;
     email: string;
 }) => {
-    assertAgentHasPermission(params.agent, Permission.CREATE_USER);
+    assertAgentHasPermission(params.agent, Permission.USER_CREATE);
     return [
         makeEventUserCreated({
             agent: params.agent,
@@ -37,7 +37,7 @@ const createUser = (params: {
 };
 
 const addRoleToUser = (params: { agent: Agent; user: User; role: Role }) => {
-    assertAgentHasPermission(params.agent, Permission.MANAGE_USER_ROLES);
+    assertAgentHasPermission(params.agent, Permission.USER_MANAGE_ROLES);
     return [
         makeEventUserRoleAdded({
             ...eventBasics(params),
@@ -51,7 +51,7 @@ const removeRoleFromUser = (params: {
     user: User;
     role: Role;
 }) => {
-    assertAgentHasPermission(params.agent, Permission.MANAGE_USER_ROLES);
+    assertAgentHasPermission(params.agent, Permission.USER_MANAGE_ROLES);
     return [
         makeEventUserRoleRemoved({
             ...eventBasics(params),

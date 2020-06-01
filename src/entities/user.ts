@@ -2,9 +2,9 @@ import { EntityType } from 'src/lib/enums';
 import {
     Role,
     Permission,
-    assertAgentHasPermission,
+    agentHasPermission,
 } from 'src/entities/authorization';
-import { Agent, getUserId } from 'src/entities/agent';
+import { Agent, getUserId, getAgentId } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from './user/build';
 import * as commands from './user/commands';
@@ -27,7 +27,8 @@ const newUser = (params: { userId: string; email: string }): User => ({
 
 const assertAuthorized = (agent: Agent, user: User): void => {
     if (getUserId(agent) === user.userId) return;
-    assertAgentHasPermission(agent, Permission.READ_USERS);
+    if (agentHasPermission(agent, Permission.USER_READ_ALL)) return;
+    throw new Error('NOT ALLOWED: READ_USER');
 };
 
 const buildUser = (

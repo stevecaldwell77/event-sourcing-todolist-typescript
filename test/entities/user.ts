@@ -81,7 +81,7 @@ test('permissions: create user', (t) => {
                 email: 'newuser@example.com',
             }),
         {
-            message: 'CREATE_USER NOT ALLOWED',
+            message: 'NOT ALLOWED: USER_CREATE',
         },
         'non-admin user cannot create a user',
     );
@@ -106,7 +106,7 @@ test('permissions: read user', (t) => {
             buildUser(user1, undefined, events2);
         },
         {
-            message: 'READ_USERS NOT ALLOWED',
+            message: 'NOT ALLOWED: READ_USER',
         },
         'a non-admin user cannot read another user',
     );

@@ -1,8 +1,5 @@
 import { EntityType } from 'src/lib/enums';
-import {
-    Permission,
-    assertAgentHasPermission,
-} from 'src/entities/authorization';
+import { Permission, agentHasPermission } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from './todo-list/build';
@@ -45,7 +42,8 @@ const newList = (params: {
 
 const assertAuthorized = (agent: Agent, list: TodoList): void => {
     if (getUserId(agent) === list.owner) return;
-    assertAgentHasPermission(agent, Permission.READ_LISTS);
+    if (agentHasPermission(agent, Permission.LIST_READ_ALL)) return;
+    throw new Error('NOT ALLOWED: READ_LIST');
 };
 
 const buildTodoList = (

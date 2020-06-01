@@ -168,7 +168,7 @@ test('permisssions: read list', (t) => {
             buildTodoList(otherUser, undefined, events);
         },
         {
-            message: 'READ_LISTS NOT ALLOWED',
+            message: 'NOT ALLOWED: READ_LIST',
         },
         "a non-admin user cannot view another user's list",
     );

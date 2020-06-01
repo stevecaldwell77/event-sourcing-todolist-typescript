@@ -6,18 +6,18 @@ export enum Role {
 }
 
 export enum Permission {
-    CREATE_USER = 'CREATE_USER',
-    READ_USERS = 'READ_USERS',
-    MANAGE_USER_ROLES = 'MANAGE_USER_ROLES',
-    READ_LISTS = 'READ_LISTS',
+    USER_CREATE = 'USER_CREATE',
+    USER_READ_ALL = 'USER_READ_ALL',
+    USER_MANAGE_ROLES = 'USER_MANAGE_ROLES',
+    LIST_READ_ALL = 'LIST_READ_ALL',
 }
 
 const rolePermissions: Record<Role, Permission[]> = {
     [Role.ADMIN]: [
-        Permission.CREATE_USER,
-        Permission.READ_USERS,
-        Permission.MANAGE_USER_ROLES,
-        Permission.READ_LISTS,
+        Permission.USER_CREATE,
+        Permission.USER_READ_ALL,
+        Permission.USER_MANAGE_ROLES,
+        Permission.LIST_READ_ALL,
     ],
 };
 
@@ -37,5 +37,5 @@ export const assertAgentHasPermission = (
     agent: Agent,
     permission: Permission,
 ): void => {
-    assert(agentHasPermission(agent, permission), `${permission} NOT ALLOWED`);
+    assert(agentHasPermission(agent, permission), `NOT ALLOWED: ${permission}`);
 };
