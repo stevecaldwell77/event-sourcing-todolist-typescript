@@ -6,7 +6,7 @@ import {
 } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
-import buildEntityFromEvents from './user/build';
+import buildEntity from './user/build';
 import * as commands from './user/commands';
 
 export const entityType = EntityType.User;
@@ -36,7 +36,7 @@ const buildUser = (
     prev: User | undefined,
     events: EntityEvent[],
 ) => {
-    const user = buildEntityFromEvents(prev, events);
+    const user = buildEntity(prev, events);
     assertReadAuthorized(agent, user);
     return user;
 };
