@@ -7,11 +7,16 @@ export enum Role {
 
 export enum Permission {
     CREATE_USER = 'CREATE_USER',
+    READ_USERS = 'READ_USERS',
     MANAGE_USER_ROLES = 'MANAGE_USER_ROLES',
 }
 
 const rolePermissions: Record<Role, Permission[]> = {
-    [Role.ADMIN]: [Permission.CREATE_USER, Permission.MANAGE_USER_ROLES],
+    [Role.ADMIN]: [
+        Permission.CREATE_USER,
+        Permission.READ_USERS,
+        Permission.MANAGE_USER_ROLES,
+    ],
 };
 
 export const agentHasPermission = (

@@ -7,7 +7,7 @@ export default async (params: {
     agent: Agent;
     userId: string;
 }): Promise<User | undefined> => {
-    const { userId, eventStore } = params;
+    const { agent, userId, eventStore } = params;
     const { snapshot, events } = await eventStore.getUserSourceData(userId);
-    return events.length > 0 ? buildUser(snapshot, events) : undefined;
+    return events.length > 0 ? buildUser(agent, snapshot, events) : undefined;
 };

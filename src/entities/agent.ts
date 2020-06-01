@@ -17,6 +17,10 @@ const isUser = (agent: Agent): agent is User => {
     return (agent as User).userId !== undefined;
 };
 
+export const getUserId = (agent: Agent): string | undefined => {
+    return isUser(agent) ? agent.userId : undefined;
+};
+
 export const getAgentId = (agent: Agent): string => {
     return isUser(agent) ? agent.userId : agent.agentId;
 };

@@ -1,7 +1,13 @@
 import { EntityType } from 'src/lib/enums';
-import { Role } from 'src/entities/authorization';
-import buildUser from './user/build';
+import {
+    Role,
+    Permission,
+    assertAgentHasPermission,
+} from 'src/entities/authorization';
+import { Agent, getUserId } from 'src/entities/agent';
+import buildEntity from './user/build';
 import * as commands from './user/commands';
+import { EntityEvent } from './entity-event';
 
 export const entityType = EntityType.User;
 
@@ -18,5 +24,20 @@ const newUser = (params: { userId: string; email: string }): User => ({
     email: params.email,
     roles: [],
 });
+
+const assertAuthorized = (agent: Agent, user: User): void => {
+    if (getUserId(agent) === user.userId) return;
+    assertAgentHasPermission(agent, Permission.READ_USERS);
+};
+
+const buildUser = (
+    agent: Agent,
+    prev: User | undefined,
+    events: EntityEvent[],
+) => {
+    const user = buildEntity(prev, events);
+    assertAuthorized(agent, user);
+    return user;
+};
 
 export { buildUser, commands, newUser };

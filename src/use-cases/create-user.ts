@@ -26,5 +26,5 @@ export default async (params: {
 
     await eventStore.saveEvents(events);
 
-    return buildUser(undefined, events);
+    return buildUser(agent, undefined, events);
 };

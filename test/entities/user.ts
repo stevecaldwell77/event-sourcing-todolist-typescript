@@ -1,14 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
 import getId from 'src/util/get-id';
-import { buildUser, newUser, commands } from 'src/entities/user';
+import { User, buildUser, newUser, commands } from 'src/entities/user';
 import { Role } from 'src/entities/authorization';
 import initializeUser from 'test/helpers/initialize-user';
-import { EntityEvent } from 'src/entities/entity-event';
 
 const runSetup = () => {
     const { events, userId, agent, email } = initializeUser();
-    const user = buildUser(undefined, events);
+    const user = buildUser(agent, undefined, events);
     return { events, agent, userId, user, email };
 };
 
@@ -32,6 +31,7 @@ test('adding and removing roles', (t) => {
     let { user } = setup;
 
     user = buildUser(
+        agent,
         user,
         commands.addRoleToUser({
             agent,
@@ -42,6 +42,7 @@ test('adding and removing roles', (t) => {
     t.deepEqual(user.roles, [Role.ADMIN], 'admin role added to user');
 
     user = buildUser(
+        agent,
         user,
         commands.removeRoleFromUser({
             agent,
@@ -52,7 +53,7 @@ test('adding and removing roles', (t) => {
     t.deepEqual(user.roles, [], 'admin role revoved from user');
 });
 
-test('permissions', (t) => {
+test('permissions: create user', (t) => {
     const adminUser = newUser({
         userId: getId(),
         email: 'admin@example.com',
@@ -86,5 +87,35 @@ test('permissions', (t) => {
             message: 'CREATE_USER NOT ALLOWED',
         },
         'non-admin user cannot create a user',
+    );
+});
+
+test('permissions: read user', (t) => {
+    const adminUser = newUser({
+        userId: getId(),
+        email: 'admin@example.com',
+    });
+    adminUser.roles = [Role.ADMIN];
+
+    const { events: events1 } = initializeUser({ agent: adminUser });
+    const { events: events2 } = initializeUser({ agent: adminUser });
+
+    let user1: User;
+    t.notThrows(() => {
+        user1 = buildUser(adminUser, undefined, events1);
+    }, 'admin user can read a user');
+
+    t.notThrows(() => {
+        buildUser(user1, undefined, events1);
+    }, 'non-admin user can read itself');
+
+    t.throws(
+        () => {
+            buildUser(user1, undefined, events2);
+        },
+        {
+            message: 'READ_USERS NOT ALLOWED',
+        },
+        'a non-admin user cannot read another user',
     );
 });
