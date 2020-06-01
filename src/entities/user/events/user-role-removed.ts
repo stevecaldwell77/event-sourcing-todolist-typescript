@@ -27,6 +27,9 @@ const makeEvent = (
     payload: params.payload,
 });
 
+const isEvent = (event: EntityEvent): event is EventUserRoleRemoved =>
+    event.eventName === eventName;
+
 function assertIsValidEvent(
     event: EntityEvent,
 ): asserts event is EventUserRoleRemoved {
@@ -40,6 +43,8 @@ function assertIsValidEvent(
 
 export {
     // eslint-disable-next-line no-undef
+    EventUserRoleRemoved,
+    isEvent as isEventUserRoleRemoved,
     assertIsValidEvent as assertIsValidEventUserRoleRemoved,
     makeEvent as makeEventUserRoleRemoved,
 };
