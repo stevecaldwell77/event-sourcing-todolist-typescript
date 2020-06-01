@@ -1,6 +1,9 @@
+import { EntityType } from 'src/lib/enums';
 import { Role } from 'src/entities/authorization';
 import buildUser from './user/build';
 import * as commands from './user/commands';
+
+export const entityType = EntityType.User;
 
 export interface User {
     userId: string;

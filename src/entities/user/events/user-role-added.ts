@@ -1,13 +1,13 @@
 import is from '@sindresorhus/is';
-import { EntityType, EventName } from 'src/lib/enums';
+import { EventName } from 'src/lib/enums';
 import {
     EntityEvent,
     EventParams,
     makeEvent as makeBaseEvent,
 } from 'src/entities/entity-event';
 import { Role } from 'src/entities/authorization';
+import { entityType } from 'src/entities/user';
 
-const entityType = EntityType.User;
 const eventName = EventName.USER_ROLE_ADDED;
 
 interface Payload {

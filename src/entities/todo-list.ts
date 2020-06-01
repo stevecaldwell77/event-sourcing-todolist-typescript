@@ -1,5 +1,8 @@
+import { EntityType } from 'src/lib/enums';
 import buildTodoList from './todo-list/build';
 import * as commands from './todo-list/commands';
+
+export const entityType = EntityType.User;
 
 interface Item {
     itemId: string;

@@ -1,12 +1,12 @@
 import is from '@sindresorhus/is';
-import { EntityType, EventName } from 'src/lib/enums';
+import { EventName } from 'src/lib/enums';
 import {
     EntityEvent,
     EventParams,
     makeEvent as makeBaseEvent,
 } from 'src/entities/entity-event';
+import { entityType } from 'src/entities/todo-list';
 
-const entityType = EntityType.TodoList;
 const eventName = EventName.LIST_ITEM_MOVED;
 
 interface Payload {
