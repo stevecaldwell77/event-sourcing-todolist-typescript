@@ -4,7 +4,7 @@ import {
     Permission,
     agentHasPermission,
 } from 'src/entities/authorization';
-import { Agent, getUserId, getAgentId } from 'src/entities/agent';
+import { Agent, getUserId } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from './user/build';
 import * as commands from './user/commands';
