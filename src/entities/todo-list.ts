@@ -51,9 +51,9 @@ const buildTodoList = (
     prev: TodoList | undefined,
     events: EntityEvent[],
 ) => {
-    const user = buildEntity(prev, events);
-    assertReadAuthorized(agent, user);
-    return user;
+    const list = buildEntity(prev, events);
+    assertReadAuthorized(agent, list);
+    return list;
 };
 
 export { buildTodoList, commands, newList };
