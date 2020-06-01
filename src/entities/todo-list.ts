@@ -4,7 +4,7 @@ import * as commands from './todo-list/commands';
 
 export const entityType = EntityType.User;
 
-interface Item {
+interface TodoListItem {
     itemId: string;
     text: string;
     completed: boolean;
@@ -15,10 +15,10 @@ export interface TodoList {
     owner: string;
     revision: number;
     title: string;
-    items: Item[];
+    items: TodoListItem[];
 }
 
-export const getItem = (list: TodoList, itemId: string): Item => {
+export const getItem = (list: TodoList, itemId: string): TodoListItem => {
     const item = list.items.find((item) => item.itemId === itemId);
     if (!item)
         throw new Error(`list item ${list.listId}.${itemId} does not exist`);
