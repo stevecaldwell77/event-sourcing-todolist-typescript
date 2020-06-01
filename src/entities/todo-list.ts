@@ -40,7 +40,7 @@ const newList = (params: {
     items: [],
 });
 
-const assertAuthorized = (agent: Agent, list: TodoList): void => {
+const assertReadAuthorized = (agent: Agent, list: TodoList): void => {
     if (getUserId(agent) === list.owner) return;
     if (agentHasPermission(agent, Permission.LIST_READ_ALL)) return;
     throw new Error('NOT ALLOWED: READ_LIST');
@@ -52,7 +52,7 @@ const buildTodoList = (
     events: EntityEvent[],
 ) => {
     const user = buildEntity(prev, events);
-    assertAuthorized(agent, user);
+    assertReadAuthorized(agent, user);
     return user;
 };
 

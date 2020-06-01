@@ -25,7 +25,7 @@ const newUser = (params: { userId: string; email: string }): User => ({
     roles: [],
 });
 
-const assertAuthorized = (agent: Agent, user: User): void => {
+const assertReadAuthorized = (agent: Agent, user: User): void => {
     if (getUserId(agent) === user.userId) return;
     if (agentHasPermission(agent, Permission.USER_READ_ALL)) return;
     throw new Error('NOT ALLOWED: READ_USER');
@@ -37,7 +37,7 @@ const buildUser = (
     events: EntityEvent[],
 ) => {
     const user = buildEntity(prev, events);
-    assertAuthorized(agent, user);
+    assertReadAuthorized(agent, user);
     return user;
 };
 
