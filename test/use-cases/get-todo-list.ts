@@ -53,5 +53,6 @@ test('miss', async (t) => {
         agent: user,
         listId,
     });
-    t.is(result, undefined, 'undefined returned on unknown user');
+
+    t.is(result, undefined, 'undefined returned on unknown list');
 });
