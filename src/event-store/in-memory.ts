@@ -6,6 +6,7 @@ import { User } from 'src/entities/user';
 import { TodoList } from 'src/entities/todo-list';
 import EventStore from './event-store';
 import { SnapshotGateway } from './snapshot-gateway';
+import { EventGateway } from './event-gateway';
 
 class SnapshotGatewayInMemory implements SnapshotGateway {
     private users: Record<string, User> = {};
@@ -32,11 +33,11 @@ class SnapshotGatewayInMemory implements SnapshotGateway {
     }
 }
 
-class EventStoreInMemory extends EventStore {
+class EventGatewayInMemory implements EventGateway {
     private events: Record<string, EntityEvent[]> = {};
 
     constructor() {
-        super({ snapshotGateway: new SnapshotGatewayInMemory() });
+        autoBind(this);
     }
 
     async saveEvent(event: EntityEvent): Promise<void> {
@@ -69,6 +70,15 @@ class EventStoreInMemory extends EventStore {
         return allEvents.filter(
             (event) => event.eventRevision >= startingRevision,
         );
+    }
+}
+
+class EventStoreInMemory extends EventStore {
+    constructor() {
+        super({
+            eventGateway: new EventGatewayInMemory(),
+            snapshotGateway: new SnapshotGatewayInMemory(),
+        });
     }
 }
 

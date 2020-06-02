@@ -10,6 +10,7 @@ import {
     SaveEvents,
 } from 'src/use-cases/types';
 import { SnapshotGateway } from './snapshot-gateway';
+import { EventGateway } from './event-gateway';
 
 interface EventStoreInterface {
     getTodoListSourceData: GetTodoListSourceData;
@@ -18,20 +19,33 @@ interface EventStoreInterface {
 }
 
 abstract class EventStore implements EventStoreInterface {
+    public eventGateway: EventGateway;
     public snapshotGateway: SnapshotGateway;
 
-    constructor(params: { snapshotGateway: SnapshotGateway }) {
+    constructor(params: {
+        eventGateway: EventGateway;
+        snapshotGateway: SnapshotGateway;
+    }) {
+        this.eventGateway = params.eventGateway;
         this.snapshotGateway = params.snapshotGateway;
         autoBind(this);
     }
 
-    abstract async saveEvents(events: EntityEvent[]): Promise<void>;
+    async saveEvents(events: EntityEvent[]): Promise<void> {
+        return this.eventGateway.saveEvents(events);
+    }
 
-    abstract async getEvents(
+    async getEvents(
         entityType: EntityType,
         entityId: string,
-        startingRevision: number,
-    ): Promise<EntityEvent[]>;
+        startingRevision = 1,
+    ): Promise<EntityEvent[]> {
+        return this.eventGateway.getEvents(
+            entityType,
+            entityId,
+            startingRevision,
+        );
+    }
 
     async getEntitySourceData<K extends HasRevision>(
         getSnapshot: (entityId: string) => Promise<K | undefined>,
