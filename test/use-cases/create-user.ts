@@ -32,27 +32,19 @@ test('successful creation', async (t) => {
 test('error on duplicate', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
-
-    await createUser({
+    const createParams = {
         getUserSourceData: eventStore.getUserSourceData,
         saveEvents: eventStore.saveEvents,
         agent: systemAgent,
         email,
         userId,
-    });
+    };
+
+    await createUser(createParams);
 
     await t.throwsAsync(
-        () =>
-            createUser({
-                getUserSourceData: eventStore.getUserSourceData,
-                saveEvents: eventStore.saveEvents,
-                agent: systemAgent,
-                email,
-                userId,
-            }),
-        {
-            message: /User [a-z]+ already exists/,
-        },
+        () => createUser(createParams),
+        { message: /User [a-z]+ already exists/ },
         'error thrown when trying to create duplicate user',
     );
 });
