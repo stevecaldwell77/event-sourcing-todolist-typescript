@@ -9,15 +9,19 @@ import {
     GetUserSourceData,
     SaveEvents,
 } from 'src/use-cases/types';
+import { SnapshotGateway } from './snapshot-gateway';
 
-interface UseCaseMethods {
+interface EventStoreInterface {
     getTodoListSourceData: GetTodoListSourceData;
     getUserSourceData: GetUserSourceData;
     saveEvents: SaveEvents;
 }
 
-abstract class EventStore implements UseCaseMethods {
-    constructor() {
+abstract class EventStore implements EventStoreInterface {
+    public snapshotGateway: SnapshotGateway;
+
+    constructor(params: { snapshotGateway: SnapshotGateway }) {
+        this.snapshotGateway = params.snapshotGateway;
         autoBind(this);
     }
 
@@ -28,16 +32,6 @@ abstract class EventStore implements UseCaseMethods {
         entityId: string,
         startingRevision: number,
     ): Promise<EntityEvent[]>;
-
-    abstract async saveTodoListSnapshot(list: TodoList): Promise<void>;
-
-    abstract async getTodoListSnapshot(
-        listId: string,
-    ): Promise<TodoList | undefined>;
-
-    abstract async saveUserSnapshot(user: User): Promise<void>;
-
-    abstract async getUserSnapshot(userId: string): Promise<User | undefined>;
 
     async getEntitySourceData<K extends HasRevision>(
         getSnapshot: (entityId: string) => Promise<K | undefined>,
@@ -54,7 +48,7 @@ abstract class EventStore implements UseCaseMethods {
         userId: string,
     ): Promise<{ snapshot?: User; events: EntityEvent[] }> {
         return this.getEntitySourceData<User>(
-            this.getUserSnapshot,
+            this.snapshotGateway.getUserSnapshot,
             EntityType.User,
             userId,
         );
@@ -64,7 +58,7 @@ abstract class EventStore implements UseCaseMethods {
         listId: string,
     ): Promise<{ snapshot?: TodoList; events: EntityEvent[] }> {
         return this.getEntitySourceData<TodoList>(
-            this.getTodoListSnapshot,
+            this.snapshotGateway.getTodoListSnapshot,
             EntityType.TodoList,
             listId,
         );

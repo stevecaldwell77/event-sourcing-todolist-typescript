@@ -1,14 +1,43 @@
 import assert from 'assert';
+import autoBind from 'auto-bind';
 import { EntityEvent } from 'src/entities/entity-event';
 import { EntityType } from 'src/lib/enums';
 import { User } from 'src/entities/user';
 import { TodoList } from 'src/entities/todo-list';
 import EventStore from './event-store';
+import { SnapshotGateway } from './snapshot-gateway';
+
+class SnapshotGatewayInMemory implements SnapshotGateway {
+    private users: Record<string, User> = {};
+    private todoLists: Record<string, TodoList> = {};
+
+    constructor() {
+        autoBind(this);
+    }
+
+    async getTodoListSnapshot(listId: string): Promise<TodoList | undefined> {
+        return this.todoLists[listId];
+    }
+
+    async getUserSnapshot(userId: string): Promise<User | undefined> {
+        return this.users[userId];
+    }
+
+    async saveTodoListSnapshot(list: TodoList): Promise<void> {
+        this.todoLists[list.listId] = list;
+    }
+
+    async saveUserSnapshot(user: User): Promise<void> {
+        this.users[user.userId] = user;
+    }
+}
 
 class EventStoreInMemory extends EventStore {
     private events: Record<string, EntityEvent[]> = {};
-    private users: Record<string, User> = {};
-    private todoLists: Record<string, TodoList> = {};
+
+    constructor() {
+        super({ snapshotGateway: new SnapshotGatewayInMemory() });
+    }
 
     async saveEvent(event: EntityEvent): Promise<void> {
         const { entityType, entityId } = event;
@@ -40,22 +69,6 @@ class EventStoreInMemory extends EventStore {
         return allEvents.filter(
             (event) => event.eventRevision >= startingRevision,
         );
-    }
-
-    async saveTodoListSnapshot(list: TodoList): Promise<void> {
-        this.todoLists[list.listId] = list;
-    }
-
-    async getTodoListSnapshot(listId: string): Promise<TodoList | undefined> {
-        return this.todoLists[listId];
-    }
-
-    async saveUserSnapshot(user: User): Promise<void> {
-        this.users[user.userId] = user;
-    }
-
-    async getUserSnapshot(userId: string): Promise<User | undefined> {
-        return this.users[userId];
     }
 }
 
