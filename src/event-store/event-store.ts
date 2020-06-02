@@ -1,7 +1,9 @@
+import autoBind from 'auto-bind';
 import { EntityEvent } from 'src/entities/entity-event';
 import { User } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
 import { TodoList } from 'src/entities/todo-list';
+import { HasRevision } from 'src/entities/has-revision';
 
 abstract class EventStore {
     abstract async saveEvents(events: EntityEvent[]): Promise<void>;
@@ -22,17 +24,39 @@ abstract class EventStore {
 
     abstract async getUserSnapshot(userId: string): Promise<User | undefined>;
 
+    constructor() {
+        autoBind(this);
+    }
+
+    async getEntitySourceData<K extends HasRevision>(
+        getSnapshot: (entityId: string) => Promise<K | undefined>,
+        entityType: EntityType,
+        entityId: string,
+    ): Promise<{ snapshot?: K; events: EntityEvent[] }> {
+        const snapshot = await getSnapshot(entityId);
+        const revision = snapshot ? snapshot.revision : 0;
+        const events = await this.getEvents(entityType, entityId, revision + 1);
+        return { snapshot, events };
+    }
+
     async getUserSourceData(
         userId: string,
     ): Promise<{ snapshot?: User; events: EntityEvent[] }> {
-        const snapshot = await this.getUserSnapshot(userId);
-        const revision = snapshot ? snapshot.revision : 0;
-        const events = await this.getEvents(
+        return this.getEntitySourceData<User>(
+            this.getUserSnapshot,
             EntityType.User,
             userId,
-            revision + 1,
         );
-        return { snapshot, events };
+    }
+
+    async getTodoListSourceData(
+        listId: string,
+    ): Promise<{ snapshot?: TodoList; events: EntityEvent[] }> {
+        return this.getEntitySourceData<TodoList>(
+            this.getTodoListSnapshot,
+            EntityType.TodoList,
+            listId,
+        );
     }
 }
 

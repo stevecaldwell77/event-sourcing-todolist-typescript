@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { EntityType, EventName } from 'src/lib/enums';
 import { Agent, getAgentId } from 'src/entities/agent';
+import { HasRevision } from 'src/entities/has-revision';
 
 const schemaVersion = 1;
 
@@ -13,10 +14,6 @@ export interface EntityEvent {
     readonly entityType: EntityType;
     readonly entityId: string;
     readonly agentId: string;
-}
-
-interface HasRevision {
-    revision: number;
 }
 
 export interface EventParams {
