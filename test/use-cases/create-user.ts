@@ -17,7 +17,8 @@ test('successful creation', async (t) => {
     t.deepEqual(await getEvents(), [], 'no events initially');
 
     await createUser({
-        eventStore,
+        getUserSourceData: eventStore.getUserSourceData,
+        saveEvents: eventStore.saveEvents,
         agent: systemAgent,
         email,
         userId,
@@ -33,7 +34,8 @@ test('error on duplicate', async (t) => {
     const email = 'jdoe@example.com';
 
     await createUser({
-        eventStore,
+        getUserSourceData: eventStore.getUserSourceData,
+        saveEvents: eventStore.saveEvents,
         agent: systemAgent,
         email,
         userId,
@@ -42,7 +44,8 @@ test('error on duplicate', async (t) => {
     await t.throwsAsync(
         () =>
             createUser({
-                eventStore,
+                getUserSourceData: eventStore.getUserSourceData,
+                saveEvents: eventStore.saveEvents,
                 agent: systemAgent,
                 email,
                 userId,

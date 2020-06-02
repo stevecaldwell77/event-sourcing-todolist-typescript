@@ -12,7 +12,13 @@ const eventStore = new EventStoreInMemory();
 test('successful fetch', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
-    await createUser({ eventStore, agent: systemAgent, userId, email });
+    await createUser({
+        getUserSourceData: eventStore.getUserSourceData,
+        saveEvents: eventStore.saveEvents,
+        agent: systemAgent,
+        userId,
+        email,
+    });
 
     const result = await getUser({
         getUserSourceData: eventStore.getUserSourceData,

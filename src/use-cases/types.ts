@@ -7,10 +7,13 @@ export type BuildEventsBasedEntity<K> = {
     (agent: Agent, prev: K | undefined, events: EntityEvent[]): K;
 };
 
+export type SaveEvents = {
+    (events: EntityEvent[]): Promise<void>;
+};
+
 export type GetSourceData<K> = {
     (entityId: string): Promise<{ snapshot?: K; events: EntityEvent[] }>;
 };
 
-export type GetUserSourceData = GetSourceData<User>;
-
 export type GetTodoListSourceData = GetSourceData<TodoList>;
+export type GetUserSourceData = GetSourceData<User>;

@@ -1,22 +1,26 @@
-import EventStore from 'src/event-store/event-store';
 import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/entities/agent';
+import { SaveEvents, GetUserSourceData } from './types';
 
-const assertNotExists = async (eventStore: EventStore, userId: string) => {
-    const { events } = await eventStore.getUserSourceData(userId);
+const assertNotExists = async (
+    getUserSourceData: GetUserSourceData,
+    userId: string,
+) => {
+    const { events } = await getUserSourceData(userId);
     if (events.length > 0) {
         throw new Error(`User ${userId} already exists`);
     }
 };
 
 export default async (params: {
-    eventStore: EventStore;
+    getUserSourceData: GetUserSourceData;
+    saveEvents: SaveEvents;
     agent: Agent;
     userId: string;
     email: string;
 }): Promise<User> => {
-    const { eventStore, agent, userId, email } = params;
-    await assertNotExists(eventStore, userId);
+    const { getUserSourceData, saveEvents, agent, userId, email } = params;
+    await assertNotExists(getUserSourceData, userId);
 
     const events = commands.createUser({
         agent,
@@ -24,7 +28,7 @@ export default async (params: {
         email,
     });
 
-    await eventStore.saveEvents(events);
+    await saveEvents(events);
 
     return buildUser(agent, undefined, events);
 };

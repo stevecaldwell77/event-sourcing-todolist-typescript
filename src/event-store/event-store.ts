@@ -4,11 +4,16 @@ import { User } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
 import { TodoList } from 'src/entities/todo-list';
 import { HasRevision } from 'src/entities/has-revision';
-import { GetUserSourceData, GetTodoListSourceData } from 'src/use-cases/types';
+import {
+    GetTodoListSourceData,
+    GetUserSourceData,
+    SaveEvents,
+} from 'src/use-cases/types';
 
 interface UseCaseMethods {
-    getUserSourceData: GetUserSourceData;
     getTodoListSourceData: GetTodoListSourceData;
+    getUserSourceData: GetUserSourceData;
+    saveEvents: SaveEvents;
 }
 
 abstract class EventStore implements UseCaseMethods {
