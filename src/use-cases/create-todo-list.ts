@@ -1,7 +1,7 @@
 import { TodoList, buildTodoList, commands } from 'src/entities/todo-list';
 import { User } from 'src/entities/user';
 import { SaveEvents, GetTodoListSourceData } from './types';
-import runCommandAndUpdate from './run-command-and-update';
+import runCommandAndSave from './run-command-and-save';
 import getTodoList from './get-todo-list';
 
 export default async (params: {
@@ -11,7 +11,7 @@ export default async (params: {
     listId: string;
     title: string;
 }): Promise<TodoList> =>
-    runCommandAndUpdate({
+    runCommandAndSave({
         isCreateCommand: true,
         getEntity: () =>
             getTodoList({

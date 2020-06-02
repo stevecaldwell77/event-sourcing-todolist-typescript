@@ -1,7 +1,7 @@
 import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/entities/agent';
 import { SaveEvents, GetUserSourceData } from './types';
-import runCommandAndUpdate from './run-command-and-update';
+import runCommandAndSave from './run-command-and-save';
 import getUser from './get-user';
 
 export default async (params: {
@@ -11,7 +11,7 @@ export default async (params: {
     userId: string;
     email: string;
 }): Promise<User> =>
-    runCommandAndUpdate({
+    runCommandAndSave({
         isCreateCommand: true,
         getEntity: () =>
             getUser({
