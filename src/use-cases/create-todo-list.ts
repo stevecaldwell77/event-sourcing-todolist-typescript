@@ -1,8 +1,8 @@
 import { TodoList, buildTodoList, commands } from 'src/entities/todo-list';
 import { User } from 'src/entities/user';
-import { EntityType } from 'src/lib/enums';
 import { SaveEvents, GetTodoListSourceData } from './types';
 import runCommandAndUpdate from './run-command-and-update';
+import getTodoList from './get-todo-list';
 
 export default async (params: {
     getTodoListSourceData: GetTodoListSourceData;
@@ -13,7 +13,12 @@ export default async (params: {
 }): Promise<TodoList> =>
     runCommandAndUpdate({
         isCreateCommand: true,
-        getSourceData: params.getTodoListSourceData,
+        getEntity: () =>
+            getTodoList({
+                getTodoListSourceData: params.getTodoListSourceData,
+                agent: params.user,
+                listId: params.listId,
+            }),
         runCommand: () =>
             commands.createList({
                 agent: params.user,
@@ -24,6 +29,5 @@ export default async (params: {
         saveEvents: params.saveEvents,
         buildEntity: buildTodoList,
         agent: params.user,
-        entityType: EntityType.TodoList,
-        entityId: params.listId,
+        label: 'createTodoList',
     });

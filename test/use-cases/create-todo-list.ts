@@ -60,7 +60,7 @@ test('error on duplicate', async (t) => {
 
     await t.throwsAsync(
         () => createTodoList(createParams),
-        { message: /TodoList [a-z]+ already exists/ },
+        { message: /createTodoList: entity already exists/ },
         'error thrown when trying to create duplicate list',
     );
 });

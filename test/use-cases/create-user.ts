@@ -44,7 +44,7 @@ test('error on duplicate', async (t) => {
 
     await t.throwsAsync(
         () => createUser(createParams),
-        { message: /User [a-z]+ already exists/ },
+        { message: /createUser: entity already exists/ },
         'error thrown when trying to create duplicate user',
     );
 });

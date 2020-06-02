@@ -1,42 +1,24 @@
 import { EntityEvent } from 'src/entities/entity-event';
 import { Agent } from 'src/entities/agent';
-import { EntityType } from 'src/lib/enums';
-import { GetSourceData, SaveEvents, BuildEventsBasedEntity } from './types';
-
-const assertNotExists = async <K>(
-    getSourceData: GetSourceData<K>,
-    entityType: EntityType,
-    entityId: string,
-) => {
-    const { events } = await getSourceData(entityId);
-    if (events.length > 0) {
-        throw new Error(`${entityType} ${entityId} already exists`);
-    }
-};
+import { SaveEvents, BuildEventsBasedEntity } from './types';
 
 export default async <K>(params: {
     isCreateCommand: boolean;
-    getSourceData: GetSourceData<K>;
+    getEntity: () => Promise<K | undefined>;
     runCommand: () => EntityEvent[];
     saveEvents: SaveEvents;
     buildEntity: BuildEventsBasedEntity<K>;
-    entityType: EntityType;
     agent: Agent;
-    entityId: string;
+    label: string;
 }): Promise<K> => {
-    if (params.isCreateCommand) {
-        await assertNotExists<K>(
-            params.getSourceData,
-            params.entityType,
-            params.entityId,
-        );
-    } else {
-        throw new Error(
-            'TODO: run-command-and-update needs to be enhanced to handle existing entities',
-        );
+    const entity = await params.getEntity();
+    if (params.isCreateCommand && entity) {
+        throw new Error(`${params.label}: entity already exists`);
+    } else if (!params.isCreateCommand && !entity) {
+        throw new Error(`${params.label}: entity does not exist`);
     }
 
     const events = params.runCommand();
     await params.saveEvents(events);
-    return params.buildEntity(params.agent, undefined, events);
+    return params.buildEntity(params.agent, entity, events);
 };

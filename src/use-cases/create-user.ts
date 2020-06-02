@@ -1,8 +1,8 @@
 import { User, buildUser, commands } from 'src/entities/user';
 import { Agent } from 'src/entities/agent';
-import { EntityType } from 'src/lib/enums';
 import { SaveEvents, GetUserSourceData } from './types';
 import runCommandAndUpdate from './run-command-and-update';
+import getUser from './get-user';
 
 export default async (params: {
     getUserSourceData: GetUserSourceData;
@@ -13,7 +13,12 @@ export default async (params: {
 }): Promise<User> =>
     runCommandAndUpdate({
         isCreateCommand: true,
-        getSourceData: params.getUserSourceData,
+        getEntity: () =>
+            getUser({
+                getUserSourceData: params.getUserSourceData,
+                agent: params.agent,
+                userId: params.userId,
+            }),
         runCommand: () =>
             commands.createUser({
                 agent: params.agent,
@@ -23,6 +28,5 @@ export default async (params: {
         saveEvents: params.saveEvents,
         buildEntity: buildUser,
         agent: params.agent,
-        entityType: EntityType.User,
-        entityId: params.userId,
+        label: 'createUser',
     });
