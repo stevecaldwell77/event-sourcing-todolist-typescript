@@ -15,7 +15,7 @@ test('successful fetch', async (t) => {
     await createUser({ eventStore, agent: systemAgent, userId, email });
 
     const result = await getUser({
-        eventStore,
+        getUserSourceData: eventStore.getUserSourceData,
         agent: systemAgent,
         userId,
     });
@@ -33,7 +33,7 @@ test('successful fetch', async (t) => {
 test('miss', async (t) => {
     const userId = getId();
     const result = await getUser({
-        eventStore,
+        getUserSourceData: eventStore.getUserSourceData,
         agent: systemAgent,
         userId,
     });

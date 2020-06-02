@@ -4,8 +4,18 @@ import { User } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
 import { TodoList } from 'src/entities/todo-list';
 import { HasRevision } from 'src/entities/has-revision';
+import { GetUserSourceData, GetTodoListSourceData } from 'src/use-cases/types';
 
-abstract class EventStore {
+interface UseCaseMethods {
+    getUserSourceData: GetUserSourceData;
+    getTodoListSourceData: GetTodoListSourceData;
+}
+
+abstract class EventStore implements UseCaseMethods {
+    constructor() {
+        autoBind(this);
+    }
+
     abstract async saveEvents(events: EntityEvent[]): Promise<void>;
 
     abstract async getEvents(
@@ -23,10 +33,6 @@ abstract class EventStore {
     abstract async saveUserSnapshot(user: User): Promise<void>;
 
     abstract async getUserSnapshot(userId: string): Promise<User | undefined>;
-
-    constructor() {
-        autoBind(this);
-    }
 
     async getEntitySourceData<K extends HasRevision>(
         getSnapshot: (entityId: string) => Promise<K | undefined>,
