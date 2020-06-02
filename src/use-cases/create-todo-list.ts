@@ -1,16 +1,8 @@
 import { TodoList, buildTodoList, commands } from 'src/entities/todo-list';
 import { User } from 'src/entities/user';
+import { EntityType } from 'src/lib/enums';
 import { SaveEvents, GetTodoListSourceData } from './types';
-
-const assertNotExists = async (
-    getTodoListSourceData: GetTodoListSourceData,
-    listId: string,
-) => {
-    const { events } = await getTodoListSourceData(listId);
-    if (events.length > 0) {
-        throw new Error(`TodoList ${listId} already exists`);
-    }
-};
+import runCommandAndUpdate from './run-command-and-update';
 
 export default async (params: {
     getTodoListSourceData: GetTodoListSourceData;
@@ -18,18 +10,20 @@ export default async (params: {
     user: User;
     listId: string;
     title: string;
-}): Promise<TodoList> => {
-    const { getTodoListSourceData, saveEvents, user, listId } = params;
-    await assertNotExists(getTodoListSourceData, listId);
-
-    const events = commands.createList({
-        agent: user,
-        listId,
-        owner: user.userId,
-        title: params.title,
+}): Promise<TodoList> =>
+    runCommandAndUpdate({
+        isCreateCommand: true,
+        getSourceData: params.getTodoListSourceData,
+        runCommand: () =>
+            commands.createList({
+                agent: params.user,
+                listId: params.listId,
+                owner: params.user.userId,
+                title: params.title,
+            }),
+        saveEvents: params.saveEvents,
+        buildEntity: buildTodoList,
+        agent: params.user,
+        entityType: EntityType.TodoList,
+        entityId: params.listId,
     });
-
-    await saveEvents(events);
-
-    return buildTodoList(user, undefined, events);
-};
