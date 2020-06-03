@@ -9,8 +9,8 @@ import {
     GetUserSourceData,
     SaveEvents,
 } from 'src/use-cases/types';
-import { SnapshotGateway } from './snapshot-gateway';
-import { EventGateway } from './event-gateway';
+import { SnapshotGateway } from 'src/gateways/snapshot';
+import { EventGateway } from '../gateways/event';
 
 interface EventStoreInterface {
     getTodoListSourceData: GetTodoListSourceData;
