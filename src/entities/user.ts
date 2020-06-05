@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
+import { assertSchema } from 'src/util/assert';
 import {
     roleSchema,
     Permission,
@@ -44,4 +45,6 @@ const buildUser = (
     return user;
 };
 
-export { buildUser, commands, newUser };
+const assertValidUser = assertSchema(userSchema);
+
+export { buildUser, commands, newUser, assertValidUser };

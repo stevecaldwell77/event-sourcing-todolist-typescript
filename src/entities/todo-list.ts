@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
+import { assertSchema } from 'src/util/assert';
 import { Permission, agentHasPermission } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
 import { EntityEvent } from 'src/entities/entity-event';
@@ -61,4 +62,6 @@ const buildTodoList = (
     return list;
 };
 
-export { buildTodoList, commands, newList };
+const assertValidTodoList = assertSchema(todoListSchema);
+
+export { buildTodoList, commands, newList, assertValidTodoList };
