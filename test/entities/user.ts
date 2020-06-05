@@ -2,7 +2,6 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { User, buildUser, newUser, commands } from 'src/entities/user';
-import { Role } from 'src/entities/authorization';
 import initializeUser from 'test/helpers/initialize-user';
 import getAdminUser from 'test/helpers/get-admin-user';
 
@@ -37,10 +36,10 @@ test('adding and removing roles', (t) => {
         commands.addRoleToUser({
             agent,
             user,
-            role: Role.ADMIN,
+            role: 'ADMIN',
         }),
     );
-    t.deepEqual(user.roles, [Role.ADMIN], 'admin role added to user');
+    t.deepEqual(user.roles, ['ADMIN'], 'admin role added to user');
 
     user = buildUser(
         agent,
@@ -48,7 +47,7 @@ test('adding and removing roles', (t) => {
         commands.removeRoleFromUser({
             agent,
             user,
-            role: Role.ADMIN,
+            role: 'ADMIN',
         }),
     );
     t.deepEqual(user.roles, [], 'admin role revoved from user');

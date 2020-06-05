@@ -1,9 +1,12 @@
 import assert from 'assert';
+import * as t from 'io-ts';
 import { Agent } from 'src/entities/agent';
 
-export enum Role {
-    ADMIN = 'ADMIN',
-}
+export type Role = t.TypeOf<typeof roleSchema>;
+
+export const roleSchema = t.keyof({
+    ADMIN: null,
+});
 
 export enum Permission {
     USER_CREATE = 'USER_CREATE',
@@ -13,7 +16,7 @@ export enum Permission {
 }
 
 const rolePermissions: Record<Role, Permission[]> = {
-    [Role.ADMIN]: [
+    ADMIN: [
         Permission.USER_CREATE,
         Permission.USER_READ_ALL,
         Permission.USER_MANAGE_ROLES,

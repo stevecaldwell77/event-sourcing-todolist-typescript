@@ -1,6 +1,7 @@
+import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
 import {
-    Role,
+    roleSchema,
     Permission,
     agentHasPermission,
 } from 'src/entities/authorization';
@@ -11,12 +12,14 @@ import * as commands from './user/commands';
 
 export const entityType = EntityType.User;
 
-export interface User {
-    userId: string;
-    email: string;
-    revision: number;
-    roles: Role[];
-}
+export type User = t.TypeOf<typeof userSchema>;
+
+const userSchema = t.type({
+    userId: t.string,
+    email: t.string,
+    revision: t.number,
+    roles: t.array(roleSchema),
+});
 
 const newUser = (params: { userId: string; email: string }): User => ({
     revision: 1,

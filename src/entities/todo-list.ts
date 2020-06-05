@@ -1,3 +1,4 @@
+import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
 import { Permission, agentHasPermission } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
@@ -7,19 +8,23 @@ import * as commands from './todo-list/commands';
 
 export const entityType = EntityType.TodoList;
 
-interface TodoListItem {
-    itemId: string;
-    text: string;
-    completed: boolean;
-}
+export type TodoList = t.TypeOf<typeof todoListSchema>;
 
-export interface TodoList {
-    listId: string;
-    owner: string;
-    revision: number;
-    title: string;
-    items: TodoListItem[];
-}
+type TodoListItem = t.TypeOf<typeof itemSchema>;
+
+const itemSchema = t.type({
+    itemId: t.string,
+    text: t.string,
+    completed: t.boolean,
+});
+
+const todoListSchema = t.type({
+    listId: t.string,
+    owner: t.string,
+    revision: t.number,
+    title: t.string,
+    items: t.array(itemSchema),
+});
 
 export const getItem = (list: TodoList, itemId: string): TodoListItem => {
     const item = list.items.find((item) => item.itemId === itemId);

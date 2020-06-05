@@ -10,7 +10,7 @@ export type Agent = User | SystemAgent;
 
 export const systemAgent: SystemAgent = {
     agentId: 'SYSTEM_AGENT',
-    roles: [Role.ADMIN],
+    roles: ['ADMIN'],
 };
 
 const isUser = (agent: Agent): agent is User => {
