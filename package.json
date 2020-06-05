@@ -29,6 +29,8 @@
     "@sindresorhus/is": "^2.1.1",
     "auto-bind": "^4.0.0",
     "autobind-decorator": "^2.4.0",
+    "fp-ts": "^2.6.2",
+    "io-ts": "^2.2.4",
     "lodash": "^4.17.15",
     "nanoid": "^3.1.9",
     "uuid": "^8.1.0"
