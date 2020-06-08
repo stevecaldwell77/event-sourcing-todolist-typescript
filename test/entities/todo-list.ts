@@ -9,7 +9,6 @@ import {
 } from 'src/entities/todo-list';
 import { User, newUser } from 'src/entities/user';
 import { EntityEvent } from 'src/entities/entity-event';
-import getAdminUser from 'test/helpers/get-admin-user';
 
 const runSetup = () => {
     const user = newUser({
@@ -23,7 +22,7 @@ const runSetup = () => {
         owner: user.userId,
         title: 'My Test List',
     });
-    const list = buildTodoList(user, undefined, events);
+    const list = buildTodoList(undefined, events);
     return { events, user, listId, list };
 };
 
@@ -71,7 +70,7 @@ test('createListItem()', (t) => {
     const itemText = 'My Test Item';
     const itemId = addItem({ events, list, user, itemText });
 
-    list = buildTodoList(user, list, events);
+    list = buildTodoList(list, events);
     t.deepEqual(
         list.items,
         [
@@ -94,7 +93,7 @@ test('item completion', (t) => {
     const itemId1 = addItem({ events, user, list });
     const itemId2 = addItem({ events, user, list });
     const itemId3 = addItem({ events, user, list });
-    list = buildTodoList(user, list, events);
+    list = buildTodoList(list, events);
 
     events = [
         ...commands.completeListItem({
@@ -109,7 +108,7 @@ test('item completion', (t) => {
         }),
     ];
 
-    list = buildTodoList(user, list, events);
+    list = buildTodoList(list, events);
     t.false(getItem(list, itemId1).completed, 'item1 not completed');
     t.true(getItem(list, itemId2).completed, 'item2 completed');
     t.true(getItem(list, itemId3).completed, 'item3 completed');
@@ -120,11 +119,11 @@ test('item completion', (t) => {
         list,
     });
 
-    list = buildTodoList(user, list, events);
+    list = buildTodoList(list, events);
     t.false(getItem(list, itemId2).completed, 'item2 un-completed');
 });
 
-test('permisssions: create list', (t) => {
+test('permisssions: create list item', (t) => {
     const { list } = runSetup();
 
     const otherUser = newUser({
@@ -144,32 +143,5 @@ test('permisssions: create list', (t) => {
             message: 'LIST USER MISMATCH',
         },
         "a user is not allowed to create items on a different user's list",
-    );
-});
-
-test('permisssions: read list', (t) => {
-    const adminUser = getAdminUser();
-    const otherUser = newUser({
-        userId: getId(),
-        email: 'other@example.com',
-    });
-    const { events, user } = runSetup();
-
-    t.notThrows(() => {
-        buildTodoList(user, undefined, events);
-    }, 'a user can view their own list');
-
-    t.notThrows(() => {
-        buildTodoList(adminUser, undefined, events);
-    }, 'an admin user can view a list');
-
-    t.throws(
-        () => {
-            buildTodoList(otherUser, undefined, events);
-        },
-        {
-            message: 'NOT ALLOWED: READ_LIST',
-        },
-        "a non-admin user cannot view another user's list",
     );
 });

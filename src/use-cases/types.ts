@@ -4,7 +4,7 @@ import { User } from 'src/entities/user';
 import { Agent } from 'src/entities/agent';
 
 export type BuildEventsBasedEntity<K> = {
-    (agent: Agent, prev: K | undefined, events: EntityEvent[]): K;
+    (prev: K | undefined, events: EntityEvent[]): K;
 };
 
 export type SaveEvents = {
@@ -14,6 +14,8 @@ export type SaveEvents = {
 export type GetSourceData<K> = {
     (entityId: string): Promise<{ snapshot?: K; events: EntityEvent[] }>;
 };
+
+export type AssertReadAuthorized<K> = (agent: Agent, entity: K) => void;
 
 export type GetTodoListSourceData = GetSourceData<TodoList>;
 export type GetUserSourceData = GetSourceData<User>;

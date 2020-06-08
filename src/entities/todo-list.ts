@@ -3,7 +3,6 @@ import { EntityType } from 'src/lib/enums';
 import { assertSchema } from 'src/util/assert';
 import { Permission, agentHasPermission } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
-import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from './todo-list/build';
 import * as commands from './todo-list/commands';
 
@@ -52,16 +51,14 @@ const assertReadAuthorized = (agent: Agent, list: TodoList): void => {
     throw new Error('NOT ALLOWED: READ_LIST');
 };
 
-const buildTodoList = (
-    agent: Agent,
-    prev: TodoList | undefined,
-    events: EntityEvent[],
-) => {
-    const list = buildEntity(prev, events);
-    assertReadAuthorized(agent, list);
-    return list;
-};
+const buildTodoList = buildEntity;
 
 const assertValidTodoList = assertSchema(todoListSchema);
 
-export { buildTodoList, commands, newList, assertValidTodoList };
+export {
+    buildTodoList,
+    commands,
+    newList,
+    assertValidTodoList,
+    assertReadAuthorized,
+};

@@ -20,5 +20,5 @@ export default async <K>(params: {
 
     const events = params.runCommand();
     await params.saveEvents(events);
-    return params.buildEntity(params.agent, entity, events);
+    return params.buildEntity(entity, events);
 };

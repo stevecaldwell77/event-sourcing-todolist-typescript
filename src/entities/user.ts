@@ -7,7 +7,6 @@ import {
     agentHasPermission,
 } from 'src/entities/authorization';
 import { Agent, getUserId } from 'src/entities/agent';
-import { EntityEvent } from 'src/entities/entity-event';
 import buildEntity from './user/build';
 import * as commands from './user/commands';
 
@@ -35,16 +34,8 @@ const assertReadAuthorized = (agent: Agent, user: User): void => {
     throw new Error('NOT ALLOWED: READ_USER');
 };
 
-const buildUser = (
-    agent: Agent,
-    prev: User | undefined,
-    events: EntityEvent[],
-) => {
-    const user = buildEntity(prev, events);
-    assertReadAuthorized(agent, user);
-    return user;
-};
+const buildUser = buildEntity;
 
 const assertValidUser = assertSchema(userSchema);
 
-export { buildUser, commands, newUser, assertValidUser };
+export { buildUser, commands, newUser, assertValidUser, assertReadAuthorized };
