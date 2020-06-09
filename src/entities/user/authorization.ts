@@ -13,13 +13,14 @@ const assertRead = (agent: Agent, user: User): void => {
     throw new Error('NOT ALLOWED: READ_USER');
 };
 
+const commandPermissions = new Map([
+    ['createUser', Permission.USER_CREATE],
+    ['addRoleToUser', Permission.USER_MANAGE_ROLES],
+    ['removeRoleFromUser', Permission.USER_MANAGE_ROLES],
+]);
+
 const assertCommand = (agent: Agent, command: string): void => {
-    const permissions = new Map([
-        ['createUser', Permission.USER_CREATE],
-        ['addRoleToUser', Permission.USER_MANAGE_ROLES],
-        ['removeRoleFromUser', Permission.USER_MANAGE_ROLES],
-    ]);
-    const permission = permissions.get(command);
+    const permission = commandPermissions.get(command);
     if (!permission)
         throw new Error(`No permissions defined for command ${command}`);
     assertAgentHasPermission(agent, permission);
