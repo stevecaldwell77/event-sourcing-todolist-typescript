@@ -1,7 +1,5 @@
-import assert from 'assert';
 import { Agent } from 'src/entities/agent';
 import { TodoList, getItem } from '../todo-list';
-import { User } from '../user';
 import authorization from './authorization';
 import { makeEventListCreated } from './events/list-created';
 import { makeEventListItemCreated } from './events/list-item-created';
@@ -13,12 +11,6 @@ interface CommandParams {
     agent: Agent;
     list: TodoList;
 }
-
-const assertAgentPermissions = (agent: Agent, list: TodoList) => {
-    const { owner } = list;
-    const userIdMatches = (agent as User).userId === owner;
-    assert(userIdMatches, 'LIST USER MISMATCH');
-};
 
 const eventBasics = (params: CommandParams) => ({
     agent: params.agent,
