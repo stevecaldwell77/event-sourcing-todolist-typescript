@@ -2,6 +2,7 @@ import assert from 'assert';
 import { Agent } from 'src/entities/agent';
 import { TodoList, getItem } from '../todo-list';
 import { User } from '../user';
+import authorization from './authorization';
 import { makeEventListCreated } from './events/list-created';
 import { makeEventListItemCreated } from './events/list-item-created';
 import { makeEventListItemCompleted } from './events/list-item-completed';
@@ -30,14 +31,17 @@ const createList = (params: {
     owner: string;
     listId: string;
     title: string;
-}) => [
-    makeEventListCreated({
-        agent: params.agent,
-        entityId: params.listId,
-        payload: { owner: params.owner, title: params.title },
-        eventRevision: 1,
-    }),
-];
+}) => {
+    authorization.assertCommand(params.agent, 'createList');
+    return [
+        makeEventListCreated({
+            agent: params.agent,
+            entityId: params.listId,
+            payload: { owner: params.owner, title: params.title },
+            eventRevision: 1,
+        }),
+    ];
+};
 
 const createListItem = (
     params: CommandParams & {
@@ -46,7 +50,7 @@ const createListItem = (
     },
 ) => {
     const { list, agent, itemId } = params;
-    assertAgentPermissions(agent, list);
+    authorization.assertCommand(agent, 'createListItem', list);
 
     const currentItemIds = list.items.map((i) => i.itemId);
     if (currentItemIds.includes(itemId))
@@ -69,7 +73,7 @@ const completeListItem = (
     },
 ) => {
     const { list, agent, itemId } = params;
-    assertAgentPermissions(agent, list);
+    authorization.assertCommand(agent, 'completeListItem', list);
 
     const item = getItem(list, itemId);
     if (item.completed)
@@ -89,7 +93,7 @@ const uncompleteListItem = (
     },
 ) => {
     const { list, agent, itemId } = params;
-    assertAgentPermissions(agent, list);
+    authorization.assertCommand(agent, 'uncompleteListItem', list);
 
     const item = getItem(list, itemId);
     if (!item.completed)
@@ -110,7 +114,7 @@ const moveListItem = (
     },
 ) => {
     const { list, agent, itemId, newPosition } = params;
-    assertAgentPermissions(agent, list);
+    authorization.assertCommand(agent, 'moveListItem', list);
 
     // asserts item existence
     getItem(list, itemId);

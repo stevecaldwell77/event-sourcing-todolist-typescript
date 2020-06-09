@@ -15,6 +15,11 @@ export enum Permission {
     LIST_READ_ALL = 'LIST_READ_ALL',
 }
 
+export type Authorization<K> = {
+    assertRead: (agent: Agent, entity: K) => void;
+    assertCommand: (agent: Agent, command: string, entity?: K) => void;
+};
+
 const rolePermissions: Record<Role, Permission[]> = {
     ADMIN: [
         Permission.USER_CREATE,

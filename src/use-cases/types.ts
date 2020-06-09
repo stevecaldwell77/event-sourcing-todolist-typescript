@@ -15,7 +15,5 @@ export type GetSourceData<K> = {
     (entityId: string): Promise<{ snapshot?: K; events: EntityEvent[] }>;
 };
 
-export type AssertReadAuthorized<K> = (agent: Agent, entity: K) => void;
-
 export type GetTodoListSourceData = GetSourceData<TodoList>;
 export type GetUserSourceData = GetSourceData<User>;

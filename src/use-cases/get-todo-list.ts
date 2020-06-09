@@ -1,9 +1,5 @@
 import { Agent } from 'src/entities/agent';
-import {
-    TodoList,
-    buildTodoList,
-    assertReadAuthorized,
-} from '../entities/todo-list';
+import { TodoList, buildTodoList, authorization } from '../entities/todo-list';
 import { GetTodoListSourceData } from './types';
 import getEventBasedEntity from './get-events-based-entity';
 
@@ -15,7 +11,7 @@ export default async (params: {
     getEventBasedEntity({
         getSourceData: params.getTodoListSourceData,
         buildEntity: buildTodoList,
-        assertReadAuthorized,
+        authorization,
         agent: params.agent,
         entityId: params.listId,
     });

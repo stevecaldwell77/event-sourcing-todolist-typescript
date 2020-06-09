@@ -1,10 +1,7 @@
-import {
-    Role,
-    Permission,
-    assertAgentHasPermission,
-} from 'src/entities/authorization';
+import { Role } from 'src/entities/authorization';
 import { Agent } from 'src/entities/agent';
 import { User } from 'src/entities/user';
+import authorization from './authorization';
 import { makeEventUserCreated } from './events/user-created';
 import { makeEventUserRoleAdded } from './events/user-role-added';
 import { makeEventUserRoleRemoved } from './events/user-role-removed';
@@ -25,7 +22,7 @@ const createUser = (params: {
     userId: string;
     email: string;
 }) => {
-    assertAgentHasPermission(params.agent, Permission.USER_CREATE);
+    authorization.assertCommand(params.agent, 'createUser');
     return [
         makeEventUserCreated({
             agent: params.agent,
@@ -37,7 +34,7 @@ const createUser = (params: {
 };
 
 const addRoleToUser = (params: { agent: Agent; user: User; role: Role }) => {
-    assertAgentHasPermission(params.agent, Permission.USER_MANAGE_ROLES);
+    authorization.assertCommand(params.agent, 'addRoleToUser');
     return [
         makeEventUserRoleAdded({
             ...eventBasics(params),
@@ -51,7 +48,7 @@ const removeRoleFromUser = (params: {
     user: User;
     role: Role;
 }) => {
-    assertAgentHasPermission(params.agent, Permission.USER_MANAGE_ROLES);
+    authorization.assertCommand(params.agent, 'removeRoleFromUser');
     return [
         makeEventUserRoleRemoved({
             ...eventBasics(params),

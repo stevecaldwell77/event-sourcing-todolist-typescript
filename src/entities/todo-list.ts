@@ -1,10 +1,9 @@
 import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
 import { assertSchema } from 'src/util/assert';
-import { Permission, agentHasPermission } from 'src/entities/authorization';
-import { Agent, getUserId } from 'src/entities/agent';
 import buildEntity from './todo-list/build';
 import * as commands from './todo-list/commands';
+import authorization from './todo-list/authorization';
 
 export const entityType = EntityType.TodoList;
 
@@ -45,20 +44,8 @@ const newList = (params: {
     items: [],
 });
 
-const assertReadAuthorized = (agent: Agent, list: TodoList): void => {
-    if (getUserId(agent) === list.owner) return;
-    if (agentHasPermission(agent, Permission.LIST_READ_ALL)) return;
-    throw new Error('NOT ALLOWED: READ_LIST');
-};
-
 const buildTodoList = buildEntity;
 
 const assertValidTodoList = assertSchema(todoListSchema);
 
-export {
-    buildTodoList,
-    commands,
-    newList,
-    assertValidTodoList,
-    assertReadAuthorized,
-};
+export { buildTodoList, commands, newList, assertValidTodoList, authorization };

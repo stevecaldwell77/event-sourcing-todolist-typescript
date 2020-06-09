@@ -1,5 +1,5 @@
 import { Agent } from 'src/entities/agent';
-import { User, buildUser, assertReadAuthorized } from 'src/entities/user';
+import { User, buildUser, authorization } from 'src/entities/user';
 import { GetUserSourceData } from './types';
 import getEventBasedEntity from './get-events-based-entity';
 
@@ -11,7 +11,7 @@ export default async (params: {
     getEventBasedEntity({
         getSourceData: params.getUserSourceData,
         buildEntity: buildUser,
-        assertReadAuthorized,
+        authorization,
         agent: params.agent,
         entityId: params.userId,
     });

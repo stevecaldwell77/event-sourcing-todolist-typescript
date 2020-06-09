@@ -1,14 +1,11 @@
 import { Agent } from 'src/entities/agent';
-import {
-    GetSourceData,
-    BuildEventsBasedEntity,
-    AssertReadAuthorized,
-} from './types';
+import { Authorization } from 'src/entities/authorization';
+import { GetSourceData, BuildEventsBasedEntity } from './types';
 
 export default async <K>(params: {
     getSourceData: GetSourceData<K>;
     buildEntity: BuildEventsBasedEntity<K>;
-    assertReadAuthorized: AssertReadAuthorized<K>;
+    authorization: Authorization<K>;
     agent: Agent;
     entityId: string;
 }): Promise<K | undefined> => {
@@ -17,13 +14,13 @@ export default async <K>(params: {
         buildEntity,
         agent,
         entityId,
-        assertReadAuthorized,
+        authorization,
     } = params;
     const { snapshot, events } = await getSourceData(entityId);
     if (events.length === 0) return undefined;
 
     const entity = buildEntity(snapshot, events);
-    assertReadAuthorized(agent, entity);
+    authorization.assertRead(agent, entity);
 
     return entity;
 };
