@@ -15,7 +15,7 @@ const createUser: CreateCommand<User, CreateUserParams> = {
         makeEventUserCreated({
             agent,
             entityId,
-            payload: { email: params.email },
+            payload: params,
             eventRevision: 1,
         }),
     ],
@@ -27,7 +27,7 @@ const addRoleToUser: Command<User, { role: Role }> = {
         makeEventUserRoleAdded({
             agent,
             entityId: user.userId,
-            payload: { role: params.role },
+            payload: params,
             eventRevision: user.revision + 1,
         }),
     ],
@@ -39,7 +39,7 @@ const removeRoleFromUser: Command<User, { role: Role }> = {
         makeEventUserRoleRemoved({
             agent,
             entityId: user.userId,
-            payload: { role: params.role },
+            payload: params,
             eventRevision: user.revision + 1,
         }),
     ],

@@ -17,7 +17,7 @@ const createList: CreateCommand<TodoList, CreateListParams> = {
         makeEventListCreated({
             agent,
             entityId,
-            payload: { owner: params.owner, title: params.title },
+            payload: params,
             eventRevision: 1,
         }),
     ],
@@ -38,7 +38,7 @@ const createListItem: Command<TodoList, { itemId: string; text: string }> = {
                 agent,
                 entityId: list.listId,
                 eventRevision: list.revision + 1,
-                payload: { itemId, text: params.text },
+                payload: params,
             }),
         ];
     },
@@ -59,7 +59,7 @@ const completeListItem: Command<TodoList, { itemId: string }> = {
                 agent,
                 entityId: list.listId,
                 eventRevision: list.revision + 1,
-                payload: { itemId },
+                payload: params,
             }),
         ];
     },
@@ -80,7 +80,7 @@ const uncompleteListItem: Command<TodoList, { itemId: string }> = {
                 agent,
                 entityId: list.listId,
                 eventRevision: list.revision + 1,
-                payload: { itemId },
+                payload: params,
             }),
         ];
     },
@@ -108,7 +108,7 @@ const moveListItem: Command<
                 agent,
                 entityId: list.listId,
                 eventRevision: list.revision + 1,
-                payload: { itemId, newPosition },
+                payload: params,
             }),
         ];
     },
