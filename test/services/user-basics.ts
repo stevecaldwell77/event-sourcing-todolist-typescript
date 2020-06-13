@@ -11,7 +11,7 @@ import getAdminUser from 'test/helpers/get-admin-user';
 const eventStore = new EventStoreInMemory();
 const userService = new UserService({ eventStore });
 
-test('successful creation', async (t) => {
+test('UserService: create() and get()', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
     const getEvents = () => eventStore.getEvents(EntityType.User, userId);
@@ -21,24 +21,23 @@ test('successful creation', async (t) => {
     await userService.create(userId, systemAgent, { email });
 
     const events = await getEvents();
-    t.is(events.length, 1, 'one event saved');
+    t.is(events.length, 1, 'one event saved after calling create()');
 
     const user = await userService.get(userId, systemAgent);
-    t.truthy(user, 'user can be fetched aftewards');
+
+    t.truthy(user, 'user can be fetched afteward creation');
     assert.object(user);
     t.deepEqual(
         user,
-        {
-            userId,
-            revision: 1,
+        newUser({
             email,
-            roles: [],
-        },
+            userId,
+        }),
         'inital user created correctly',
     );
 });
 
-test('error on duplicate', async (t) => {
+test('UserService.create(): error on duplicate', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
 
@@ -58,7 +57,7 @@ test('error on duplicate', async (t) => {
     );
 });
 
-test('permissions', async (t) => {
+test('UserService.create(): permissions', async (t) => {
     const adminUser = getAdminUser();
 
     const nonAdminUser = newUser({
@@ -85,4 +84,43 @@ test('permissions', async (t) => {
         },
         'non-admin user cannot create a user',
     );
+});
+
+test('UserService.get(): permissions', async (t) => {
+    const userId = getId();
+    const email = 'jdoe@example.com';
+    const adminUser = getAdminUser();
+
+    const user = await userService.create(userId, systemAgent, {
+        email,
+    });
+
+    const otherUser = newUser({
+        userId: getId(),
+        email: 'other@example.com',
+    });
+
+    await t.notThrowsAsync(
+        () => userService.get(userId, adminUser),
+        'admin user can read a user',
+    );
+
+    await t.notThrowsAsync(
+        () => userService.get(userId, user),
+        'non-admin user can read itself',
+    );
+
+    await t.throwsAsync(
+        () => userService.get(userId, otherUser),
+        {
+            message: 'NOT ALLOWED: READ_USER',
+        },
+        'a non-admin user cannot read another user',
+    );
+});
+
+test('UserService.get(): miss', async (t) => {
+    const userId = getId();
+    const result = await userService.get(userId, systemAgent);
+    t.is(result, undefined, 'undefined returned on unknown user');
 });
