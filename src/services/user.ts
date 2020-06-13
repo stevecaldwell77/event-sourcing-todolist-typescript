@@ -1,20 +1,16 @@
-import { User } from 'src/entities/user';
+import { EntityType } from 'src/lib/enums';
+import { User, mapToUser } from 'src/entities/user';
 import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/build';
 import { createUser, CreateUserParams } from 'src/entities/user/commands';
-import { EntityEvent } from 'src/entities/entity-event';
 import EventBasedEntityService from './event-based-entity';
 
 class UserService extends EventBasedEntityService<User, CreateUserParams> {
+    entityType = EntityType.User;
     buildFromEvents = buildFromEvents;
     authorization = authorization;
     createCommand = createUser;
-
-    async getSourceData(
-        userId: string,
-    ): Promise<{ snapshot?: User; events: EntityEvent[] }> {
-        return this.eventStore.getUserSourceData(userId);
-    }
+    mapToEntity = mapToUser;
 }
 
 export default UserService;

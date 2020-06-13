@@ -1,24 +1,11 @@
 import autoBind from 'auto-bind';
 import { EntityEvent } from 'src/entities/entity-event';
-import { User } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
-import { TodoList } from 'src/entities/todo-list';
-import { HasRevision } from 'src/entities/has-revision';
-import {
-    GetTodoListSourceData,
-    GetUserSourceData,
-    SaveEvents,
-} from 'src/use-cases/types';
+import { MapToEntity, HasRevision } from 'src/entities/types';
 import { SnapshotGateway } from 'src/gateways/snapshot';
 import { EventGateway } from '../gateways/event';
 
-interface EventStoreInterface {
-    getTodoListSourceData: GetTodoListSourceData;
-    getUserSourceData: GetUserSourceData;
-    saveEvents: SaveEvents;
-}
-
-abstract class EventStore implements EventStoreInterface {
+abstract class EventStore {
     public eventGateway: EventGateway;
     public snapshotGateway: SnapshotGateway;
 
@@ -47,35 +34,19 @@ abstract class EventStore implements EventStoreInterface {
         );
     }
 
-    async getEntitySourceData<K extends HasRevision>(
-        getSnapshot: (entityId: string) => Promise<K | undefined>,
+    async getEntitySourceData<T extends HasRevision>(
         entityType: EntityType,
+        mapToEntity: MapToEntity<T>,
         entityId: string,
-    ): Promise<{ snapshot?: K; events: EntityEvent[] }> {
-        const snapshot = await getSnapshot(entityId);
+    ): Promise<{ snapshot?: T; events: EntityEvent[] }> {
+        const snapshot = await this.snapshotGateway.getSnapshot(
+            entityType,
+            mapToEntity,
+            entityId,
+        );
         const revision = snapshot ? snapshot.revision : 0;
         const events = await this.getEvents(entityType, entityId, revision + 1);
         return { snapshot, events };
-    }
-
-    async getUserSourceData(
-        userId: string,
-    ): Promise<{ snapshot?: User; events: EntityEvent[] }> {
-        return this.getEntitySourceData<User>(
-            this.snapshotGateway.getUserSnapshot,
-            EntityType.User,
-            userId,
-        );
-    }
-
-    async getTodoListSourceData(
-        listId: string,
-    ): Promise<{ snapshot?: TodoList; events: EntityEvent[] }> {
-        return this.getEntitySourceData<TodoList>(
-            this.snapshotGateway.getTodoListSnapshot,
-            EntityType.TodoList,
-            listId,
-        );
     }
 }
 

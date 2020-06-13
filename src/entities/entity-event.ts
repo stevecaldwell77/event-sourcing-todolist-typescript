@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { EntityType, EventName } from 'src/lib/enums';
+import { HasRevision } from 'src/entities/types';
 import { Agent, getAgentId } from 'src/entities/agent';
-import { HasRevision } from 'src/entities/has-revision';
 
 const schemaVersion = 1;
 

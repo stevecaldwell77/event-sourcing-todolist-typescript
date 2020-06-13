@@ -1,30 +1,36 @@
 import autoBind from 'auto-bind';
-import { User } from 'src/entities/user';
-import { TodoList } from 'src/entities/todo-list';
 import { SnapshotGateway } from 'src/gateways/snapshot';
+import { EntityType } from 'src/lib/enums';
+import { MapToEntity } from 'src/entities/types';
 
 class SnapshotGatewayInMemory implements SnapshotGateway {
-    private users: Record<string, User> = {};
-    private todoLists: Record<string, TodoList> = {};
+    private records: Record<string, unknown> = {};
 
     constructor() {
         autoBind(this);
     }
 
-    async getTodoListSnapshot(listId: string): Promise<TodoList | undefined> {
-        return this.todoLists[listId];
+    entityKey(entityType: EntityType, entityId: string): string {
+        return `${entityType}#${entityId}`;
     }
 
-    async getUserSnapshot(userId: string): Promise<User | undefined> {
-        return this.users[userId];
+    async getSnapshot<T>(
+        entityType: EntityType,
+        mapToEntity: MapToEntity<T>,
+        entityId: string,
+    ): Promise<T | undefined> {
+        const key = this.entityKey(entityType, entityId);
+        const record = this.records[key];
+        return record ? mapToEntity(record) : undefined;
     }
 
-    async saveTodoListSnapshot(list: TodoList): Promise<void> {
-        this.todoLists[list.listId] = list;
-    }
-
-    async saveUserSnapshot(user: User): Promise<void> {
-        this.users[user.userId] = user;
+    async saveSnapshot<T>(
+        entityType: EntityType,
+        entityId: string,
+        entity: T,
+    ): Promise<void> {
+        const key = this.entityKey(entityType, entityId);
+        this.records[key] = entity;
     }
 }
 

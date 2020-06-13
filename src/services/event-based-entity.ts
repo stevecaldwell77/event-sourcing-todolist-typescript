@@ -1,31 +1,35 @@
 import autoBind from 'auto-bind';
 import EventStore from 'src/event-store/event-store';
+import { EntityType } from 'src/lib/enums';
+import { MapToEntity, HasRevision } from 'src/entities/types';
 import { EntityEvent } from 'src/entities/entity-event';
 import { Agent } from 'src/entities/agent';
 import { Authorization } from 'src/entities/authorization';
 import { CreateCommand, Command } from 'src/entities/commands';
 
-type buildFromEvents<K> = {
-    (prev: K | undefined, events: EntityEvent[]): K;
+type BuildFromEvents<T> = {
+    (prev: T | undefined, events: EntityEvent[]): T;
 };
 
-abstract class EventBasedEntityService<T, U> {
+abstract class EventBasedEntityService<T extends HasRevision, U> {
     eventStore: EventStore;
-    abstract buildFromEvents: buildFromEvents<T>;
+    abstract entityType: EntityType;
+    abstract buildFromEvents: BuildFromEvents<T>;
     abstract authorization: Authorization<T>;
     abstract createCommand: CreateCommand<T, U>;
+    abstract mapToEntity: MapToEntity<T>;
 
     constructor(params: { eventStore: EventStore }) {
         this.eventStore = params.eventStore;
         autoBind(this);
     }
 
-    abstract getSourceData(
-        entityId: string,
-    ): Promise<{ snapshot?: T; events: EntityEvent[] }>;
-
     async get(entityId: string, agent: Agent): Promise<T | undefined> {
-        const { snapshot, events } = await this.getSourceData(entityId);
+        const { snapshot, events } = await this.eventStore.getEntitySourceData(
+            this.entityType,
+            this.mapToEntity,
+            entityId,
+        );
         if (events.length === 0) return undefined;
         const entity = this.buildFromEvents(snapshot, events);
         this.authorization.assertRead(agent, entity);

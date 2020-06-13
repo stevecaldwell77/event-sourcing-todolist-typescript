@@ -1,9 +1,15 @@
-import { User } from 'src/entities/user';
-import { TodoList } from 'src/entities/todo-list';
+import { EntityType } from 'src/lib/enums';
+import { MapToEntity } from 'src/entities/types';
 
 export interface SnapshotGateway {
-    getTodoListSnapshot(listId: string): Promise<TodoList | undefined>;
-    getUserSnapshot(userId: string): Promise<User | undefined>;
-    saveTodoListSnapshot(list: TodoList): Promise<void>;
-    saveUserSnapshot(user: User): Promise<void>;
+    getSnapshot<T>(
+        entityType: EntityType,
+        mapToEntity: MapToEntity<T>,
+        entityId: string,
+    ): Promise<T | undefined>;
+    saveSnapshot<T>(
+        entityType: EntityType,
+        entityId: string,
+        entity: T,
+    ): Promise<void>;
 }

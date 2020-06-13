@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
-import { assertSchema } from 'src/util/assert';
+import { mapOrDie } from 'src/util/io-ts';
 
 export const entityType = EntityType.TodoList;
 
@@ -41,6 +41,6 @@ const newList = (params: {
     items: [],
 });
 
-const assertValidTodoList = assertSchema(todoListSchema);
+const mapToTodoList = mapOrDie(todoListSchema);
 
-export { newList, assertValidTodoList };
+export { newList, mapToTodoList };
