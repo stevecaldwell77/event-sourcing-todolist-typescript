@@ -2,7 +2,6 @@ import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
 import { assertSchema } from 'src/util/assert';
 import { roleSchema } from 'src/entities/authorization';
-import authorization from './user/authorization';
 
 export const entityType = EntityType.User;
 
@@ -24,4 +23,4 @@ const newUser = (params: { userId: string; email: string }): User => ({
 
 const assertValidUser = assertSchema(userSchema);
 
-export { newUser, assertValidUser, authorization };
+export { newUser, assertValidUser };

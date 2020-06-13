@@ -1,4 +1,5 @@
-import { User, authorization } from 'src/entities/user';
+import { User } from 'src/entities/user';
+import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/build';
 import { createUser, CreateUserParams } from 'src/entities/user/commands';
 import { EntityEvent } from 'src/entities/entity-event';
