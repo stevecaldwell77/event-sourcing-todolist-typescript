@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
 import { assert } from '@sindresorhus/is/dist';
 import EventStoreInMemory from 'src/event-store/in-memory';

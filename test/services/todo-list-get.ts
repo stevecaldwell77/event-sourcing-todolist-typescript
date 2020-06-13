@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import test from 'ava';
 import TodoListService from 'src/services/todo-list';
 import EventStoreInMemory from 'src/event-store/in-memory';
