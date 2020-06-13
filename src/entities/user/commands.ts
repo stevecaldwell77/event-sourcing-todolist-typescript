@@ -21,11 +21,7 @@ const createUser: CreateCommand<User, CreateUserParams> = {
     ],
 };
 
-interface AddRoleToUserParams {
-    role: Role;
-}
-
-const addRoleToUser: Command<User, AddRoleToUserParams> = {
+const addRoleToUser: Command<User, { role: Role }> = {
     name: 'addRoleToUser',
     run: (user, agent, params) => [
         makeEventUserRoleAdded({
@@ -37,11 +33,7 @@ const addRoleToUser: Command<User, AddRoleToUserParams> = {
     ],
 };
 
-interface RemoveRoleFromUserParams {
-    role: Role;
-}
-
-const removeRoleFromUser: Command<User, RemoveRoleFromUserParams> = {
+const removeRoleFromUser: Command<User, { role: Role }> = {
     name: 'removeRoleFromUser',
     run: (user, agent, params) => [
         makeEventUserRoleRemoved({

@@ -23,12 +23,7 @@ const createList: CreateCommand<TodoList, CreateListParams> = {
     ],
 };
 
-interface CreateListItemParams {
-    itemId: string;
-    text: string;
-}
-
-const createListItem: Command<TodoList, CreateListItemParams> = {
+const createListItem: Command<TodoList, { itemId: string; text: string }> = {
     name: 'createListItem',
     run: (list, agent, params) => {
         const { itemId } = params;
@@ -49,11 +44,7 @@ const createListItem: Command<TodoList, CreateListItemParams> = {
     },
 };
 
-interface CompleteListItemParams {
-    itemId: string;
-}
-
-const completeListItem: Command<TodoList, CompleteListItemParams> = {
+const completeListItem: Command<TodoList, { itemId: string }> = {
     name: 'completeListItem',
     run: (list, agent, params) => {
         const { itemId } = params;
@@ -74,11 +65,7 @@ const completeListItem: Command<TodoList, CompleteListItemParams> = {
     },
 };
 
-interface UncompleteListItemParams {
-    itemId: string;
-}
-
-const uncompleteListItem: Command<TodoList, UncompleteListItemParams> = {
+const uncompleteListItem: Command<TodoList, { itemId: string }> = {
     name: 'uncompleteListItem',
     run: (list, agent, params) => {
         const { itemId } = params;
@@ -99,12 +86,10 @@ const uncompleteListItem: Command<TodoList, UncompleteListItemParams> = {
     },
 };
 
-interface MoveListItemParams {
-    itemId: string;
-    newPosition: number;
-}
-
-const moveListItem: Command<TodoList, MoveListItemParams> = {
+const moveListItem: Command<
+    TodoList,
+    { itemId: string; newPosition: number }
+> = {
     name: 'moveListItem',
     run: (list, agent, params) => {
         const { itemId, newPosition } = params;
