@@ -1,7 +1,6 @@
 import { EntityEvent } from 'src/entities/entity-event';
 import { TodoList } from 'src/entities/todo-list';
 import { User } from 'src/entities/user';
-import { Agent } from 'src/entities/agent';
 
 export type BuildEventsBasedEntity<K> = {
     (prev: K | undefined, events: EntityEvent[]): K;

@@ -47,7 +47,7 @@ abstract class EventBasedEntityService<T, U> {
         run: () => EntityEvent[],
         entity?: T,
     ): Promise<T> {
-        this.authorization.assertCommand(agent, commandName);
+        this.authorization.assertCommand(agent, commandName, entity);
         const events = run();
         await this.eventStore.saveEvents(events);
         return this.buildFromEvents(entity, events);
@@ -70,12 +70,7 @@ abstract class EventBasedEntityService<T, U> {
         params: V,
     ): Promise<T> {
         const run = () => command.run(entity, agent, params);
-        return this._executeCommand(
-            agent,
-            this.createCommand.name,
-            run,
-            entity,
-        );
+        return this._executeCommand(agent, command.name, run, entity);
     }
 }
 

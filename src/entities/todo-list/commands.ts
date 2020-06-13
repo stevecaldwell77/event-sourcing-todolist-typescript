@@ -1,128 +1,132 @@
-import { Agent } from 'src/entities/agent';
-import { TodoList, getItem } from '../todo-list';
-import authorization from './authorization';
+import { CreateCommand, Command } from 'src/entities/commands';
+import { TodoList, getItem } from 'src/entities/todo-list';
 import { makeEventListCreated } from './events/list-created';
 import { makeEventListItemCreated } from './events/list-item-created';
 import { makeEventListItemCompleted } from './events/list-item-completed';
 import { makeEventListItemUncompleted } from './events/list-item-uncompleted';
 import { makeEventListItemMoved } from './events/list-item-moved';
 
-interface CommandParams {
-    agent: Agent;
-    list: TodoList;
+export interface CreateListParams {
+    owner: string;
+    title: string;
 }
 
-const eventBasics = (params: CommandParams) => ({
-    agent: params.agent,
-    eventRevision: params.list.revision + 1,
-    entityId: params.list.listId,
-});
-
-const createList = (params: {
-    agent: Agent;
-    owner: string;
-    listId: string;
-    title: string;
-}) => {
-    authorization.assertCommand(params.agent, 'createList');
-    return [
+const createList: CreateCommand<TodoList, CreateListParams> = {
+    name: 'createList',
+    run: (entityId, agent, params) => [
         makeEventListCreated({
-            agent: params.agent,
-            entityId: params.listId,
+            agent,
+            entityId,
             payload: { owner: params.owner, title: params.title },
             eventRevision: 1,
         }),
-    ];
+    ],
 };
 
-const createListItem = (
-    params: CommandParams & {
-        itemId: string;
-        text: string;
+interface CreateListItemParams {
+    itemId: string;
+    text: string;
+}
+
+const createListItem: Command<TodoList, CreateListItemParams> = {
+    name: 'createListItem',
+    run: (list, agent, params) => {
+        const { itemId } = params;
+        const currentItemIds = list.items.map((i) => i.itemId);
+        if (currentItemIds.includes(itemId))
+            throw new Error(
+                `list item ${list.listId}.${itemId} already exists`,
+            );
+
+        return [
+            makeEventListItemCreated({
+                agent,
+                entityId: list.listId,
+                eventRevision: list.revision + 1,
+                payload: { itemId, text: params.text },
+            }),
+        ];
     },
-) => {
-    const { list, agent, itemId } = params;
-    authorization.assertCommand(agent, 'createListItem', list);
-
-    const currentItemIds = list.items.map((i) => i.itemId);
-    if (currentItemIds.includes(itemId))
-        throw new Error(`list item ${list.listId}.${itemId} already exists`);
-
-    return [
-        makeEventListItemCreated({
-            ...eventBasics(params),
-            payload: {
-                itemId,
-                text: params.text,
-            },
-        }),
-    ];
 };
 
-const completeListItem = (
-    params: CommandParams & {
-        itemId: string;
+interface CompleteListItemParams {
+    itemId: string;
+}
+
+const completeListItem: Command<TodoList, CompleteListItemParams> = {
+    name: 'completeListItem',
+    run: (list, agent, params) => {
+        const { itemId } = params;
+        const item = getItem(list, itemId);
+        if (item.completed)
+            throw new Error(
+                `list item ${list.listId}.${itemId} already completed`,
+            );
+
+        return [
+            makeEventListItemCompleted({
+                agent,
+                entityId: list.listId,
+                eventRevision: list.revision + 1,
+                payload: { itemId },
+            }),
+        ];
     },
-) => {
-    const { list, agent, itemId } = params;
-    authorization.assertCommand(agent, 'completeListItem', list);
-
-    const item = getItem(list, itemId);
-    if (item.completed)
-        throw new Error(`list item ${list.listId}.${itemId} already completed`);
-
-    return [
-        makeEventListItemCompleted({
-            ...eventBasics(params),
-            payload: { itemId },
-        }),
-    ];
 };
 
-const uncompleteListItem = (
-    params: CommandParams & {
-        itemId: string;
+interface UncompleteListItemParams {
+    itemId: string;
+}
+
+const uncompleteListItem: Command<TodoList, UncompleteListItemParams> = {
+    name: 'uncompleteListItem',
+    run: (list, agent, params) => {
+        const { itemId } = params;
+        const item = getItem(list, itemId);
+        if (!item.completed)
+            throw new Error(
+                `list item ${list.listId}.${itemId} already completed`,
+            );
+
+        return [
+            makeEventListItemUncompleted({
+                agent,
+                entityId: list.listId,
+                eventRevision: list.revision + 1,
+                payload: { itemId },
+            }),
+        ];
     },
-) => {
-    const { list, agent, itemId } = params;
-    authorization.assertCommand(agent, 'uncompleteListItem', list);
-
-    const item = getItem(list, itemId);
-    if (!item.completed)
-        throw new Error(`list item ${list.listId}.${itemId} not completed`);
-
-    return [
-        makeEventListItemUncompleted({
-            ...eventBasics(params),
-            payload: { itemId },
-        }),
-    ];
 };
 
-const moveListItem = (
-    params: CommandParams & {
-        itemId: string;
-        newPosition: number;
+interface MoveListItemParams {
+    itemId: string;
+    newPosition: number;
+}
+
+const moveListItem: Command<TodoList, MoveListItemParams> = {
+    name: 'moveListItem',
+    run: (list, agent, params) => {
+        const { itemId, newPosition } = params;
+
+        // asserts item existence
+        getItem(list, itemId);
+
+        const numItems = list.items.length;
+        if (newPosition <= 0)
+            throw new Error('newPosition must be greater than 0');
+        if (newPosition > numItems)
+            throw new Error('newPosition is out of bounds');
+
+        return [
+            makeEventListItemMoved({
+                agent,
+                entityId: list.listId,
+                eventRevision: list.revision + 1,
+                payload: { itemId, newPosition },
+            }),
+        ];
     },
-) => {
-    const { list, agent, itemId, newPosition } = params;
-    authorization.assertCommand(agent, 'moveListItem', list);
-
-    // asserts item existence
-    getItem(list, itemId);
-    const numItems = list.items.length;
-    if (newPosition <= 0) throw new Error('newPosition must be greater than 0');
-    if (newPosition > numItems) throw new Error('newPosition is out of bounds');
-
-    return [
-        makeEventListItemMoved({
-            ...eventBasics(params),
-            payload: {
-                itemId,
-                newPosition,
-            },
-        }),
-    ];
 };
 
 export {

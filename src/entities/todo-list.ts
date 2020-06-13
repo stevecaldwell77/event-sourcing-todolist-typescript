@@ -1,8 +1,6 @@
 import * as t from 'io-ts';
 import { EntityType } from 'src/lib/enums';
 import { assertSchema } from 'src/util/assert';
-import buildEntity from './todo-list/build';
-import * as commands from './todo-list/commands';
 import authorization from './todo-list/authorization';
 
 export const entityType = EntityType.TodoList;
@@ -44,8 +42,6 @@ const newList = (params: {
     items: [],
 });
 
-const buildTodoList = buildEntity;
-
 const assertValidTodoList = assertSchema(todoListSchema);
 
-export { buildTodoList, commands, newList, assertValidTodoList, authorization };
+export { newList, assertValidTodoList, authorization };
