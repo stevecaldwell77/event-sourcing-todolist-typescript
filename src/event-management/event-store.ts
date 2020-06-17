@@ -2,12 +2,15 @@ import autoBind from 'auto-bind';
 import { EntityEvent } from 'src/entities/entity-event';
 import { EntityType } from 'src/lib/enums';
 import { MapToEntity, HasRevision } from 'src/entities/types';
+import { GetEvents, SaveEvents } from 'src/use-cases/types';
 import { SnapshotGateway } from 'src/gateways/snapshot';
 import { EventGateway } from '../gateways/event';
 
 abstract class EventStore {
-    public eventGateway: EventGateway;
-    public snapshotGateway: SnapshotGateway;
+    eventGateway: EventGateway;
+    snapshotGateway: SnapshotGateway;
+    getEvents: GetEvents;
+    saveEvents: SaveEvents;
 
     constructor(params: {
         eventGateway: EventGateway;
@@ -15,23 +18,9 @@ abstract class EventStore {
     }) {
         this.eventGateway = params.eventGateway;
         this.snapshotGateway = params.snapshotGateway;
+        this.getEvents = this.eventGateway.getEvents;
+        this.saveEvents = this.eventGateway.saveEvents;
         autoBind(this);
-    }
-
-    async saveEvents(events: EntityEvent[]): Promise<void> {
-        return this.eventGateway.saveEvents(events);
-    }
-
-    async getEvents(
-        entityType: EntityType,
-        entityId: string,
-        startingRevision = 1,
-    ): Promise<EntityEvent[]> {
-        return this.eventGateway.getEvents(
-            entityType,
-            entityId,
-            startingRevision,
-        );
     }
 
     async getEntitySourceData<T extends HasRevision>(
