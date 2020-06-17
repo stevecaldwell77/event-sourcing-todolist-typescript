@@ -1,5 +1,5 @@
 import test from 'ava';
-import EventStoreInMemory from 'src/event-store/event-store-in-memory';
+import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { User } from 'src/entities/user';

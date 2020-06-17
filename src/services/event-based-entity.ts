@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import EventStore from 'src/event-store/event-store';
+import EventStore from 'src/event-management/event-store';
 import { EntityType } from 'src/lib/enums';
 import { MapToEntity, HasRevision } from 'src/entities/types';
 import { EntityEvent } from 'src/entities/entity-event';

@@ -1,5 +1,5 @@
 import casual from 'casual';
-import EventStore from 'src/event-store/event-store';
+import EventStore from 'src/event-management/event-store';
 import UserService from 'src/services/user';
 import { systemAgent } from 'src/entities/agent';
 import getId from 'src/util/get-id';

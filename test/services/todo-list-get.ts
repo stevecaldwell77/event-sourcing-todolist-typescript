@@ -1,6 +1,6 @@
 import test from 'ava';
 import TodoListService from 'src/services/todo-list';
-import EventStoreInMemory from 'src/event-store/event-store-in-memory';
+import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { newList } from 'src/entities/todo-list';

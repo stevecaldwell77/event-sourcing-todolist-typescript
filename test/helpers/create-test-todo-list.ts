@@ -1,6 +1,6 @@
 import TodoListService from 'src/services/todo-list';
 import { User } from 'src/entities/user';
-import EventStore from 'src/event-store/event-store';
+import EventStore from 'src/event-management/event-store';
 import getId from 'src/util/get-id';
 import { TodoList } from 'src/entities/todo-list';
 import createTestUser from './create-test-user';
