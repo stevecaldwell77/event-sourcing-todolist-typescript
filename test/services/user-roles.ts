@@ -1,5 +1,5 @@
 import test from 'ava';
-import EventStoreInMemory from 'src/event-store/in-memory';
+import EventStoreInMemory from 'src/event-store/event-store-in-memory';
 import getId from 'src/util/get-id';
 import { addRoleToUser, removeRoleFromUser } from 'src/entities/user/commands';
 import UserService from 'src/services/user';
