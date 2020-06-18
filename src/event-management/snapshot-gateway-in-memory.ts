@@ -1,7 +1,5 @@
 import autoBind from 'auto-bind';
-import { SnapshotGateway } from 'src/gateways/snapshot';
-import { EntityType } from 'src/lib/enums';
-import { MapToEntity } from 'src/entities/types';
+import { SnapshotGateway, MapToEntity } from './event-store';
 
 class SnapshotGatewayInMemory implements SnapshotGateway {
     private records: Record<string, unknown> = {};
@@ -10,26 +8,26 @@ class SnapshotGatewayInMemory implements SnapshotGateway {
         autoBind(this);
     }
 
-    entityKey(entityType: EntityType, entityId: string): string {
-        return `${entityType}#${entityId}`;
+    entityKey(collectionType: string, entityId: string): string {
+        return `${collectionType}#${entityId}`;
     }
 
     async getSnapshot<T>(
-        entityType: EntityType,
+        collectionType: string,
         mapToEntity: MapToEntity<T>,
         entityId: string,
     ): Promise<T | undefined> {
-        const key = this.entityKey(entityType, entityId);
+        const key = this.entityKey(collectionType, entityId);
         const record = this.records[key];
         return record ? mapToEntity(record) : undefined;
     }
 
     async saveSnapshot<T>(
-        entityType: EntityType,
+        collectionType: string,
         entityId: string,
         entity: T,
     ): Promise<void> {
-        const key = this.entityKey(entityType, entityId);
+        const key = this.entityKey(collectionType, entityId);
         this.records[key] = entity;
     }
 }

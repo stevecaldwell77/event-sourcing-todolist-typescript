@@ -24,6 +24,7 @@ export abstract class DomainEvent<TPayload> {
     payload: TPayload;
     eventNumber?: number;
     static eventName: string;
+    static collectionType: string;
 
     constructor(params: DomainEventParams<TPayload>) {
         this.schemaVersion = params.schemaVersion;
@@ -63,11 +64,18 @@ export abstract class DomainEvent<TPayload> {
         const constructor = <typeof DomainEvent>this.constructor;
         return constructor.eventName;
     }
+
+    getCollectionType(): string {
+        const constructor = <typeof DomainEvent>this.constructor;
+        return constructor.collectionType;
+    }
 }
 
 export type DomainEventClass<TPayload> = {
     new (params: DomainEventParams<TPayload>): DomainEvent<TPayload>;
 };
+
+export type GenericDomainEvent = DomainEvent<unknown>;
 
 export const generateDomainEvent = <TAgent, TEntity>(
     schemaVersion: number,

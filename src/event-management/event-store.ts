@@ -1,10 +1,43 @@
 import autoBind from 'auto-bind';
-import { EntityEvent } from 'src/entities/entity-event';
-import { EntityType } from 'src/lib/enums';
-import { MapToEntity, HasRevision } from 'src/entities/types';
-import { GetEvents, SaveEvents } from 'src/use-cases/types';
-import { SnapshotGateway } from 'src/gateways/snapshot';
-import { EventGateway } from '../gateways/event';
+import { GenericDomainEvent } from './domain-event';
+
+interface IEntity {
+    revision: number;
+}
+
+export interface MapToEntity<TEntity> {
+    (input: unknown): TEntity;
+}
+
+interface GetEvents {
+    (
+        collectionType: string,
+        collectionId: string,
+        startingRevision?: number,
+    ): Promise<GenericDomainEvent[]>;
+}
+
+type SaveEvents = {
+    (events: GenericDomainEvent[]): Promise<void>;
+};
+
+export interface EventGateway {
+    getEvents: GetEvents;
+    saveEvents: SaveEvents;
+}
+
+export interface SnapshotGateway {
+    getSnapshot<T>(
+        collectionType: string,
+        mapToEntity: MapToEntity<T>,
+        collectionId: string,
+    ): Promise<T | undefined>;
+    saveSnapshot<T>(
+        collectionType: string,
+        collectionId: string,
+        entity: T,
+    ): Promise<void>;
+}
 
 abstract class EventStore {
     eventGateway: EventGateway;
@@ -23,18 +56,22 @@ abstract class EventStore {
         autoBind(this);
     }
 
-    async getEntitySourceData<T extends HasRevision>(
-        entityType: EntityType,
-        mapToEntity: MapToEntity<T>,
-        entityId: string,
-    ): Promise<{ snapshot?: T; events: EntityEvent[] }> {
+    async getEntitySourceData<TEntity extends IEntity>(
+        collectionType: string,
+        mapToEntity: MapToEntity<TEntity>,
+        collectionId: string,
+    ): Promise<{ snapshot?: TEntity; events: GenericDomainEvent[] }> {
         const snapshot = await this.snapshotGateway.getSnapshot(
-            entityType,
+            collectionType,
             mapToEntity,
-            entityId,
+            collectionId,
         );
         const revision = snapshot ? snapshot.revision : 0;
-        const events = await this.getEvents(entityType, entityId, revision + 1);
+        const events = await this.getEvents(
+            collectionType,
+            collectionId,
+            revision + 1,
+        );
         return { snapshot, events };
     }
 }
