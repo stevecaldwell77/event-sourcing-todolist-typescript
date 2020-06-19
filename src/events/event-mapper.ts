@@ -1,6 +1,5 @@
 import { assert } from '@sindresorhus/is/dist';
-import { DomainEvent } from '../event-management/domain-event';
-
+import { DomainEvent } from './domain-event';
 import { UserCreated, UserRoleAdded, UserRoleRemoved } from './user-events';
 import {
     TodoListCreated,
@@ -10,7 +9,7 @@ import {
     TodoListItemMoved,
 } from './todo-list-events';
 
-export const mapEvent = (input: unknown): DomainEvent<unknown> => {
+export const mapToEvent = (input: unknown): DomainEvent => {
     assert.plainObject(input);
     assert.string(input.eventName);
 

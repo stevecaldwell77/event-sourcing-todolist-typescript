@@ -1,12 +1,11 @@
-import { Agent } from 'src/entities/agent';
-import { EntityEvent } from 'src/entities/entity-event';
+import { IEvent } from 'src/event-management/event';
 
-export interface CreateCommand<T, U> {
+export interface CreateCommand<TAgent, TParams, TEvent extends IEvent> {
     name: string;
-    run: (entityId: string, agent: Agent, params: U) => EntityEvent[];
+    run: (entityId: string, agent: TAgent, params: TParams) => TEvent[];
 }
 
-export interface Command<T, V> {
+export interface Command<TAgent, TEntity, TParams, TEvent> {
     name: string;
-    run: (entity: T, agent: Agent, params: V) => EntityEvent[];
+    run: (entity: TEntity, agent: TAgent, params: TParams) => TEvent[];
 }

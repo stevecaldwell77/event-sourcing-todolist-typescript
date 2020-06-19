@@ -11,17 +11,14 @@ interface IEvent {
     eventNumber?: number;
 }
 
-interface DomainEventHandler<TEntity, TEntityDomainEvent> {
-    (entity: TEntity | undefined, event: TEntityDomainEvent): TEntity;
+interface EventHandler<TEntity, TEntityEvent> {
+    (entity: TEntity | undefined, event: TEntityEvent): TEntity;
 }
 
-const handleDomainEvent = <
-    TEntity extends IEntity,
-    TDomainEvent extends IEvent
->(
+const handleEvent = <TEntity extends IEntity, TEvent extends IEvent>(
     label: string,
-    domainEventHandler: DomainEventHandler<TEntity, TDomainEvent>,
-) => (entity: TEntity | undefined, event: TDomainEvent): TEntity => {
+    eventHandler: EventHandler<TEntity, TEvent>,
+) => (entity: TEntity | undefined, event: TEvent): TEntity => {
     if (!event.eventNumber)
         throw new Error(
             `Error in building ${label}: event found without an eventNumber (${event.getEventName()})`,
@@ -39,7 +36,7 @@ const handleDomainEvent = <
             }, eventNumber: ${event.eventNumber} (${event.getEventName()})`,
         );
 
-    const updatedEntity = domainEventHandler(entity, event);
+    const updatedEntity = eventHandler(entity, event);
     updatedEntity.revision = event.eventNumber;
 
     return updatedEntity;
@@ -47,16 +44,13 @@ const handleDomainEvent = <
 
 export const entityBuilder = <
     TEntity extends IEntity,
-    TDomainEvent extends IEvent
+    TEvent extends IEvent
 >(params: {
     label: string;
-    domainEventHandler: DomainEventHandler<TEntity, TDomainEvent>;
-}) => (prev: TEntity | undefined, events: TDomainEvent[]): TEntity => {
-    const { label, domainEventHandler } = params;
-    const result = events.reduce(
-        handleDomainEvent(label, domainEventHandler),
-        prev,
-    );
+    eventHandler: EventHandler<TEntity, TEvent>;
+}) => (prev: TEntity | undefined, events: TEvent[]): TEntity => {
+    const { label, eventHandler } = params;
+    const result = events.reduce(handleEvent(label, eventHandler), prev);
     if (!result)
         throw new Error(
             `Error in building ${label}: Unexpected: did not end up with defined entity`,

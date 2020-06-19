@@ -1,7 +1,7 @@
 import * as t from 'io-ts';
-import { DomainEvent } from '../event-management/domain-event';
+import { Event, IEvent } from '../event-management/event';
 
-const collectionType = 'TodoList';
+export const collectionType = 'TodoList';
 
 export type TodoListDomainEvent =
     | TodoListCreated
@@ -9,6 +9,15 @@ export type TodoListDomainEvent =
     | TodoListItemCompleted
     | TodoListItemUncompleted
     | TodoListItemMoved;
+
+export const isTodoListDomainEvent = (
+    event: IEvent,
+): event is TodoListDomainEvent =>
+    event instanceof TodoListCreated ||
+    event instanceof TodoListItemCreated ||
+    event instanceof TodoListItemCompleted ||
+    event instanceof TodoListItemUncompleted ||
+    event instanceof TodoListItemMoved;
 
 /*------------------------------------------------------------------------------
   TODO_LIST_CREATED
@@ -19,7 +28,7 @@ const todoListCreatedPayloadSchema = t.type({
     title: t.string,
 });
 
-export class TodoListCreated extends DomainEvent<
+export class TodoListCreated extends Event<
     t.TypeOf<typeof todoListCreatedPayloadSchema>
 > {
     static collectionType = collectionType;
@@ -36,7 +45,7 @@ const todoListItemCreatedPayloadSchema = t.type({
     text: t.string,
 });
 
-export class TodoListItemCreated extends DomainEvent<
+export class TodoListItemCreated extends Event<
     t.TypeOf<typeof todoListItemCreatedPayloadSchema>
 > {
     static collectionType = collectionType;
@@ -52,7 +61,7 @@ const todoListItemCompletedPayloadSchema = t.type({
     itemId: t.string,
 });
 
-export class TodoListItemCompleted extends DomainEvent<
+export class TodoListItemCompleted extends Event<
     t.TypeOf<typeof todoListItemCompletedPayloadSchema>
 > {
     static collectionType = collectionType;
@@ -68,7 +77,7 @@ const todoListItemUncompletedPayloadSchema = t.type({
     itemId: t.string,
 });
 
-export class TodoListItemUncompleted extends DomainEvent<
+export class TodoListItemUncompleted extends Event<
     t.TypeOf<typeof todoListItemUncompletedPayloadSchema>
 > {
     static collectionType = collectionType;
@@ -85,7 +94,7 @@ const todoListItemMovedPayloadSchema = t.type({
     newPosition: t.number,
 });
 
-export class TodoListItemMoved extends DomainEvent<
+export class TodoListItemMoved extends Event<
     t.TypeOf<typeof todoListItemMovedPayloadSchema>
 > {
     static collectionType = collectionType;

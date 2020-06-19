@@ -1,48 +1,48 @@
-import { Role } from 'src/entities/authorization';
+import { CreateCommand, Command } from 'src/event-management/command';
+import { UserDomainEvent } from 'src/events/user-events';
+import { UserRole } from 'src/events/enums';
+import { Agent } from 'src/entities/agent';
 import { User } from 'src/entities/user';
-import { CreateCommand, Command } from 'src/entities/commands';
-import { makeEventUserCreated } from './events/user-created';
-import { makeEventUserRoleAdded } from './events/user-role-added';
-import { makeEventUserRoleRemoved } from './events/user-role-removed';
+import {
+    generateEventUserCreated,
+    generateEventUserRoleAdded,
+    generateEventUserRoleRemoved,
+} from 'src/entities/user/event-generators';
 
-export interface CreateUserParams {
-    email: string;
-}
-
-const createUser: CreateCommand<User, CreateUserParams> = {
+export type CreateUserParams = { email: string };
+export const createUser: CreateCommand<
+    UserDomainEvent,
+    Agent,
+    CreateUserParams
+> = {
     name: 'createUser',
-    run: (entityId, agent, params) => [
-        makeEventUserCreated({
-            agent,
-            entityId,
-            payload: params,
-            eventRevision: 1,
-        }),
+    run: (userId, agent, payload: CreateUserParams) => [
+        generateEventUserCreated(agent, userId, payload),
     ],
 };
 
-const addRoleToUser: Command<User, { role: Role }> = {
+type AddRoleParams = { role: UserRole };
+export const addRoleToUser: Command<
+    UserDomainEvent,
+    Agent,
+    User,
+    AddRoleParams
+> = {
     name: 'addRoleToUser',
-    run: (user, agent, params) => [
-        makeEventUserRoleAdded({
-            agent,
-            entityId: user.userId,
-            payload: params,
-            eventRevision: user.revision + 1,
-        }),
+    run: (userId, agent, payload: AddRoleParams) => [
+        generateEventUserRoleAdded(agent, userId, payload),
     ],
 };
 
-const removeRoleFromUser: Command<User, { role: Role }> = {
+type RemoveRoleParams = { role: UserRole };
+export const removeRoleFromUser: Command<
+    UserDomainEvent,
+    Agent,
+    User,
+    RemoveRoleParams
+> = {
     name: 'removeRoleFromUser',
-    run: (user, agent, params) => [
-        makeEventUserRoleRemoved({
-            agent,
-            entityId: user.userId,
-            payload: params,
-            eventRevision: user.revision + 1,
-        }),
+    run: (userId, agent, payload: { role: UserRole }) => [
+        generateEventUserRoleRemoved(agent, userId, payload),
     ],
 };
-
-export { createUser, addRoleToUser, removeRoleFromUser };

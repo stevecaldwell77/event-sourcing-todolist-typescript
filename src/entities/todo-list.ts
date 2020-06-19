@@ -1,8 +1,5 @@
 import * as t from 'io-ts';
-import { EntityType } from 'src/lib/enums';
 import { mapOrDie } from 'src/util/io-ts';
-
-export const entityType = EntityType.TodoList;
 
 export type TodoList = t.TypeOf<typeof todoListSchema>;
 
@@ -29,7 +26,7 @@ export const getItem = (list: TodoList, itemId: string): TodoListItem => {
     return item;
 };
 
-const newList = (params: {
+export const newList = (params: {
     listId: string;
     owner: string;
     title: string;
@@ -41,6 +38,4 @@ const newList = (params: {
     items: [],
 });
 
-const mapToTodoList = mapOrDie(todoListSchema);
-
-export { newList, mapToTodoList };
+export const mapToTodoList = mapOrDie(todoListSchema);

@@ -1,12 +1,13 @@
+import EventStore from 'src/event-management/event-store';
+import { DomainEvent } from 'src/events/domain-event';
 import TodoListService from 'src/services/todo-list';
 import { User } from 'src/entities/user';
-import EventStore from 'src/event-management/event-store';
 import getId from 'src/util/get-id';
 import { TodoList } from 'src/entities/todo-list';
 import createTestUser from './create-test-user';
 
 const createTestTodoList = async (
-    eventStore: EventStore,
+    eventStore: EventStore<DomainEvent>,
     owner?: User,
 ): Promise<{ list: TodoList; listId: string; user: User; userId: string }> => {
     const todoListSevice = new TodoListService({ eventStore });

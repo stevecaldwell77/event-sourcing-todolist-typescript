@@ -1,14 +1,14 @@
 import test from 'ava';
 import { assert } from '@sindresorhus/is/dist';
-import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
 import UserService from 'src/services/user';
+import createEventStore from 'test/helpers/event-store';
 import getAdminUser from 'test/helpers/get-admin-user';
 
-const eventStore = new EventStoreInMemory();
+const eventStore = createEventStore();
 const userService = new UserService({ eventStore });
 
 test('UserService: create() and get()', async (t) => {

@@ -1,21 +1,11 @@
-import { DomainEvent } from './domain-event';
+import { IEvent } from './event';
 
-export interface CreateCommand<TAgent> {
+export interface CreateCommand<TEvent extends IEvent, TAgent, TParams> {
     name: string;
-    run: (
-        entityId: string,
-        agent: TAgent,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        params: any,
-    ) => DomainEvent<unknown>[];
+    run: (entityId: string, agent: TAgent, params: TParams) => TEvent[];
 }
 
-export interface Command<TAgent, TEntity> {
+export interface Command<TEvent extends IEvent, TAgent, TEntity, TParams> {
     name: string;
-    run: (
-        entity: TEntity,
-        agent: TAgent,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        params: any,
-    ) => DomainEvent<unknown>[];
+    run: (entity: TEntity, agent: TAgent, params: TParams) => TEvent[];
 }

@@ -22,7 +22,7 @@ const assertCommand = (
     list?: TodoList,
 ): void => {
     // Anyone can create a list
-    if (command === 'createList') return;
+    if (command === 'createTodoList') return;
 
     // All other commands must be done by list owner
     if (!list) throw new Error(`Unexpected: no list for command ${command}`);

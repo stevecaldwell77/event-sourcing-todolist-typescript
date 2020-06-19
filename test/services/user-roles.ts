@@ -1,11 +1,11 @@
 import test from 'ava';
-import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import getId from 'src/util/get-id';
 import { addRoleToUser, removeRoleFromUser } from 'src/entities/user/commands';
 import UserService from 'src/services/user';
+import createEventStore from 'test/helpers/event-store';
 import getAdminUser from 'test/helpers/get-admin-user';
 
-const eventStore = new EventStoreInMemory();
+const eventStore = createEventStore();
 const userService = new UserService({ eventStore });
 
 test('adding and removing roles', async (t) => {

@@ -1,98 +1,97 @@
-import { CreateCommand, Command } from 'src/entities/commands';
+import { CreateCommand, Command } from 'src/event-management/command';
+import { TodoListDomainEvent } from 'src/events/todo-list-events';
+import { Agent } from 'src/entities/agent';
 import { TodoList, getItem } from 'src/entities/todo-list';
-import { makeEventListCreated } from './events/list-created';
-import { makeEventListItemCreated } from './events/list-item-created';
-import { makeEventListItemCompleted } from './events/list-item-completed';
-import { makeEventListItemUncompleted } from './events/list-item-uncompleted';
-import { makeEventListItemMoved } from './events/list-item-moved';
+import {
+    generateEventTodoListCreated,
+    generateEventTodoListItemCreated,
+    generateEventTodoListItemCompleted,
+    generateEventTodoListItemUncompleted,
+    generateEventTodoListItemMoved,
+} from 'src/entities/todo-list/event-generators';
 
-export interface CreateListParams {
+export type CreateTodoListParams = {
     owner: string;
     title: string;
-}
-
-const createList: CreateCommand<TodoList, CreateListParams> = {
-    name: 'createList',
-    run: (entityId, agent, params) => [
-        makeEventListCreated({
-            agent,
-            entityId,
-            payload: params,
-            eventRevision: 1,
-        }),
+};
+export const createTodoList: CreateCommand<
+    TodoListDomainEvent,
+    Agent,
+    CreateTodoListParams
+> = {
+    name: 'createTodoList',
+    run: (listId, agent, payload: CreateTodoListParams) => [
+        generateEventTodoListCreated(agent, listId, payload),
     ],
 };
 
-const createListItem: Command<TodoList, { itemId: string; text: string }> = {
-    name: 'createListItem',
-    run: (list, agent, params) => {
-        const { itemId } = params;
+type CreateTodoListItemParams = { itemId: string; text: string };
+export const createTodoListItem: Command<
+    TodoListDomainEvent,
+    Agent,
+    TodoList,
+    CreateTodoListItemParams
+> = {
+    name: 'createTodoListItem',
+    run: (list, agent, payload: CreateTodoListItemParams) => {
+        const { itemId } = payload;
         const currentItemIds = list.items.map((i) => i.itemId);
         if (currentItemIds.includes(itemId))
             throw new Error(
                 `list item ${list.listId}.${itemId} already exists`,
             );
-
-        return [
-            makeEventListItemCreated({
-                agent,
-                entityId: list.listId,
-                eventRevision: list.revision + 1,
-                payload: params,
-            }),
-        ];
+        return [generateEventTodoListItemCreated(agent, list, payload)];
     },
 };
 
-const completeListItem: Command<TodoList, { itemId: string }> = {
-    name: 'completeListItem',
-    run: (list, agent, params) => {
-        const { itemId } = params;
+type CompleteTodoListItemParams = { itemId: string };
+export const completeTodoListItem: Command<
+    TodoListDomainEvent,
+    Agent,
+    TodoList,
+    CompleteTodoListItemParams
+> = {
+    name: 'completeTodoListItem',
+    run: (list, agent, payload: CompleteTodoListItemParams) => {
+        const { itemId } = payload;
         const item = getItem(list, itemId);
         if (item.completed)
             throw new Error(
                 `list item ${list.listId}.${itemId} already completed`,
             );
-
-        return [
-            makeEventListItemCompleted({
-                agent,
-                entityId: list.listId,
-                eventRevision: list.revision + 1,
-                payload: params,
-            }),
-        ];
+        return [generateEventTodoListItemCompleted(agent, list, payload)];
     },
 };
 
-const uncompleteListItem: Command<TodoList, { itemId: string }> = {
-    name: 'uncompleteListItem',
-    run: (list, agent, params) => {
-        const { itemId } = params;
+type UncompleteTodoListItemParams = { itemId: string };
+export const uncompleteTodoListItem: Command<
+    TodoListDomainEvent,
+    Agent,
+    TodoList,
+    UncompleteTodoListItemParams
+> = {
+    name: 'uncompleteTodoListItem',
+    run: (list, agent, payload: UncompleteTodoListItemParams) => {
+        const { itemId } = payload;
         const item = getItem(list, itemId);
         if (!item.completed)
             throw new Error(
                 `list item ${list.listId}.${itemId} already completed`,
             );
-
-        return [
-            makeEventListItemUncompleted({
-                agent,
-                entityId: list.listId,
-                eventRevision: list.revision + 1,
-                payload: params,
-            }),
-        ];
+        return [generateEventTodoListItemUncompleted(agent, list, payload)];
     },
 };
 
-const moveListItem: Command<
+type MoveTodoListItemParams = { itemId: string; newPosition: number };
+export const moveTodoListItem: Command<
+    TodoListDomainEvent,
+    Agent,
     TodoList,
-    { itemId: string; newPosition: number }
+    MoveTodoListItemParams
 > = {
-    name: 'moveListItem',
-    run: (list, agent, params) => {
-        const { itemId, newPosition } = params;
+    name: 'moveTodoListItem',
+    run: (list, agent, payload: MoveTodoListItemParams) => {
+        const { itemId, newPosition } = payload;
 
         // asserts item existence
         getItem(list, itemId);
@@ -103,21 +102,6 @@ const moveListItem: Command<
         if (newPosition > numItems)
             throw new Error('newPosition is out of bounds');
 
-        return [
-            makeEventListItemMoved({
-                agent,
-                entityId: list.listId,
-                eventRevision: list.revision + 1,
-                payload: params,
-            }),
-        ];
+        return [generateEventTodoListItemMoved(agent, list, payload)];
     },
-};
-
-export {
-    createList,
-    createListItem,
-    completeListItem,
-    uncompleteListItem,
-    moveListItem,
 };

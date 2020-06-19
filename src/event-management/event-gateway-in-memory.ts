@@ -1,55 +1,64 @@
 import assert from 'assert';
 import autoBind from 'auto-bind';
+import { assert as assertIs } from '@sindresorhus/is/dist';
 import { EventGateway } from './event-store';
-import { GenericDomainEvent } from './domain-event';
+import { IEvent } from './event';
 
-class EventGatewayInMemory implements EventGateway {
-    private events: Record<string, GenericDomainEvent[]> = {};
+const getEventNumber = (event: unknown): number => {
+    assertIs.object(event);
+    if (!event.eventNumber) throw new Error('Unexpected, event missing number');
+    assertIs.number(event.eventNumber);
+    return event.eventNumber;
+};
+
+class EventGatewayInMemory<TEvent extends IEvent>
+    implements EventGateway<TEvent> {
+    // events format: { [collectionType]: [collectionId]: [{event}, ...]}
+    private events: Record<
+        string,
+        Record<string, Record<string, unknown>[]>
+    > = {};
 
     constructor() {
         autoBind(this);
     }
 
-    async saveEvent(event: GenericDomainEvent): Promise<void> {
+    saveEvent(event: TEvent): void {
         const { collectionId } = event;
         const collectionType = event.getCollectionType();
-        const entityKey = `${collectionType}#${collectionId}`;
-        const events = this.events[entityKey] || [];
+        this.events[collectionType] = this.events[collectionType] || {};
+        const events = this.events[collectionType][collectionId] || [];
+
         const lastEvent = events[events.length - 1];
         let expectedRevision: number;
         if (lastEvent) {
-            if (!lastEvent.eventNumber)
-                throw new Error('Unexpected, saved event missing number');
-            expectedRevision = lastEvent.eventNumber + 1;
+            expectedRevision = getEventNumber(lastEvent) + 1;
         } else {
             expectedRevision = 1;
         }
 
         assert.strictEqual(
-            event.eventNumber,
+            getEventNumber(event),
             expectedRevision,
             'out of order event',
         );
 
-        events.push(event);
-        this.events[entityKey] = events;
+        events.push(event.valueOf());
+        this.events[collectionType][collectionId] = events;
     }
 
-    async saveEvents(events: GenericDomainEvent[]): Promise<void> {
-        events.map((event) => this.saveEvent(event));
+    async saveEvents(events: TEvent[]): Promise<void> {
+        events.forEach((event) => this.saveEvent(event));
     }
 
     async getEvents(
         collectionType: string,
         collectionId: string,
         startingRevision = 1,
-    ): Promise<GenericDomainEvent[]> {
-        const entityKey = `${collectionType}#${collectionId}`;
-        const allEvents = this.events[entityKey] || [];
+    ): Promise<Record<string, unknown>[]> {
+        const allEvents = this.events[collectionType]?.[collectionId] || [];
         return allEvents.filter((event) => {
-            if (!event.eventNumber)
-                throw new Error('Unexpected, saved event missing number');
-            return event.eventNumber >= startingRevision;
+            return getEventNumber(event) >= startingRevision;
         });
     }
 }

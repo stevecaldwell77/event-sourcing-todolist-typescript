@@ -1,13 +1,13 @@
 import test from 'ava';
 import TodoListService from 'src/services/todo-list';
-import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { newList } from 'src/entities/todo-list';
 import getId from 'src/util/get-id';
+import createEventStore from 'test/helpers/event-store';
 import getAdminUser from 'test/helpers/get-admin-user';
 
-const eventStore = new EventStoreInMemory();
+const eventStore = createEventStore();
 const todoListService = new TodoListService({ eventStore });
 
 test('TodoListService.get(): success', async (t) => {

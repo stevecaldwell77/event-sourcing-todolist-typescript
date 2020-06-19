@@ -1,42 +1,68 @@
 import autoBind from 'auto-bind';
-import EventStore from 'src/event-management/event-store';
-import { EntityType } from 'src/lib/enums';
-import { MapToEntity, HasRevision } from 'src/entities/types';
-import { EntityEvent } from 'src/entities/entity-event';
+import { IEvent } from 'src/event-management/event';
+import { CreateCommand, Command } from 'src/event-management/command';
+import EventStore, {
+    MapToEntity,
+    IEntity,
+} from 'src/event-management/event-store';
 import { Agent } from 'src/entities/agent';
 import { Authorization } from 'src/entities/authorization';
-import { CreateCommand, Command } from 'src/entities/commands';
 
-type BuildFromEvents<T> = {
-    (prev: T | undefined, events: EntityEvent[]): T;
+type BuildFromEvents<TEntity extends IEntity, TEvent extends IEvent> = {
+    (prev: TEntity | undefined, events: TEvent[]): TEntity;
 };
 
-abstract class EventBasedEntityService<T extends HasRevision, U> {
-    eventStore: EventStore;
-    abstract entityType: EntityType;
-    abstract buildFromEvents: BuildFromEvents<T>;
-    abstract authorization: Authorization<T>;
-    abstract createCommand: CreateCommand<T, U>;
-    abstract mapToEntity: MapToEntity<T>;
+type IsEntityEvent<TEvent extends IEvent, TEntityEvent extends TEvent> = {
+    (event: TEvent): event is TEntityEvent;
+};
 
-    constructor(params: { eventStore: EventStore }) {
+abstract class EventBasedEntityService<
+    TEntity extends IEntity,
+    TCreateCommandParams,
+    TEvent extends IEvent,
+    TEntityEvent extends TEvent
+> {
+    eventStore: EventStore<TEvent>;
+    abstract collectionType: string;
+    abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
+    abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
+    abstract mapToEntity: MapToEntity<TEntity>;
+    abstract authorization: Authorization<TEntity>;
+    abstract createCommand: CreateCommand<TEvent, Agent, TCreateCommandParams>;
+
+    constructor(params: { eventStore: EventStore<TEvent> }) {
         this.eventStore = params.eventStore;
         autoBind(this);
     }
 
-    async get(entityId: string, agent: Agent): Promise<T | undefined> {
+    mapToEntityEvents(events: TEvent[]): TEntityEvent[] {
+        return events.map((event) => {
+            if (!this.isEntityEvent(event))
+                throw new Error(
+                    `Unexpected event found: ${event.getEventName()}`,
+                );
+            return event;
+        });
+    }
+
+    _buildFromEvents(prev: TEntity | undefined, events: TEvent[]): TEntity {
+        const entityEvents = this.mapToEntityEvents(events);
+        return this.buildFromEvents(prev, entityEvents);
+    }
+
+    async get(entityId: string, agent: Agent): Promise<TEntity | undefined> {
         const { snapshot, events } = await this.eventStore.getEntitySourceData(
-            this.entityType,
+            this.collectionType,
             this.mapToEntity,
             entityId,
         );
         if (events.length === 0) return undefined;
-        const entity = this.buildFromEvents(snapshot, events);
+        const entity = this._buildFromEvents(snapshot, events);
         this.authorization.assertRead(agent, entity);
         return entity;
     }
 
-    async getOrDie(entityId: string, agent: Agent): Promise<T> {
+    async getOrDie(entityId: string, agent: Agent): Promise<TEntity> {
         const entity = await this.get(entityId, agent);
         if (!entity)
             throw new Error(
@@ -45,36 +71,63 @@ abstract class EventBasedEntityService<T extends HasRevision, U> {
         return entity;
     }
 
-    private async _executeCommand(
-        agent: Agent,
-        commandName: string,
-        run: () => EntityEvent[],
-        entity?: T,
-    ): Promise<T> {
-        this.authorization.assertCommand(agent, commandName, entity);
-        const events = run();
+    private async _executeCommand(params: {
+        agent: Agent;
+        commandName: string;
+        entity?: TEntity;
+        prevEventNumber: number;
+        run: () => TEvent[];
+    }): Promise<TEntity> {
+        this.authorization.assertCommand(
+            params.agent,
+            params.commandName,
+            params.entity,
+        );
+        const events = params.run();
+
+        let eventNumber = params.prevEventNumber;
+        for (const event of events) {
+            eventNumber += 1;
+            event.eventNumber = eventNumber;
+        }
+
         await this.eventStore.saveEvents(events);
-        return this.buildFromEvents(entity, events);
+        return this._buildFromEvents(params.entity, events);
     }
 
-    async create(entityId: string, agent: Agent, params: U): Promise<T> {
+    async create(
+        entityId: string,
+        agent: Agent,
+        params: TCreateCommandParams,
+    ): Promise<TEntity> {
         const exists = await this.get(entityId, agent);
         if (exists)
             throw new Error(
                 `${this.constructor.name}.create(): ${entityId} already exists`,
             );
         const run = () => this.createCommand.run(entityId, agent, params);
-        return this._executeCommand(agent, this.createCommand.name, run);
+        return this._executeCommand({
+            agent,
+            commandName: this.createCommand.name,
+            prevEventNumber: 0,
+            run,
+        });
     }
 
-    async runCommand<V>(
-        command: Command<T, V>,
-        entity: T,
+    async runCommand<TParams>(
+        command: Command<TEvent, Agent, TEntity, TParams>,
+        entity: TEntity,
         agent: Agent,
-        params: V,
-    ): Promise<T> {
+        params: TParams,
+    ): Promise<TEntity> {
         const run = () => command.run(entity, agent, params);
-        return this._executeCommand(agent, command.name, run, entity);
+        return this._executeCommand({
+            agent,
+            commandName: command.name,
+            entity,
+            prevEventNumber: entity.revision,
+            run,
+        });
     }
 }
 

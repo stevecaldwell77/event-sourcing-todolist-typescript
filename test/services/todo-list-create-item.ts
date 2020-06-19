@@ -1,13 +1,13 @@
 import test from 'ava';
-import EventStoreInMemory from 'src/event-management/event-store-in-memory';
 import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
-import { createListItem } from 'src/entities/todo-list/commands';
+import { createTodoListItem } from 'src/entities/todo-list/commands';
 import TodoListService from 'src/services/todo-list';
+import createEventStore from 'test/helpers/event-store';
 import createTestTodoList from 'test/helpers/create-test-todo-list';
 
-const eventStore = new EventStoreInMemory();
+const eventStore = createEventStore();
 const todoListSevice = new TodoListService({ eventStore });
 
 const getList = async (listId: string) =>
@@ -18,7 +18,7 @@ test('TodoListService.createListItem() - success', async (t) => {
     const itemId = getId();
 
     let list = await getList(listId);
-    await todoListSevice.runCommand(createListItem, list, user, {
+    await todoListSevice.runCommand(createTodoListItem, list, user, {
         itemId,
         text: 'My Test Item',
     });
@@ -43,7 +43,7 @@ test('TodoListService.createListItem() - duplicate throws error', async (t) => {
 
     const runCommand = async () => {
         const list = await getList(listId);
-        await todoListSevice.runCommand(createListItem, list, user, {
+        await todoListSevice.runCommand(createTodoListItem, list, user, {
             itemId,
             text: 'My Test Item',
         });
@@ -71,7 +71,7 @@ test('TodoListService.createListItem() - permissions', async (t) => {
 
     await t.throwsAsync(
         () =>
-            todoListSevice.runCommand(createListItem, list, otherUser, {
+            todoListSevice.runCommand(createTodoListItem, list, otherUser, {
                 itemId: getId(),
                 text: 'My Test Item',
             }),

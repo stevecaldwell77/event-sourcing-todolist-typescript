@@ -2,7 +2,7 @@ import { Type } from 'io-ts';
 import { assert } from '@sindresorhus/is/dist';
 import { mapOrDie } from 'src/util/io-ts';
 
-type DomainEventParams<TPayload> = {
+type EventInput<TPayload> = {
     schemaVersion: number;
     eventTimestamp: number;
     agentId: string;
@@ -11,12 +11,19 @@ type DomainEventParams<TPayload> = {
     eventNumber?: number;
 };
 
-type StaticDomainEvent<TEvent, TPayload> = {
-    new (params: DomainEventParams<TPayload>): TEvent;
+type EventValue = EventInput<Record<string, unknown>> & {
+    eventName: string;
+    collectionType: string;
+};
+
+type EventStatic<TEvent, TPayload> = {
+    new (params: EventInput<TPayload>): TEvent;
     payloadSchema: Type<TPayload>;
 };
 
-export abstract class DomainEvent<TPayload> {
+export type IEvent = Event<Record<string, unknown>>;
+
+export abstract class Event<TPayload extends Record<string, unknown>> {
     schemaVersion: number;
     eventTimestamp: number;
     agentId: string;
@@ -26,7 +33,7 @@ export abstract class DomainEvent<TPayload> {
     static eventName: string;
     static collectionType: string;
 
-    constructor(params: DomainEventParams<TPayload>) {
+    constructor(params: EventInput<TPayload>) {
         this.schemaVersion = params.schemaVersion;
         this.eventTimestamp = params.eventTimestamp;
         this.agentId = params.agentId;
@@ -35,10 +42,10 @@ export abstract class DomainEvent<TPayload> {
         this.eventNumber = params.eventNumber;
     }
 
-    static map<TPayload, TEvent extends DomainEvent<TPayload>>(
-        this: StaticDomainEvent<TEvent, TPayload>,
-        input: unknown,
-    ): TEvent {
+    static map<
+        TPayload extends Record<string, unknown>,
+        TEvent extends Event<TPayload>
+    >(this: EventStatic<TEvent, TPayload>, input: unknown): TEvent {
         assert.plainObject(input);
         assert.number(input.schemaVersion);
         assert.number(input.eventTimestamp);
@@ -48,7 +55,7 @@ export abstract class DomainEvent<TPayload> {
         assert.number(input.eventNumber);
         assert.string(input.eventName);
 
-        const payload = mapOrDie(this.payloadSchema)(input);
+        const payload = mapOrDie(this.payloadSchema)(input.payload);
 
         return new this({
             schemaVersion: input.schemaVersion,
@@ -61,32 +68,41 @@ export abstract class DomainEvent<TPayload> {
     }
 
     getEventName(): string {
-        const constructor = <typeof DomainEvent>this.constructor;
+        const constructor = <typeof Event>this.constructor;
         return constructor.eventName;
     }
 
     getCollectionType(): string {
-        const constructor = <typeof DomainEvent>this.constructor;
+        const constructor = <typeof Event>this.constructor;
         return constructor.collectionType;
+    }
+
+    valueOf(): EventValue {
+        return {
+            schemaVersion: this.schemaVersion,
+            eventTimestamp: this.eventTimestamp,
+            agentId: this.agentId,
+            collectionId: this.collectionId,
+            payload: this.payload,
+            eventNumber: this.eventNumber,
+            eventName: this.getEventName(),
+            collectionType: this.getCollectionType(),
+        };
     }
 }
 
-export type DomainEventClass<TPayload> = {
-    new (params: DomainEventParams<TPayload>): DomainEvent<TPayload>;
+export type EventClass<TPayload extends Record<string, unknown>> = {
+    new (params: EventInput<TPayload>): Event<TPayload>;
 };
 
-export type GenericDomainEvent = DomainEvent<unknown>;
-
-export const generateDomainEvent = <TAgent, TEntity>(
+export const generateEvent = <TAgent, TEntity>(
     schemaVersion: number,
     getAgentId: (agent: TAgent) => string,
     getCollectionId: (entity: TEntity) => string,
     // eslint-disable-next-line unicorn/consistent-function-scoping
-) => <TPayload>(EventClass: DomainEventClass<TPayload>) => (
-    agent: TAgent,
-    entity: TEntity,
-    payload: TPayload,
-): DomainEvent<TPayload> => {
+) => <TPayload extends Record<string, unknown>>(
+    EventClass: EventClass<TPayload>,
+) => (agent: TAgent, entity: TEntity, payload: TPayload): Event<TPayload> => {
     const agentId = getAgentId(agent);
     const collectionId = getCollectionId(entity);
     return new EventClass({
@@ -98,15 +114,18 @@ export const generateDomainEvent = <TAgent, TEntity>(
     });
 };
 
-export const generateStartingEvent = <TAgent, TPayload>(
+export const generateStartingEvent = <
+    TAgent,
+    TPayload extends Record<string, unknown>
+>(
     schemaVersion: number,
     getAgentId: (agent: TAgent) => string,
-    EventClass: DomainEventClass<TPayload>,
+    EventClass: EventClass<TPayload>,
 ) => (
     agent: TAgent,
     collectionId: string,
     payload: TPayload,
-): DomainEvent<TPayload> => {
+): Event<TPayload> => {
     const agentId = getAgentId(agent);
     return new EventClass({
         agentId,
