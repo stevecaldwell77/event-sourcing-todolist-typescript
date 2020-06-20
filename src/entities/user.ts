@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { roleSchema } from 'src/entities/authorization';
+import { agentRoleSchema } from 'src/entities/agent';
 import { mapOrDie } from 'src/util/io-ts';
 
 export type User = t.TypeOf<typeof userSchema>;
@@ -8,7 +8,7 @@ const userSchema = t.type({
     userId: t.string,
     email: t.string,
     revision: t.number,
-    roles: t.array(roleSchema),
+    roles: t.array(agentRoleSchema),
 });
 
 export const mapToUser = mapOrDie(userSchema);

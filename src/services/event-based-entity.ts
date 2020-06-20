@@ -5,8 +5,11 @@ import EventStore, {
     MapToEntity,
     IEntity,
 } from 'src/event-management/event-store';
-import { Agent } from 'src/entities/agent';
-import { Authorization } from 'src/entities/authorization';
+
+export type Authorization<TAgent, TEntity> = {
+    assertRead: (agent: TAgent, entity: TEntity) => void;
+    assertCommand: (agent: TAgent, command: string, entity?: TEntity) => void;
+};
 
 type BuildFromEvents<TEntity extends IEntity, TEvent extends IEvent> = {
     (prev: TEntity | undefined, events: TEvent[]): TEntity;
@@ -20,15 +23,16 @@ abstract class EventBasedEntityService<
     TEntity extends IEntity,
     TCreateCommandParams,
     TEvent extends IEvent,
-    TEntityEvent extends TEvent
+    TEntityEvent extends TEvent,
+    TAgent
 > {
     eventStore: EventStore<TEvent>;
     abstract collectionType: string;
     abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
     abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
     abstract mapToEntity: MapToEntity<TEntity>;
-    abstract authorization: Authorization<TEntity>;
-    abstract createCommand: CreateCommand<TEvent, Agent, TCreateCommandParams>;
+    abstract authorization: Authorization<TAgent, TEntity>;
+    abstract createCommand: CreateCommand<TEvent, TAgent, TCreateCommandParams>;
 
     constructor(params: { eventStore: EventStore<TEvent> }) {
         this.eventStore = params.eventStore;
@@ -50,7 +54,7 @@ abstract class EventBasedEntityService<
         return this.buildFromEvents(prev, entityEvents);
     }
 
-    async get(entityId: string, agent: Agent): Promise<TEntity | undefined> {
+    async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
         const { snapshot, events } = await this.eventStore.getEntitySourceData(
             this.collectionType,
             this.mapToEntity,
@@ -62,7 +66,7 @@ abstract class EventBasedEntityService<
         return entity;
     }
 
-    async getOrDie(entityId: string, agent: Agent): Promise<TEntity> {
+    async getOrDie(entityId: string, agent: TAgent): Promise<TEntity> {
         const entity = await this.get(entityId, agent);
         if (!entity)
             throw new Error(
@@ -72,7 +76,7 @@ abstract class EventBasedEntityService<
     }
 
     private async _executeCommand(params: {
-        agent: Agent;
+        agent: TAgent;
         commandName: string;
         entity?: TEntity;
         prevEventNumber: number;
@@ -97,7 +101,7 @@ abstract class EventBasedEntityService<
 
     async create(
         entityId: string,
-        agent: Agent,
+        agent: TAgent,
         params: TCreateCommandParams,
     ): Promise<TEntity> {
         const exists = await this.get(entityId, agent);
@@ -115,9 +119,9 @@ abstract class EventBasedEntityService<
     }
 
     async runCommand<TParams>(
-        command: Command<TEvent, Agent, TEntity, TParams>,
+        command: Command<TEvent, TAgent, TEntity, TParams>,
         entity: TEntity,
-        agent: Agent,
+        agent: TAgent,
         params: TParams,
     ): Promise<TEntity> {
         const run = () => command.run(entity, agent, params);

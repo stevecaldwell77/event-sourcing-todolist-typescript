@@ -1,5 +1,5 @@
 import test from 'ava';
-import { systemAgent } from 'src/entities/agent';
+import { systemAgent } from 'src/entities/system-agent';
 import { newUser } from 'src/entities/user';
 import { newList } from 'src/entities/todo-list';
 import getId from 'src/util/get-id';

@@ -1,10 +1,12 @@
 import assert from 'assert';
+import { Authorization } from 'src/services/event-based-entity';
 import {
     Permission,
-    Authorization,
     agentHasPermission,
-} from 'src/entities/authorization';
-import { Agent, getUserId } from 'src/entities/agent';
+    Agent,
+    getUserId,
+} from 'src/entities/agent';
+
 import { TodoList } from '../todo-list';
 
 const agentOwnsList = (agent: Agent, list: TodoList) =>
@@ -29,6 +31,9 @@ const assertCommand = (
     assert(agentOwnsList(agent, list), 'LIST USER MISMATCH');
 };
 
-const authorization: Authorization<TodoList> = { assertRead, assertCommand };
+const authorization: Authorization<Agent, TodoList> = {
+    assertRead,
+    assertCommand,
+};
 
 export default authorization;

@@ -1,5 +1,5 @@
 import casual from 'casual';
-import { systemAgent } from 'src/entities/agent';
+import { systemAgent } from 'src/entities/system-agent';
 import getId from 'src/util/get-id';
 import { User } from 'src/entities/user';
 import { userService } from './services';

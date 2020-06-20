@@ -8,13 +8,15 @@ import { User, mapToUser } from 'src/entities/user';
 import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/builder';
 import { createUser, CreateUserParams } from 'src/entities/user/commands';
+import { Agent } from 'src/entities/agent';
 import EventBasedEntityService from './event-based-entity';
 
 class UserService extends EventBasedEntityService<
     User,
     CreateUserParams,
     DomainEvent,
-    UserDomainEvent
+    UserDomainEvent,
+    Agent
 > {
     collectionType = collectionType;
     isEntityEvent = isUserDomainEvent;

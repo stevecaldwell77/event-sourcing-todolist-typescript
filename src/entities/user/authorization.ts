@@ -1,10 +1,12 @@
+import { Authorization } from 'src/services/event-based-entity';
 import {
     Permission,
-    Authorization,
     agentHasPermission,
     assertAgentHasPermission,
-} from 'src/entities/authorization';
-import { Agent, getUserId } from 'src/entities/agent';
+    Agent,
+    getUserId,
+} from 'src/entities/agent';
+
 import { User } from '../user';
 
 const assertRead = (agent: Agent, user: User): void => {
@@ -26,6 +28,6 @@ const assertCommand = (agent: Agent, command: string): void => {
     assertAgentHasPermission(agent, permission);
 };
 
-const authorization: Authorization<User> = { assertRead, assertCommand };
+const authorization: Authorization<Agent, User> = { assertRead, assertCommand };
 
 export default authorization;

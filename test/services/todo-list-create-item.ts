@@ -1,6 +1,6 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
-import { systemAgent } from 'src/entities/agent';
+import { systemAgent } from 'src/entities/system-agent';
 import { newUser } from 'src/entities/user';
 import { createTodoListItem } from 'src/entities/todo-list/commands';
 import createTestTodoList from 'test/helpers/create-test-todo-list';

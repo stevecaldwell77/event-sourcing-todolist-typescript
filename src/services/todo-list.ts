@@ -11,13 +11,15 @@ import {
     createTodoList,
     CreateTodoListParams,
 } from 'src/entities/todo-list/commands';
+import { Agent } from 'src/entities/agent';
 import EventBasedEntityService from './event-based-entity';
 
 class TodoListService extends EventBasedEntityService<
     TodoList,
     CreateTodoListParams,
     DomainEvent,
-    TodoListDomainEvent
+    TodoListDomainEvent,
+    Agent
 > {
     collectionType = collectionType;
     isEntityEvent = isTodoListDomainEvent;

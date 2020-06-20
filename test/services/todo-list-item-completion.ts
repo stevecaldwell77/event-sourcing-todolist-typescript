@@ -1,6 +1,6 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
-import { systemAgent } from 'src/entities/agent';
+import { systemAgent } from 'src/entities/system-agent';
 import { User } from 'src/entities/user';
 import { TodoList, getItem } from 'src/entities/todo-list';
 import {

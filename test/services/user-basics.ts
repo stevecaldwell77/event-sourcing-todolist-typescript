@@ -1,7 +1,7 @@
 import test from 'ava';
 import { assert } from '@sindresorhus/is/dist';
 import getId from 'src/util/get-id';
-import { systemAgent } from 'src/entities/agent';
+import { systemAgent } from 'src/entities/system-agent';
 import { newUser } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
 import getAdminUser from 'test/helpers/get-admin-user';
