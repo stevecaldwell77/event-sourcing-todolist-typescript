@@ -8,19 +8,15 @@ import {
     completeTodoListItem,
     uncompleteTodoListItem,
 } from 'src/entities/todo-list/commands';
-import TodoListService from 'src/services/todo-list';
-import createEventStore from 'test/helpers/event-store';
 import createTestTodoList from 'test/helpers/create-test-todo-list';
-
-const eventStore = createEventStore();
-const todoListSevice = new TodoListService({ eventStore });
+import { todoListService } from 'test/helpers/services';
 
 const getList = async (listId: string) =>
-    todoListSevice.getOrDie(listId, systemAgent);
+    todoListService.getOrDie(listId, systemAgent);
 
 const addItem = async (user: User, list: TodoList, itemText: string) => {
     const itemId = getId();
-    await todoListSevice.runCommand(createTodoListItem, list, user, {
+    await todoListService.runCommand(createTodoListItem, list, user, {
         itemId,
         text: itemText,
     });
@@ -28,18 +24,18 @@ const addItem = async (user: User, list: TodoList, itemText: string) => {
 };
 
 test('TodoListService: item completion', async (t) => {
-    const { user, listId } = await createTestTodoList(eventStore);
+    const { user, listId } = await createTestTodoList();
     let list = await getList(listId);
 
     const itemId1 = await addItem(user, list, 'first item');
     const itemId2 = await addItem(user, list, 'second item');
     const itemId3 = await addItem(user, list, 'third item');
 
-    await todoListSevice.runCommand(completeTodoListItem, list, user, {
+    await todoListService.runCommand(completeTodoListItem, list, user, {
         itemId: itemId2,
     });
 
-    await todoListSevice.runCommand(completeTodoListItem, list, user, {
+    await todoListService.runCommand(completeTodoListItem, list, user, {
         itemId: itemId3,
     });
 
@@ -48,7 +44,7 @@ test('TodoListService: item completion', async (t) => {
     t.true(getItem(list, itemId2).completed, 'item2 completed');
     t.true(getItem(list, itemId3).completed, 'item3 completed');
 
-    await todoListSevice.runCommand(uncompleteTodoListItem, list, user, {
+    await todoListService.runCommand(uncompleteTodoListItem, list, user, {
         itemId: itemId2,
     });
     list = await getList(listId);

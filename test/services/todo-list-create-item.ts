@@ -3,22 +3,18 @@ import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { createTodoListItem } from 'src/entities/todo-list/commands';
-import TodoListService from 'src/services/todo-list';
-import createEventStore from 'test/helpers/event-store';
 import createTestTodoList from 'test/helpers/create-test-todo-list';
-
-const eventStore = createEventStore();
-const todoListSevice = new TodoListService({ eventStore });
+import { todoListService } from 'test/helpers/services';
 
 const getList = async (listId: string) =>
-    todoListSevice.getOrDie(listId, systemAgent);
+    todoListService.getOrDie(listId, systemAgent);
 
 test('TodoListService.createListItem() - success', async (t) => {
-    const { user, listId } = await createTestTodoList(eventStore);
+    const { user, listId } = await createTestTodoList();
     const itemId = getId();
 
     let list = await getList(listId);
-    await todoListSevice.runCommand(createTodoListItem, list, user, {
+    await todoListService.runCommand(createTodoListItem, list, user, {
         itemId,
         text: 'My Test Item',
     });
@@ -38,12 +34,12 @@ test('TodoListService.createListItem() - success', async (t) => {
 });
 
 test('TodoListService.createListItem() - duplicate throws error', async (t) => {
-    const { user, listId } = await createTestTodoList(eventStore);
+    const { user, listId } = await createTestTodoList();
     const itemId = getId();
 
     const runCommand = async () => {
         const list = await getList(listId);
-        await todoListSevice.runCommand(createTodoListItem, list, user, {
+        await todoListService.runCommand(createTodoListItem, list, user, {
             itemId,
             text: 'My Test Item',
         });
@@ -61,7 +57,7 @@ test('TodoListService.createListItem() - duplicate throws error', async (t) => {
 });
 
 test('TodoListService.createListItem() - permissions', async (t) => {
-    const { listId } = await createTestTodoList(eventStore);
+    const { listId } = await createTestTodoList();
     const list = await getList(listId);
 
     const otherUser = newUser({
@@ -71,7 +67,7 @@ test('TodoListService.createListItem() - permissions', async (t) => {
 
     await t.throwsAsync(
         () =>
-            todoListSevice.runCommand(createTodoListItem, list, otherUser, {
+            todoListService.runCommand(createTodoListItem, list, otherUser, {
                 itemId: getId(),
                 text: 'My Test Item',
             }),

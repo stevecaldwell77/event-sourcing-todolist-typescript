@@ -1,12 +1,8 @@
 import test from 'ava';
 import getId from 'src/util/get-id';
 import { addRoleToUser, removeRoleFromUser } from 'src/entities/user/commands';
-import UserService from 'src/services/user';
-import createEventStore from 'test/helpers/event-store';
 import getAdminUser from 'test/helpers/get-admin-user';
-
-const eventStore = createEventStore();
-const userService = new UserService({ eventStore });
+import { userService } from 'test/helpers/services';
 
 test('adding and removing roles', async (t) => {
     const adminUser = getAdminUser();

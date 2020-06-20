@@ -4,11 +4,7 @@ import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
-import TodoListService from 'src/services/todo-list';
-import createEventStore from 'test/helpers/event-store';
-
-const eventStore = createEventStore();
-const todoListSevice = new TodoListService({ eventStore });
+import { todoListService } from 'test/helpers/services';
 
 test('TodoListService.create(): successful creation', async (t) => {
     const user = newUser({
@@ -17,11 +13,12 @@ test('TodoListService.create(): successful creation', async (t) => {
     });
 
     const listId = getId();
-    const getEvents = () => eventStore.getEvents(EntityType.TodoList, listId);
+    const getEvents = () =>
+        todoListService.eventStore.getEvents(EntityType.TodoList, listId);
 
     t.deepEqual(await getEvents(), [], 'no events initially');
 
-    await todoListSevice.create(listId, systemAgent, {
+    await todoListService.create(listId, systemAgent, {
         owner: user.userId,
         title: 'my list',
     });
@@ -29,7 +26,7 @@ test('TodoListService.create(): successful creation', async (t) => {
     const events = await getEvents();
     t.is(events.length, 1, 'one event saved');
 
-    const list = await todoListSevice.get(listId, systemAgent);
+    const list = await todoListService.get(listId, systemAgent);
     t.truthy(list, 'list can be fetched aftewards');
     assert.object(list);
     t.deepEqual(
@@ -49,7 +46,7 @@ test('TodoListService.create():  error on duplicate', async (t) => {
     const listId = getId();
 
     const runCommand = () =>
-        todoListSevice.create(listId, systemAgent, {
+        todoListService.create(listId, systemAgent, {
             owner: getId(),
             title: 'a list',
         });

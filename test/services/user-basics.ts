@@ -4,17 +4,14 @@ import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/agent';
 import { newUser } from 'src/entities/user';
 import { EntityType } from 'src/lib/enums';
-import UserService from 'src/services/user';
-import createEventStore from 'test/helpers/event-store';
 import getAdminUser from 'test/helpers/get-admin-user';
-
-const eventStore = createEventStore();
-const userService = new UserService({ eventStore });
+import { userService } from 'test/helpers/services';
 
 test('UserService: create() and get()', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
-    const getEvents = () => eventStore.getEvents(EntityType.User, userId);
+    const getEvents = () =>
+        userService.eventStore.getEvents(EntityType.User, userId);
 
     t.deepEqual(await getEvents(), [], 'no events initially');
 
