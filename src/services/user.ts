@@ -1,3 +1,4 @@
+import EntityService from 'src/event-management/entity-service';
 import { DomainEvent } from 'src/events/domain-event';
 import {
     UserDomainEvent,
@@ -9,9 +10,8 @@ import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/builder';
 import { createUser, CreateUserParams } from 'src/entities/user/commands';
 import { Agent } from 'src/entities/agent';
-import EventBasedEntityService from './event-based-entity';
 
-class UserService extends EventBasedEntityService<
+class UserService extends EntityService<
     User,
     CreateUserParams,
     DomainEvent,

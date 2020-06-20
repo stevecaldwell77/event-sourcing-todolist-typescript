@@ -1,4 +1,4 @@
-import { Authorization } from 'src/services/event-based-entity';
+import { Authorization } from 'src/event-management/entity-service';
 import {
     Permission,
     agentHasPermission,

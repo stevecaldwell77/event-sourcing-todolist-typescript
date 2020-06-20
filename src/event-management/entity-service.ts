@@ -19,7 +19,7 @@ type IsEntityEvent<TEvent extends IEvent, TEntityEvent extends TEvent> = {
     (event: TEvent): event is TEntityEvent;
 };
 
-abstract class EventBasedEntityService<
+abstract class EntityService<
     TEntity extends IEntity,
     TCreateCommandParams,
     TEvent extends IEvent,
@@ -135,4 +135,4 @@ abstract class EventBasedEntityService<
     }
 }
 
-export default EventBasedEntityService;
+export default EntityService;

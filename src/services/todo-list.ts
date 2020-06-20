@@ -1,3 +1,4 @@
+import EntityService from 'src/event-management/entity-service';
 import { DomainEvent } from 'src/events/domain-event';
 import {
     TodoListDomainEvent,
@@ -12,9 +13,8 @@ import {
     CreateTodoListParams,
 } from 'src/entities/todo-list/commands';
 import { Agent } from 'src/entities/agent';
-import EventBasedEntityService from './event-based-entity';
 
-class TodoListService extends EventBasedEntityService<
+class TodoListService extends EntityService<
     TodoList,
     CreateTodoListParams,
     DomainEvent,
