@@ -1,22 +1,27 @@
-import * as t from 'io-ts';
-import { coerce } from 'src/util/io-ts';
+import {
+    StructType,
+    assert,
+    object,
+    number,
+    string,
+    array,
+    boolean,
+} from 'superstruct';
 
-export type TodoList = t.TypeOf<typeof todoListSchema>;
-
-type TodoListItem = t.TypeOf<typeof itemSchema>;
-
-const itemSchema = t.type({
-    itemId: t.string,
-    text: t.string,
-    completed: t.boolean,
+type TodoListItem = StructType<typeof TodoListItem>;
+const TodoListItem = object({
+    itemId: string(),
+    text: string(),
+    completed: boolean(),
 });
 
-const todoListSchema = t.type({
-    listId: t.string,
-    owner: t.string,
-    revision: t.number,
-    title: t.string,
-    items: t.array(itemSchema),
+export type TodoList = StructType<typeof TodoList>;
+const TodoList = object({
+    listId: string(),
+    owner: string(),
+    revision: number(),
+    title: string(),
+    items: array(TodoListItem),
 });
 
 export const getItem = (list: TodoList, itemId: string): TodoListItem => {
@@ -38,4 +43,5 @@ export const newList = (params: {
     items: [],
 });
 
-export const coerceToTodoList = coerce(todoListSchema);
+export const assertTodoList = (v: unknown): asserts v is TodoList =>
+    assert(v, TodoList);

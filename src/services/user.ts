@@ -5,7 +5,7 @@ import {
     isUserDomainEvent,
     collectionType,
 } from 'src/events/user-events';
-import { User, coerceToUser } from 'src/entities/user';
+import { User, assertUser } from 'src/entities/user';
 import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/builder';
 import { createUser, CreateUserParams } from 'src/entities/user/commands';
@@ -21,7 +21,7 @@ class UserService extends EntityService<
     collectionType = collectionType;
     isEntityEvent = isUserDomainEvent;
     buildFromEvents = buildFromEvents;
-    coerceToEntity = coerceToUser;
+    assertEntity = assertUser;
     authorization = authorization;
     createCommand = createUser;
 }

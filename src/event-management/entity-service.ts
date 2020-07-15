@@ -1,7 +1,10 @@
 import autoBind from 'auto-bind';
 import { IEvent } from 'src/event-management/event';
 import { CreateCommand, Command } from 'src/event-management/command';
-import EventStore, { Coerce, IEntity } from 'src/event-management/event-store';
+import EventStore, {
+    AssertEntity,
+    IEntity,
+} from 'src/event-management/event-store';
 
 export type Authorization<TAgent, TEntity> = {
     assertRead: (agent: TAgent, entity: TEntity) => void;
@@ -27,7 +30,7 @@ abstract class EntityService<
     abstract collectionType: string;
     abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
     abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
-    abstract coerceToEntity: Coerce<TEntity>;
+    abstract assertEntity: AssertEntity<TEntity>;
     abstract authorization: Authorization<TAgent, TEntity>;
     abstract createCommand: CreateCommand<TEvent, TAgent, TCreateCommandParams>;
 
@@ -54,7 +57,7 @@ abstract class EntityService<
     async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
         const { snapshot, events } = await this.eventStore.getEntitySourceData(
             this.collectionType,
-            this.coerceToEntity,
+            this.assertEntity,
             entityId,
         );
         if (events.length === 0) return undefined;

@@ -1,14 +1,12 @@
 import assert from 'assert';
-import * as t from 'io-ts';
+import { StructType, enums } from 'superstruct';
 import { User } from 'src/entities/user';
 import { SystemAgent } from 'src/entities/system-agent';
 
 export type Agent = User | SystemAgent;
 
-export type AgentRole = t.TypeOf<typeof agentRoleSchema>;
-export const agentRoleSchema = t.keyof({
-    ADMIN: null,
-});
+export type AgentRole = StructType<typeof AgentRole>;
+export const AgentRole = enums(['ADMIN']);
 
 export enum Permission {
     USER_CREATE = 'USER_CREATE',

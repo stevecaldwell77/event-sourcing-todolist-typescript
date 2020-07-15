@@ -5,6 +5,10 @@ export interface IEntity {
     revision: number;
 }
 
+export type AssertEntity<TEntity> = {
+    (v: unknown): asserts v is TEntity;
+};
+
 export type Coerce<T> = {
     (input: unknown): T;
 };
@@ -31,7 +35,7 @@ export interface EventGateway<TEvent extends IEvent> {
 export interface SnapshotGateway {
     getSnapshot<TEntity>(
         collectionType: string,
-        coerceToEntity: Coerce<TEntity>,
+        assertEntity: AssertEntity<TEntity>,
         collectionId: string,
     ): Promise<TEntity | undefined>;
     saveSnapshot<TEntity>(
@@ -63,12 +67,12 @@ abstract class EventStore<TEvent extends IEvent> {
 
     async getEntitySourceData<TEntity extends IEntity>(
         collectionType: string,
-        coerceToEntity: Coerce<TEntity>,
+        assertEntity: AssertEntity<TEntity>,
         collectionId: string,
     ): Promise<{ snapshot?: TEntity; events: TEvent[] }> {
         const snapshot = await this.snapshotGateway.getSnapshot(
             collectionType,
-            coerceToEntity,
+            assertEntity,
             collectionId,
         );
         const revision = snapshot ? snapshot.revision : 0;

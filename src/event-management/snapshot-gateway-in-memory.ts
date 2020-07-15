@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import { SnapshotGateway, Coerce } from './event-store';
+import { SnapshotGateway, AssertEntity } from './event-store';
 
 class SnapshotGatewayInMemory implements SnapshotGateway {
     private records: Record<string, unknown> = {};
@@ -14,12 +14,14 @@ class SnapshotGatewayInMemory implements SnapshotGateway {
 
     async getSnapshot<T>(
         collectionType: string,
-        coerceToEntity: Coerce<T>,
+        assertEntity: AssertEntity<T>,
         entityId: string,
     ): Promise<T | undefined> {
         const key = this.entityKey(collectionType, entityId);
         const record = this.records[key];
-        return record ? coerceToEntity(record) : undefined;
+        if (!record) return undefined;
+        assertEntity(record);
+        return record;
     }
 
     async saveSnapshot<T>(

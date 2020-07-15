@@ -1,17 +1,16 @@
-import * as t from 'io-ts';
-import { agentRoleSchema } from 'src/entities/agent';
-import { coerce } from 'src/util/io-ts';
+import { StructType, assert, object, number, string, array } from 'superstruct';
+import { AgentRole } from 'src/entities/agent';
 
-export type User = t.TypeOf<typeof userSchema>;
+export type User = StructType<typeof User>;
 
-const userSchema = t.type({
-    userId: t.string,
-    email: t.string,
-    revision: t.number,
-    roles: t.array(agentRoleSchema),
+const User = object({
+    userId: string(),
+    email: string(),
+    revision: number(),
+    roles: array(AgentRole),
 });
 
-export const coerceToUser = coerce(userSchema);
+export const assertUser = (v: unknown): asserts v is User => assert(v, User);
 
 export const newUser = (params: { userId: string; email: string }): User => ({
     ...params,

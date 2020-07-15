@@ -5,7 +5,7 @@ import {
     isTodoListDomainEvent,
     collectionType,
 } from 'src/events/todo-list-events';
-import { TodoList, coerceToTodoList } from 'src/entities/todo-list';
+import { TodoList, assertTodoList } from 'src/entities/todo-list';
 import authorization from 'src/entities/todo-list/authorization';
 import buildFromEvents from 'src/entities/todo-list/builder';
 import {
@@ -24,7 +24,7 @@ class TodoListService extends EntityService<
     collectionType = collectionType;
     isEntityEvent = isTodoListDomainEvent;
     buildFromEvents = buildFromEvents;
-    coerceToEntity = coerceToTodoList;
+    assertEntity = assertTodoList;
     authorization = authorization;
     createCommand = createTodoList;
 }
