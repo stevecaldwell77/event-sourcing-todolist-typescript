@@ -1,5 +1,5 @@
 import { assert } from '@sindresorhus/is/dist';
-import { TodoListAppEvent } from './todolist-app-event';
+import { AppEvent } from './app-event';
 import { UserCreated, UserRoleAdded, UserRoleRemoved } from './user-events';
 import {
     TodoListCreated,
@@ -9,7 +9,7 @@ import {
     TodoListItemMoved,
 } from './todo-list-events';
 
-export const coerceToEvent = (input: unknown): TodoListAppEvent => {
+export const coerceToEvent = (input: unknown): AppEvent => {
     assert.plainObject(input);
     assert.string(input.eventName);
 

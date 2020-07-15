@@ -1,5 +1,5 @@
 import EntityService from 'src/event-management/entity-service';
-import { TodoListAppEvent } from 'src/events/todolist-app-event';
+import { AppEvent } from 'src/events/app-event';
 import {
     TodoListEvent,
     isTodoListEvent,
@@ -17,7 +17,7 @@ import { Agent } from 'src/entities/agent';
 class TodoListService extends EntityService<
     TodoList,
     CreateTodoListParams,
-    TodoListAppEvent,
+    AppEvent,
     TodoListEvent,
     Agent
 > {

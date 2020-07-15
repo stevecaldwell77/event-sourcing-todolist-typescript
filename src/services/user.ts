@@ -1,5 +1,5 @@
 import EntityService from 'src/event-management/entity-service';
-import { TodoListAppEvent } from 'src/events/todolist-app-event';
+import { AppEvent } from 'src/events/app-event';
 import { UserEvent, isUserEvent, collectionType } from 'src/events/user-events';
 import { User, assertUser } from 'src/entities/user';
 import authorization from 'src/entities/user/authorization';
@@ -10,7 +10,7 @@ import { Agent } from 'src/entities/agent';
 class UserService extends EntityService<
     User,
     CreateUserParams,
-    TodoListAppEvent,
+    AppEvent,
     UserEvent,
     Agent
 > {
