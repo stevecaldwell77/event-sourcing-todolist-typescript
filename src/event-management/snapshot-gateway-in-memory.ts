@@ -1,5 +1,6 @@
 import autoBind from 'auto-bind';
-import { SnapshotGateway, AssertEntity } from './event-store';
+import { AssertType } from './assert';
+import { SnapshotGateway } from './snapshot-gateway';
 
 class SnapshotGatewayInMemory implements SnapshotGateway {
     private records: Record<string, unknown> = {};
@@ -14,7 +15,7 @@ class SnapshotGatewayInMemory implements SnapshotGateway {
 
     async getSnapshot<T>(
         collectionType: string,
-        assertEntity: AssertEntity<T>,
+        assertEntity: AssertType<T>,
         entityId: string,
     ): Promise<T | undefined> {
         const key = this.entityKey(collectionType, entityId);

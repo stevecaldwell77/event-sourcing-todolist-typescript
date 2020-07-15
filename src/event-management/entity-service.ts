@@ -1,15 +1,10 @@
 import autoBind from 'auto-bind';
-import { IEvent } from 'src/event-management/event';
-import { CreateCommand, Command } from 'src/event-management/command';
-import EventStore, {
-    AssertEntity,
-    IEntity,
-} from 'src/event-management/event-store';
-
-export type Authorization<TAgent, TEntity> = {
-    assertRead: (agent: TAgent, entity: TEntity) => void;
-    assertCommand: (agent: TAgent, command: string, entity?: TEntity) => void;
-};
+import { IEvent } from './event';
+import { IEntity } from './entity';
+import { CreateCommand, Command } from './command';
+import EventStore from './event-store';
+import { AssertType } from './assert';
+import { Authorization } from './authorization';
 
 type BuildFromEvents<TEntity extends IEntity, TEvent extends IEvent> = {
     (prev: TEntity | undefined, events: TEvent[]): TEntity;
@@ -30,7 +25,7 @@ abstract class EntityService<
     abstract collectionType: string;
     abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
     abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
-    abstract assertEntity: AssertEntity<TEntity>;
+    abstract assertEntity: AssertType<TEntity>;
     abstract authorization: Authorization<TAgent, TEntity>;
     abstract createCommand: CreateCommand<TEvent, TAgent, TCreateCommandParams>;
 

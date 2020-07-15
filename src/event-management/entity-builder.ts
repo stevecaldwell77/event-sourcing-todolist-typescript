@@ -1,7 +1,3 @@
-export const assertUnknownEvent = (event: never): never => {
-    throw new Error(`Unexpected event found: ${JSON.stringify(event)}`);
-};
-
 interface IEntity {
     revision: number;
 }

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import autoBind from 'auto-bind';
 import { assert as assertIs } from '@sindresorhus/is/dist';
-import { EventGateway } from './event-store';
+import { EventGateway } from './event-gateway';
 import { IEvent } from './event';
 
 const getEventNumber = (event: unknown): number => {

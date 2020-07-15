@@ -1,5 +1,5 @@
-import { IEvent } from './event';
-import EventStore, { CoerceToEvent } from './event-store';
+import { IEvent, CoerceToEvent } from './event';
+import EventStore from './event-store';
 import EventGatewayInMemory from './event-gateway-in-memory';
 import SnapshotGatewayInMemory from './snapshot-gateway-in-memory';
 

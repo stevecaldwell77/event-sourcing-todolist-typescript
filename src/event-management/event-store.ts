@@ -1,49 +1,9 @@
 import autoBind from 'auto-bind';
-import { IEvent } from './event';
-
-export interface IEntity {
-    revision: number;
-}
-
-export type AssertEntity<TEntity> = {
-    (v: unknown): asserts v is TEntity;
-};
-
-export type Coerce<T> = {
-    (input: unknown): T;
-};
-
-export type CoerceToEvent<TEvent extends IEvent> = Coerce<TEvent>;
-
-interface GetEvents {
-    (
-        collectionType: string,
-        collectionId: string,
-        startingRevision?: number,
-    ): Promise<Record<string, unknown>[]>;
-}
-
-type SaveEvents<TEvent extends IEvent> = {
-    (events: TEvent[]): Promise<void>;
-};
-
-export interface EventGateway<TEvent extends IEvent> {
-    getEvents: GetEvents;
-    saveEvents: SaveEvents<TEvent>;
-}
-
-export interface SnapshotGateway {
-    getSnapshot<TEntity>(
-        collectionType: string,
-        assertEntity: AssertEntity<TEntity>,
-        collectionId: string,
-    ): Promise<TEntity | undefined>;
-    saveSnapshot<TEntity>(
-        collectionType: string,
-        collectionId: string,
-        entity: TEntity,
-    ): Promise<void>;
-}
+import { IEvent, CoerceToEvent } from './event';
+import { IEntity } from './entity';
+import { EventGateway, GetEvents, SaveEvents } from './event-gateway';
+import { SnapshotGateway } from './snapshot-gateway';
+import { AssertType } from './assert';
 
 abstract class EventStore<TEvent extends IEvent> {
     eventGateway: EventGateway<TEvent>;
@@ -67,7 +27,7 @@ abstract class EventStore<TEvent extends IEvent> {
 
     async getEntitySourceData<TEntity extends IEntity>(
         collectionType: string,
-        assertEntity: AssertEntity<TEntity>,
+        assertEntity: AssertType<TEntity>,
         collectionId: string,
     ): Promise<{ snapshot?: TEntity; events: TEvent[] }> {
         const snapshot = await this.snapshotGateway.getSnapshot(

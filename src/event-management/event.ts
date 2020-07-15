@@ -23,6 +23,10 @@ type EventStatic<TEvent, TPayload> = {
 
 export type IEvent = Event<Record<string, unknown>>;
 
+export type CoerceToEvent<TEvent extends IEvent> = {
+    (input: unknown): TEvent;
+};
+
 export abstract class Event<TPayload extends Record<string, unknown>> {
     eventId: string;
     schemaVersion: number;
@@ -96,7 +100,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
     }
 }
 
-export type EventClass<TPayload extends Record<string, unknown>> = {
+type EventClass<TPayload extends Record<string, unknown>> = {
     new (params: EventInput<TPayload>): Event<TPayload>;
 };
 

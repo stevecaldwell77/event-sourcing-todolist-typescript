@@ -1,7 +1,5 @@
-import {
-    assertUnknownEvent,
-    entityBuilder,
-} from 'src/event-management/entity-builder';
+import { entityBuilder } from 'src/event-management/entity-builder';
+import { assertUnknownEvent } from 'src/event-management/assert';
 import {
     UserCreated,
     UserRoleAdded,
