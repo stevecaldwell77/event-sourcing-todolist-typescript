@@ -1,6 +1,7 @@
-import * as t from 'io-ts';
+import { StructType, object, string } from 'superstruct';
+import { AgentRole } from 'src/events/enums';
+import { assertType } from 'src/util/types';
 import { Event, IEvent } from '../event-management/event';
-import { userRoleSchema } from './enums';
 
 export const collectionType = 'User';
 
@@ -15,46 +16,43 @@ export const isUserDomainEvent = (event: IEvent): event is UserDomainEvent =>
   USER_CREATED
 ------------------------------------------------------------------------------*/
 
-const userCreatedPayloadSchema = t.type({
-    email: t.string,
+type UserCreatedPayload = StructType<typeof UserCreatedPayload>;
+const UserCreatedPayload = object({
+    email: string(),
 });
 
-export class UserCreated extends Event<
-    t.TypeOf<typeof userCreatedPayloadSchema>
-> {
+export class UserCreated extends Event<UserCreatedPayload> {
     static collectionType = collectionType;
     static eventName = 'USER_CREATED';
-    static payloadSchema = userCreatedPayloadSchema;
+    static assertPayload = assertType(UserCreatedPayload);
 }
 
 /*------------------------------------------------------------------------------
   USER_ROLE_ADDED
 ------------------------------------------------------------------------------*/
 
-const userRoleAddedPayloadSchema = t.type({
-    role: userRoleSchema,
+type UserRoleAddedPayload = StructType<typeof UserRoleAddedPayload>;
+const UserRoleAddedPayload = object({
+    role: AgentRole,
 });
 
-export class UserRoleAdded extends Event<
-    t.TypeOf<typeof userRoleAddedPayloadSchema>
-> {
+export class UserRoleAdded extends Event<UserRoleAddedPayload> {
     static collectionType = collectionType;
     static eventName = 'USER_ROLE_ADDED';
-    static payloadSchema = userRoleAddedPayloadSchema;
+    static assertPayload = assertType(UserRoleAddedPayload);
 }
 
 /*------------------------------------------------------------------------------
   USER_ROLE_REMOVED
 ------------------------------------------------------------------------------*/
 
-const userRoleRemovedPayloadSchema = t.type({
-    role: userRoleSchema,
+type UserRoleRemovedPayload = StructType<typeof UserRoleRemovedPayload>;
+const UserRoleRemovedPayload = object({
+    role: AgentRole,
 });
 
-export class UserRoleRemoved extends Event<
-    t.TypeOf<typeof userRoleRemovedPayloadSchema>
-> {
+export class UserRoleRemoved extends Event<UserRoleRemovedPayload> {
     static collectionType = collectionType;
     static eventName = 'USER_ROLE_REMOVED';
-    static payloadSchema = userRoleRemovedPayloadSchema;
+    static assertPayload = assertType(UserRoleRemovedPayload);
 }

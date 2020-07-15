@@ -1,6 +1,4 @@
-import { Type } from 'io-ts';
 import { assert } from '@sindresorhus/is/dist';
-import { coerce } from 'src/util/io-ts';
 
 type EventInput<TPayload> = {
     schemaVersion: number;
@@ -18,7 +16,7 @@ type EventValue = EventInput<Record<string, unknown>> & {
 
 type EventStatic<TEvent, TPayload> = {
     new (params: EventInput<TPayload>): TEvent;
-    payloadSchema: Type<TPayload>;
+    assertPayload: (v: unknown) => asserts v is TPayload;
 };
 
 export type IEvent = Event<Record<string, unknown>>;
@@ -55,7 +53,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
         assert.number(input.eventNumber);
         assert.string(input.eventName);
 
-        const payload = coerce(this.payloadSchema)(input.payload);
+        this.assertPayload(input.payload);
 
         return new this({
             schemaVersion: input.schemaVersion,
@@ -63,7 +61,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
             agentId: input.agentId,
             collectionId: input.collectionId,
             eventNumber: input.eventNumber,
-            payload: payload,
+            payload: input.payload,
         });
     }
 

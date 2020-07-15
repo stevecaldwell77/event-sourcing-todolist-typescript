@@ -1,4 +1,4 @@
-import { AgentRole } from './agent';
+import { AgentRole } from 'src/events/enums';
 
 export type SystemAgent = {
     agentId: 'SYSTEM_AGENT';

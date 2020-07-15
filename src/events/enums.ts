@@ -1,7 +1,4 @@
-import * as t from 'io-ts';
+import { StructType, enums } from 'superstruct';
 
-export type UserRole = t.TypeOf<typeof userRoleSchema>;
-
-export const userRoleSchema = t.keyof({
-    ADMIN: null,
-});
+export type AgentRole = StructType<typeof AgentRole>;
+export const AgentRole = enums(['ADMIN']);

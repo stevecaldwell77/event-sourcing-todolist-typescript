@@ -1,4 +1,5 @@
-import * as t from 'io-ts';
+import { StructType, object, string, number } from 'superstruct';
+import { assertType } from 'src/util/types';
 import { Event, IEvent } from '../event-management/event';
 
 export const collectionType = 'TodoList';
@@ -23,81 +24,82 @@ export const isTodoListDomainEvent = (
   TODO_LIST_CREATED
 ------------------------------------------------------------------------------*/
 
-const todoListCreatedPayloadSchema = t.type({
-    owner: t.string,
-    title: t.string,
+type TodoListCreatedPayload = StructType<typeof TodoListCreatedPayload>;
+const TodoListCreatedPayload = object({
+    owner: string(),
+    title: string(),
 });
 
-export class TodoListCreated extends Event<
-    t.TypeOf<typeof todoListCreatedPayloadSchema>
-> {
+export class TodoListCreated extends Event<TodoListCreatedPayload> {
     static collectionType = collectionType;
     static eventName = 'TODO_LIST_CREATED';
-    static payloadSchema = todoListCreatedPayloadSchema;
+    static assertPayload = assertType(TodoListCreatedPayload);
 }
 
 /*------------------------------------------------------------------------------
   TODO_LIST_ITEM_CREATED
 ------------------------------------------------------------------------------*/
 
-const todoListItemCreatedPayloadSchema = t.type({
-    itemId: t.string,
-    text: t.string,
+type TodoListItemCreatedPayload = StructType<typeof TodoListItemCreatedPayload>;
+const TodoListItemCreatedPayload = object({
+    itemId: string(),
+    text: string(),
 });
 
-export class TodoListItemCreated extends Event<
-    t.TypeOf<typeof todoListItemCreatedPayloadSchema>
-> {
+export class TodoListItemCreated extends Event<TodoListItemCreatedPayload> {
     static collectionType = collectionType;
     static eventName = 'TODO_LIST_ITEM_CREATED';
-    static payloadSchema = todoListItemCreatedPayloadSchema;
+    static assertPayload = assertType(TodoListItemCreatedPayload);
 }
 
 /*------------------------------------------------------------------------------
   TODO_LIST_ITEM_COMPLETED
 ------------------------------------------------------------------------------*/
 
-const todoListItemCompletedPayloadSchema = t.type({
-    itemId: t.string,
+type TodoListItemCompletedPayload = StructType<
+    typeof TodoListItemCompletedPayload
+>;
+const TodoListItemCompletedPayload = object({
+    itemId: string(),
 });
 
-export class TodoListItemCompleted extends Event<
-    t.TypeOf<typeof todoListItemCompletedPayloadSchema>
-> {
+export class TodoListItemCompleted extends Event<TodoListItemCompletedPayload> {
     static collectionType = collectionType;
     static eventName = 'TODO_LIST_ITEM_COMPLETED';
-    static payloadSchema = todoListItemCompletedPayloadSchema;
+    static assertPayload = assertType(TodoListItemCompletedPayload);
 }
 
 /*------------------------------------------------------------------------------
   TODO_LIST_ITEM_UNCOMPLETED
 ------------------------------------------------------------------------------*/
 
-const todoListItemUncompletedPayloadSchema = t.type({
-    itemId: t.string,
+type TodoListItemUncompletedPayload = StructType<
+    typeof TodoListItemUncompletedPayload
+>;
+const TodoListItemUncompletedPayload = object({
+    itemId: string(),
 });
 
 export class TodoListItemUncompleted extends Event<
-    t.TypeOf<typeof todoListItemUncompletedPayloadSchema>
+    TodoListItemUncompletedPayload
 > {
     static collectionType = collectionType;
     static eventName = 'TODO_LIST_ITEM_UNCOMPLETED';
-    static payloadSchema = todoListItemUncompletedPayloadSchema;
+    static assertPayload = assertType(TodoListItemUncompletedPayload);
 }
 
 /*------------------------------------------------------------------------------
   TODO_LIST_ITEM_MOVED
 ------------------------------------------------------------------------------*/
 
-const todoListItemMovedPayloadSchema = t.type({
-    itemId: t.string,
-    newPosition: t.number,
+type TodoListItemMovedPayload = StructType<typeof TodoListItemMovedPayload>;
+const TodoListItemMovedPayload = object({
+    itemId: string(),
+    newPosition: number(),
 });
 
-export class TodoListItemMoved extends Event<
-    t.TypeOf<typeof todoListItemMovedPayloadSchema>
-> {
+export class TodoListItemMoved extends Event<TodoListItemMovedPayload> {
     static collectionType = collectionType;
     static eventName = 'TODO_LIST_ITEM_MOVED';
-    static payloadSchema = todoListItemMovedPayloadSchema;
+    static assertPayload = assertType(TodoListItemMovedPayload);
 }

@@ -1,6 +1,6 @@
 import { CreateCommand, Command } from 'src/event-management/command';
 import { UserDomainEvent } from 'src/events/user-events';
-import { UserRole } from 'src/events/enums';
+import { AgentRole } from 'src/events/enums';
 import { Agent } from 'src/entities/agent';
 import { User } from 'src/entities/user';
 import {
@@ -21,7 +21,7 @@ export const createUser: CreateCommand<
     ],
 };
 
-type AddRoleParams = { role: UserRole };
+type AddRoleParams = { role: AgentRole };
 export const addRoleToUser: Command<
     UserDomainEvent,
     Agent,
@@ -34,7 +34,7 @@ export const addRoleToUser: Command<
     ],
 };
 
-type RemoveRoleParams = { role: UserRole };
+type RemoveRoleParams = { role: AgentRole };
 export const removeRoleFromUser: Command<
     UserDomainEvent,
     Agent,
@@ -42,7 +42,7 @@ export const removeRoleFromUser: Command<
     RemoveRoleParams
 > = {
     name: 'removeRoleFromUser',
-    run: (userId, agent, payload: { role: UserRole }) => [
+    run: (userId, agent, payload: { role: AgentRole }) => [
         generateEventUserRoleRemoved(agent, userId, payload),
     ],
 };

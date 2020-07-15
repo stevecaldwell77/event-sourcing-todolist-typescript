@@ -1,9 +1,9 @@
 import test from 'ava';
 import { assert } from '@sindresorhus/is/dist';
+import { collectionType as userCollectionType } from 'src/events/user-events';
 import getId from 'src/util/get-id';
 import { systemAgent } from 'src/entities/system-agent';
 import { newUser } from 'src/entities/user';
-import { EntityType } from 'src/lib/enums';
 import getAdminUser from 'test/helpers/get-admin-user';
 import { userService } from 'test/helpers/services';
 
@@ -11,7 +11,7 @@ test('UserService: create() and get()', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
     const getEvents = () =>
-        userService.eventStore.getEvents(EntityType.User, userId);
+        userService.eventStore.getEvents(userCollectionType, userId);
 
     t.deepEqual(await getEvents(), [], 'no events initially');
 

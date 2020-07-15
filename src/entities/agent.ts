@@ -1,12 +1,9 @@
 import assert from 'assert';
-import { StructType, enums } from 'superstruct';
+import { AgentRole } from 'src/events/enums';
 import { User } from 'src/entities/user';
 import { SystemAgent } from 'src/entities/system-agent';
 
 export type Agent = User | SystemAgent;
-
-export type AgentRole = StructType<typeof AgentRole>;
-export const AgentRole = enums(['ADMIN']);
 
 export enum Permission {
     USER_CREATE = 'USER_CREATE',

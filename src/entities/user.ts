@@ -1,5 +1,5 @@
 import { StructType, object, number, string, array } from 'superstruct';
-import { AgentRole } from 'src/entities/agent';
+import { AgentRole } from 'src/events/enums';
 import { assertType } from 'src/util/types';
 
 export type User = StructType<typeof User>;
