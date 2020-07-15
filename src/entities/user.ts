@@ -1,5 +1,6 @@
-import { StructType, assert, object, number, string, array } from 'superstruct';
+import { StructType, object, number, string, array } from 'superstruct';
 import { AgentRole } from 'src/entities/agent';
+import { assertType } from 'src/util/types';
 
 export type User = StructType<typeof User>;
 
@@ -10,7 +11,7 @@ const User = object({
     roles: array(AgentRole),
 });
 
-export const assertUser = (v: unknown): asserts v is User => assert(v, User);
+export const assertUser = assertType(User);
 
 export const newUser = (params: { userId: string; email: string }): User => ({
     ...params,

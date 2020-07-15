@@ -1,12 +1,12 @@
 import {
     StructType,
-    assert,
     object,
     number,
     string,
     array,
     boolean,
 } from 'superstruct';
+import { assertType } from 'src/util/types';
 
 type TodoListItem = StructType<typeof TodoListItem>;
 const TodoListItem = object({
@@ -43,5 +43,4 @@ export const newList = (params: {
     items: [],
 });
 
-export const assertTodoList = (v: unknown): asserts v is TodoList =>
-    assert(v, TodoList);
+export const assertTodoList = assertType(TodoList);
