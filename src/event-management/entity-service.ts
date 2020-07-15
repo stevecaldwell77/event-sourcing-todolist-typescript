@@ -101,8 +101,12 @@ abstract class EntityService<
         return entity;
     }
 
-    async getOrDie(entityId: string, agent: TAgent): Promise<TEntity> {
-        const entity = await this.get(entityId, agent);
+    async getOrDie(
+        entityId: string,
+        agent: TAgent,
+        options?: GetOptions,
+    ): Promise<TEntity> {
+        const entity = await this.get(entityId, agent, options);
         if (!entity)
             throw new Error(
                 `${this.constructor.name}.getOrDie(): ${entityId} does not exist`,
