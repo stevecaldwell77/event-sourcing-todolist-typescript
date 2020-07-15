@@ -39,7 +39,7 @@ abstract class EntityService<
         autoBind(this);
     }
 
-    coerceToEntityEvents(events: TEvent[]): TEntityEvent[] {
+    private _coerceToEntityEvents(events: TEvent[]): TEntityEvent[] {
         return events.map((event) => {
             if (!this.isEntityEvent(event))
                 throw new Error(
@@ -49,30 +49,12 @@ abstract class EntityService<
         });
     }
 
-    _buildFromEvents(prev: TEntity | undefined, events: TEvent[]): TEntity {
-        const entityEvents = this.coerceToEntityEvents(events);
+    private _buildFromEvents(
+        prev: TEntity | undefined,
+        events: TEvent[],
+    ): TEntity {
+        const entityEvents = this._coerceToEntityEvents(events);
         return this.buildFromEvents(prev, entityEvents);
-    }
-
-    async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
-        const { snapshot, events } = await this.eventStore.getEntitySourceData(
-            this.collectionType,
-            this.assertEntity,
-            entityId,
-        );
-        if (events.length === 0) return undefined;
-        const entity = this._buildFromEvents(snapshot, events);
-        this.authorization.assertRead(agent, entity);
-        return entity;
-    }
-
-    async getOrDie(entityId: string, agent: TAgent): Promise<TEntity> {
-        const entity = await this.get(entityId, agent);
-        if (!entity)
-            throw new Error(
-                `${this.constructor.name}.getOrDie(): ${entityId} does not exist`,
-            );
-        return entity;
     }
 
     private async _executeCommand(params: {
@@ -97,6 +79,27 @@ abstract class EntityService<
 
         await this.eventStore.saveEvents(events);
         return this._buildFromEvents(params.entity, events);
+    }
+
+    async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
+        const { snapshot, events } = await this.eventStore.getEntitySourceData(
+            this.collectionType,
+            this.assertEntity,
+            entityId,
+        );
+        if (events.length === 0) return undefined;
+        const entity = this._buildFromEvents(snapshot, events);
+        this.authorization.assertRead(agent, entity);
+        return entity;
+    }
+
+    async getOrDie(entityId: string, agent: TAgent): Promise<TEntity> {
+        const entity = await this.get(entityId, agent);
+        if (!entity)
+            throw new Error(
+                `${this.constructor.name}.getOrDie(): ${entityId} does not exist`,
+            );
+        return entity;
     }
 
     async create(
