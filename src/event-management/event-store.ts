@@ -5,6 +5,10 @@ import { EventGateway, GetEvents, SaveEvents } from './event-gateway';
 import { SnapshotGateway } from './snapshot-gateway';
 import { AssertType } from './assert';
 
+type GetEntitySourceDataOptions = {
+    noSnapshot?: boolean;
+};
+
 abstract class EventStore<TEvent extends IEvent> {
     eventGateway: EventGateway<TEvent>;
     snapshotGateway: SnapshotGateway;
@@ -29,12 +33,16 @@ abstract class EventStore<TEvent extends IEvent> {
         collectionType: string,
         assertEntity: AssertType<TEntity>,
         collectionId: string,
+        options?: GetEntitySourceDataOptions,
     ): Promise<{ snapshot?: TEntity; events: TEvent[] }> {
-        const snapshot = await this.snapshotGateway.getSnapshot(
-            collectionType,
-            assertEntity,
-            collectionId,
-        );
+        const noSnapshot = options?.noSnapshot;
+        const snapshot = noSnapshot
+            ? undefined
+            : await this.snapshotGateway.getSnapshot(
+                  collectionType,
+                  assertEntity,
+                  collectionId,
+              );
         const revision = snapshot ? snapshot.revision : 0;
         const rawEvents = await this.getEvents(
             collectionType,

@@ -14,6 +14,10 @@ type IsEntityEvent<TEvent extends IEvent, TEntityEvent extends TEvent> = {
     (event: TEvent): event is TEntityEvent;
 };
 
+type GetOptions = {
+    noSnapshot?: boolean;
+};
+
 abstract class EntityService<
     TEntity extends IEntity,
     TCreateCommandParams,
@@ -76,11 +80,20 @@ abstract class EntityService<
         return this._buildFromEvents(params.entity, events);
     }
 
-    async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
-        const { snapshot, events } = await this.eventStore.getEntitySourceData(
+    async get(
+        entityId: string,
+        agent: TAgent,
+        options?: GetOptions,
+    ): Promise<TEntity | undefined> {
+        const noSnapshot = options?.noSnapshot;
+        const {
+            snapshot,
+            events,
+        } = await this.eventStore.getEntitySourceData(
             this.collectionType,
             this.assertEntity,
             entityId,
+            { noSnapshot },
         );
         if (events.length === 0) return undefined;
         const entity = this._buildFromEvents(snapshot, events);
