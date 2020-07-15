@@ -9,7 +9,7 @@ import {
     TodoListItemMoved,
 } from './todo-list-events';
 
-export const mapToEvent = (input: unknown): DomainEvent => {
+export const coerceToEvent = (input: unknown): DomainEvent => {
     assert.plainObject(input);
     assert.string(input.eventName);
 

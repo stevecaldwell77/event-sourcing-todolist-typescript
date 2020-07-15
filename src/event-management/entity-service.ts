@@ -1,10 +1,7 @@
 import autoBind from 'auto-bind';
 import { IEvent } from 'src/event-management/event';
 import { CreateCommand, Command } from 'src/event-management/command';
-import EventStore, {
-    MapToEntity,
-    IEntity,
-} from 'src/event-management/event-store';
+import EventStore, { Coerce, IEntity } from 'src/event-management/event-store';
 
 export type Authorization<TAgent, TEntity> = {
     assertRead: (agent: TAgent, entity: TEntity) => void;
@@ -30,7 +27,7 @@ abstract class EntityService<
     abstract collectionType: string;
     abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
     abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
-    abstract mapToEntity: MapToEntity<TEntity>;
+    abstract coerceToEntity: Coerce<TEntity>;
     abstract authorization: Authorization<TAgent, TEntity>;
     abstract createCommand: CreateCommand<TEvent, TAgent, TCreateCommandParams>;
 
@@ -39,7 +36,7 @@ abstract class EntityService<
         autoBind(this);
     }
 
-    mapToEntityEvents(events: TEvent[]): TEntityEvent[] {
+    coerceToEntityEvents(events: TEvent[]): TEntityEvent[] {
         return events.map((event) => {
             if (!this.isEntityEvent(event))
                 throw new Error(
@@ -50,14 +47,14 @@ abstract class EntityService<
     }
 
     _buildFromEvents(prev: TEntity | undefined, events: TEvent[]): TEntity {
-        const entityEvents = this.mapToEntityEvents(events);
+        const entityEvents = this.coerceToEntityEvents(events);
         return this.buildFromEvents(prev, entityEvents);
     }
 
     async get(entityId: string, agent: TAgent): Promise<TEntity | undefined> {
         const { snapshot, events } = await this.eventStore.getEntitySourceData(
             this.collectionType,
-            this.mapToEntity,
+            this.coerceToEntity,
             entityId,
         );
         if (events.length === 0) return undefined;

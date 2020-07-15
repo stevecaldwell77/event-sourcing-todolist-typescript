@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { mapOrDie } from 'src/util/io-ts';
+import { coerce } from 'src/util/io-ts';
 
 export type TodoList = t.TypeOf<typeof todoListSchema>;
 
@@ -38,4 +38,4 @@ export const newList = (params: {
     items: [],
 });
 
-export const mapToTodoList = mapOrDie(todoListSchema);
+export const coerceToTodoList = coerce(todoListSchema);

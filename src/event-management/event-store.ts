@@ -5,13 +5,11 @@ export interface IEntity {
     revision: number;
 }
 
-export interface MapToEntity<TEntity> {
-    (input: unknown): TEntity;
-}
+export type Coerce<T> = {
+    (input: unknown): T;
+};
 
-export interface MapToEvent<TEvent extends IEvent> {
-    (input: unknown): TEvent;
-}
+export type CoerceToEvent<TEvent extends IEvent> = Coerce<TEvent>;
 
 interface GetEvents {
     (
@@ -33,7 +31,7 @@ export interface EventGateway<TEvent extends IEvent> {
 export interface SnapshotGateway {
     getSnapshot<TEntity>(
         collectionType: string,
-        mapToEntity: MapToEntity<TEntity>,
+        coerceToEntity: Coerce<TEntity>,
         collectionId: string,
     ): Promise<TEntity | undefined>;
     saveSnapshot<TEntity>(
@@ -46,18 +44,18 @@ export interface SnapshotGateway {
 abstract class EventStore<TEvent extends IEvent> {
     eventGateway: EventGateway<TEvent>;
     snapshotGateway: SnapshotGateway;
-    mapToEvent: MapToEvent<TEvent>;
+    coerceToEvent: CoerceToEvent<TEvent>;
     getEvents: GetEvents;
     saveEvents: SaveEvents<TEvent>;
 
     constructor(params: {
         eventGateway: EventGateway<TEvent>;
         snapshotGateway: SnapshotGateway;
-        mapToEvent: MapToEvent<TEvent>;
+        coerceToEvent: CoerceToEvent<TEvent>;
     }) {
         this.eventGateway = params.eventGateway;
         this.snapshotGateway = params.snapshotGateway;
-        this.mapToEvent = params.mapToEvent;
+        this.coerceToEvent = params.coerceToEvent;
         this.getEvents = this.eventGateway.getEvents;
         this.saveEvents = this.eventGateway.saveEvents;
         autoBind(this);
@@ -65,12 +63,12 @@ abstract class EventStore<TEvent extends IEvent> {
 
     async getEntitySourceData<TEntity extends IEntity>(
         collectionType: string,
-        mapToEntity: MapToEntity<TEntity>,
+        coerceToEntity: Coerce<TEntity>,
         collectionId: string,
     ): Promise<{ snapshot?: TEntity; events: TEvent[] }> {
         const snapshot = await this.snapshotGateway.getSnapshot(
             collectionType,
-            mapToEntity,
+            coerceToEntity,
             collectionId,
         );
         const revision = snapshot ? snapshot.revision : 0;
@@ -79,7 +77,7 @@ abstract class EventStore<TEvent extends IEvent> {
             collectionId,
             revision + 1,
         );
-        const events = rawEvents.map(this.mapToEvent);
+        const events = rawEvents.map(this.coerceToEvent);
         return { snapshot, events };
     }
 }

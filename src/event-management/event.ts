@@ -1,6 +1,6 @@
 import { Type } from 'io-ts';
 import { assert } from '@sindresorhus/is/dist';
-import { mapOrDie } from 'src/util/io-ts';
+import { coerce } from 'src/util/io-ts';
 
 type EventInput<TPayload> = {
     schemaVersion: number;
@@ -55,7 +55,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
         assert.number(input.eventNumber);
         assert.string(input.eventName);
 
-        const payload = mapOrDie(this.payloadSchema)(input.payload);
+        const payload = coerce(this.payloadSchema)(input.payload);
 
         return new this({
             schemaVersion: input.schemaVersion,

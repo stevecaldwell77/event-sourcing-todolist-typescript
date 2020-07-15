@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { agentRoleSchema } from 'src/entities/agent';
-import { mapOrDie } from 'src/util/io-ts';
+import { coerce } from 'src/util/io-ts';
 
 export type User = t.TypeOf<typeof userSchema>;
 
@@ -11,7 +11,7 @@ const userSchema = t.type({
     roles: t.array(agentRoleSchema),
 });
 
-export const mapToUser = mapOrDie(userSchema);
+export const coerceToUser = coerce(userSchema);
 
 export const newUser = (params: { userId: string; email: string }): User => ({
     ...params,
