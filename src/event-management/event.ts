@@ -1,6 +1,8 @@
+import { v4 as uuid } from 'uuid';
 import { assert } from '@sindresorhus/is/dist';
 
 type EventInput<TPayload> = {
+    eventId: string;
     schemaVersion: number;
     eventTimestamp: number;
     agentId: string;
@@ -22,6 +24,7 @@ type EventStatic<TEvent, TPayload> = {
 export type IEvent = Event<Record<string, unknown>>;
 
 export abstract class Event<TPayload extends Record<string, unknown>> {
+    eventId: string;
     schemaVersion: number;
     eventTimestamp: number;
     agentId: string;
@@ -32,6 +35,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
     static collectionType: string;
 
     constructor(params: EventInput<TPayload>) {
+        this.eventId = params.eventId;
         this.schemaVersion = params.schemaVersion;
         this.eventTimestamp = params.eventTimestamp;
         this.agentId = params.agentId;
@@ -45,6 +49,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
         TEvent extends Event<TPayload>
     >(this: EventStatic<TEvent, TPayload>, input: unknown): TEvent {
         assert.plainObject(input);
+        assert.string(input.eventId);
         assert.number(input.schemaVersion);
         assert.number(input.eventTimestamp);
         assert.string(input.agentId);
@@ -56,6 +61,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
         this.assertPayload(input.payload);
 
         return new this({
+            eventId: input.eventId,
             schemaVersion: input.schemaVersion,
             eventTimestamp: input.eventTimestamp,
             agentId: input.agentId,
@@ -77,6 +83,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
 
     valueOf(): EventValue {
         return {
+            eventId: this.eventId,
             schemaVersion: this.schemaVersion,
             eventTimestamp: this.eventTimestamp,
             agentId: this.agentId,
@@ -104,6 +111,7 @@ export const generateEvent = <TAgent, TEntity>(
     const agentId = getAgentId(agent);
     const collectionId = getCollectionId(entity);
     return new EventClass({
+        eventId: uuid(),
         agentId,
         collectionId,
         payload,
@@ -126,6 +134,7 @@ export const generateStartingEvent = <
 ): Event<TPayload> => {
     const agentId = getAgentId(agent);
     return new EventClass({
+        eventId: uuid(),
         agentId,
         collectionId,
         payload,
