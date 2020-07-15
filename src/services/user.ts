@@ -1,10 +1,6 @@
 import EntityService from 'src/event-management/entity-service';
-import { DomainEvent } from 'src/events/domain-event';
-import {
-    UserDomainEvent,
-    isUserDomainEvent,
-    collectionType,
-} from 'src/events/user-events';
+import { TodoListAppEvent } from 'src/events/todolist-app-event';
+import { UserEvent, isUserEvent, collectionType } from 'src/events/user-events';
 import { User, assertUser } from 'src/entities/user';
 import authorization from 'src/entities/user/authorization';
 import buildFromEvents from 'src/entities/user/builder';
@@ -14,12 +10,12 @@ import { Agent } from 'src/entities/agent';
 class UserService extends EntityService<
     User,
     CreateUserParams,
-    DomainEvent,
-    UserDomainEvent,
+    TodoListAppEvent,
+    UserEvent,
     Agent
 > {
     collectionType = collectionType;
-    isEntityEvent = isUserDomainEvent;
+    isEntityEvent = isUserEvent;
     buildFromEvents = buildFromEvents;
     assertEntity = assertUser;
     authorization = authorization;

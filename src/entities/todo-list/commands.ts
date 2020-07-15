@@ -1,5 +1,5 @@
 import { CreateCommand, Command } from 'src/event-management/command';
-import { TodoListDomainEvent } from 'src/events/todo-list-events';
+import { TodoListEvent } from 'src/events/todo-list-events';
 import { Agent } from 'src/entities/agent';
 import { TodoList, getItem } from 'src/entities/todo-list';
 import {
@@ -15,7 +15,7 @@ export type CreateTodoListParams = {
     title: string;
 };
 export const createTodoList: CreateCommand<
-    TodoListDomainEvent,
+    TodoListEvent,
     Agent,
     CreateTodoListParams
 > = {
@@ -27,7 +27,7 @@ export const createTodoList: CreateCommand<
 
 type CreateTodoListItemParams = { itemId: string; text: string };
 export const createTodoListItem: Command<
-    TodoListDomainEvent,
+    TodoListEvent,
     Agent,
     TodoList,
     CreateTodoListItemParams
@@ -46,7 +46,7 @@ export const createTodoListItem: Command<
 
 type CompleteTodoListItemParams = { itemId: string };
 export const completeTodoListItem: Command<
-    TodoListDomainEvent,
+    TodoListEvent,
     Agent,
     TodoList,
     CompleteTodoListItemParams
@@ -65,7 +65,7 @@ export const completeTodoListItem: Command<
 
 type UncompleteTodoListItemParams = { itemId: string };
 export const uncompleteTodoListItem: Command<
-    TodoListDomainEvent,
+    TodoListEvent,
     Agent,
     TodoList,
     UncompleteTodoListItemParams
@@ -84,7 +84,7 @@ export const uncompleteTodoListItem: Command<
 
 type MoveTodoListItemParams = { itemId: string; newPosition: number };
 export const moveTodoListItem: Command<
-    TodoListDomainEvent,
+    TodoListEvent,
     Agent,
     TodoList,
     MoveTodoListItemParams

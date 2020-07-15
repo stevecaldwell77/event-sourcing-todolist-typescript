@@ -1,5 +1,5 @@
 import { CreateCommand, Command } from 'src/event-management/command';
-import { UserDomainEvent } from 'src/events/user-events';
+import { UserEvent } from 'src/events/user-events';
 import { AgentRole } from 'src/events/enums';
 import { Agent } from 'src/entities/agent';
 import { User } from 'src/entities/user';
@@ -10,11 +10,7 @@ import {
 } from 'src/entities/user/event-generators';
 
 export type CreateUserParams = { email: string };
-export const createUser: CreateCommand<
-    UserDomainEvent,
-    Agent,
-    CreateUserParams
-> = {
+export const createUser: CreateCommand<UserEvent, Agent, CreateUserParams> = {
     name: 'createUser',
     run: (userId, agent, payload: CreateUserParams) => [
         generateEventUserCreated(agent, userId, payload),
@@ -22,12 +18,7 @@ export const createUser: CreateCommand<
 };
 
 type AddRoleParams = { role: AgentRole };
-export const addRoleToUser: Command<
-    UserDomainEvent,
-    Agent,
-    User,
-    AddRoleParams
-> = {
+export const addRoleToUser: Command<UserEvent, Agent, User, AddRoleParams> = {
     name: 'addRoleToUser',
     run: (userId, agent, payload: AddRoleParams) => [
         generateEventUserRoleAdded(agent, userId, payload),
@@ -36,7 +27,7 @@ export const addRoleToUser: Command<
 
 type RemoveRoleParams = { role: AgentRole };
 export const removeRoleFromUser: Command<
-    UserDomainEvent,
+    UserEvent,
     Agent,
     User,
     RemoveRoleParams

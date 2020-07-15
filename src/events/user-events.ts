@@ -5,9 +5,9 @@ import { Event, IEvent } from '../event-management/event';
 
 export const collectionType = 'User';
 
-export type UserDomainEvent = UserCreated | UserRoleAdded | UserRoleRemoved;
+export type UserEvent = UserCreated | UserRoleAdded | UserRoleRemoved;
 
-export const isUserDomainEvent = (event: IEvent): event is UserDomainEvent =>
+export const isUserEvent = (event: IEvent): event is UserEvent =>
     event instanceof UserCreated ||
     event instanceof UserRoleAdded ||
     event instanceof UserRoleRemoved;

@@ -4,16 +4,14 @@ import { Event, IEvent } from '../event-management/event';
 
 export const collectionType = 'TodoList';
 
-export type TodoListDomainEvent =
+export type TodoListEvent =
     | TodoListCreated
     | TodoListItemCreated
     | TodoListItemCompleted
     | TodoListItemUncompleted
     | TodoListItemMoved;
 
-export const isTodoListDomainEvent = (
-    event: IEvent,
-): event is TodoListDomainEvent =>
+export const isTodoListEvent = (event: IEvent): event is TodoListEvent =>
     event instanceof TodoListCreated ||
     event instanceof TodoListItemCreated ||
     event instanceof TodoListItemCompleted ||

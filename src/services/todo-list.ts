@@ -1,8 +1,8 @@
 import EntityService from 'src/event-management/entity-service';
-import { DomainEvent } from 'src/events/domain-event';
+import { TodoListAppEvent } from 'src/events/todolist-app-event';
 import {
-    TodoListDomainEvent,
-    isTodoListDomainEvent,
+    TodoListEvent,
+    isTodoListEvent,
     collectionType,
 } from 'src/events/todo-list-events';
 import { TodoList, assertTodoList } from 'src/entities/todo-list';
@@ -17,12 +17,12 @@ import { Agent } from 'src/entities/agent';
 class TodoListService extends EntityService<
     TodoList,
     CreateTodoListParams,
-    DomainEvent,
-    TodoListDomainEvent,
+    TodoListAppEvent,
+    TodoListEvent,
     Agent
 > {
     collectionType = collectionType;
-    isEntityEvent = isTodoListDomainEvent;
+    isEntityEvent = isTodoListEvent;
     buildFromEvents = buildFromEvents;
     assertEntity = assertTodoList;
     authorization = authorization;

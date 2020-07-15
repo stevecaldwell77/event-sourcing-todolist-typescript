@@ -40,7 +40,7 @@ export abstract class Event<TPayload extends Record<string, unknown>> {
         this.eventNumber = params.eventNumber;
     }
 
-    static map<
+    static coerce<
         TPayload extends Record<string, unknown>,
         TEvent extends Event<TPayload>
     >(this: EventStatic<TEvent, TPayload>, input: unknown): TEvent {

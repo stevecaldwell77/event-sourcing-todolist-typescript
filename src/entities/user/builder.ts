@@ -6,7 +6,7 @@ import {
     UserCreated,
     UserRoleAdded,
     UserRoleRemoved,
-    UserDomainEvent,
+    UserEvent,
 } from 'src/events/user-events';
 import { User, newUser } from 'src/entities/user';
 
@@ -26,10 +26,7 @@ const handleUserRoleRemoved = (user: User, event: UserRoleRemoved): User => {
     return user;
 };
 
-const handleUserEvent = (
-    user: User | undefined,
-    event: UserDomainEvent,
-): User => {
+const handleUserEvent = (user: User | undefined, event: UserEvent): User => {
     if (event instanceof UserCreated) return handleUserCreated(event);
     if (!user) throw new Error(`${event.getEventName()} requires a User`);
 

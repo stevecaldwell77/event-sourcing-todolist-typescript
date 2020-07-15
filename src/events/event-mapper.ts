@@ -1,5 +1,5 @@
 import { assert } from '@sindresorhus/is/dist';
-import { DomainEvent } from './domain-event';
+import { TodoListAppEvent } from './todolist-app-event';
 import { UserCreated, UserRoleAdded, UserRoleRemoved } from './user-events';
 import {
     TodoListCreated,
@@ -9,27 +9,27 @@ import {
     TodoListItemMoved,
 } from './todo-list-events';
 
-export const coerceToEvent = (input: unknown): DomainEvent => {
+export const coerceToEvent = (input: unknown): TodoListAppEvent => {
     assert.plainObject(input);
     assert.string(input.eventName);
 
     switch (input.eventName) {
         case UserCreated.eventName:
-            return UserCreated.map(input);
+            return UserCreated.coerce(input);
         case UserRoleAdded.eventName:
-            return UserRoleAdded.map(input);
+            return UserRoleAdded.coerce(input);
         case UserRoleRemoved.eventName:
-            return UserRoleRemoved.map(input);
+            return UserRoleRemoved.coerce(input);
         case TodoListCreated.eventName:
-            return TodoListCreated.map(input);
+            return TodoListCreated.coerce(input);
         case TodoListItemCreated.eventName:
-            return TodoListItemCreated.map(input);
+            return TodoListItemCreated.coerce(input);
         case TodoListItemCompleted.eventName:
-            return TodoListItemCompleted.map(input);
+            return TodoListItemCompleted.coerce(input);
         case TodoListItemUncompleted.eventName:
-            return TodoListItemUncompleted.map(input);
+            return TodoListItemUncompleted.coerce(input);
         case TodoListItemMoved.eventName:
-            return TodoListItemMoved.map(input);
+            return TodoListItemMoved.coerce(input);
         default:
             throw new Error(`Unknown event ${input.eventName}`);
     }

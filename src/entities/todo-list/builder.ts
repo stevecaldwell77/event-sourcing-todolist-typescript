@@ -8,7 +8,7 @@ import {
     TodoListItemCompleted,
     TodoListItemUncompleted,
     TodoListItemMoved,
-    TodoListDomainEvent,
+    TodoListEvent,
 } from 'src/events/todo-list-events';
 import { TodoList, newList, getItem } from 'src/entities/todo-list';
 
@@ -61,7 +61,7 @@ const handleItemMoved = (
 
 const handleTodoListEvent = (
     list: TodoList | undefined,
-    event: TodoListDomainEvent,
+    event: TodoListEvent,
 ): TodoList => {
     if (event instanceof TodoListCreated) return handleListCreated(event);
     if (!list) throw new Error(`${event.getEventName()} requires a TodoList`);
