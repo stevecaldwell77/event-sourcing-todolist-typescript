@@ -54,11 +54,11 @@ class EventRepositoryInMemory<TEvent extends IEvent>
     async getEvents(
         collectionType: string,
         collectionId: string,
-        startingRevision = 1,
+        startingRevision?: number,
     ): Promise<Record<string, unknown>[]> {
         const allEvents = this.events[collectionType]?.[collectionId] || [];
         return allEvents.filter((event) => {
-            return getEventNumber(event) >= startingRevision;
+            return getEventNumber(event) >= (startingRevision || 1);
         });
     }
 }

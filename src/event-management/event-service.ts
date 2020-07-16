@@ -43,11 +43,11 @@ abstract class EventService<TEvent extends IEvent> {
                   assertEntity,
                   collectionId,
               );
-        const revision = snapshot ? snapshot.revision : 0;
+        const startingRevision = snapshot ? snapshot.revision + 1 : undefined;
         const rawEvents = await this.getEvents(
             collectionType,
             collectionId,
-            revision + 1,
+            startingRevision,
         );
         const events = rawEvents.map(this.coerceToEvent);
         return { snapshot, events };
