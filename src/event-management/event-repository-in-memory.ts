@@ -1,7 +1,11 @@
 import assert from 'assert';
 import autoBind from 'auto-bind';
 import { assert as assertIs } from '@sindresorhus/is/dist';
-import { EventRepository } from './event-repository';
+import {
+    EventRepository,
+    QueryEventsParams,
+    queryEventsFilter,
+} from './event-repository';
 import { IEvent, EventValue, CoerceToEvent } from './event';
 
 const getEventNumber = (event: unknown): number => {
@@ -73,6 +77,10 @@ class EventRepositoryInMemory<TEvent extends IEvent>
                 return getEventNumber(event) >= (startingRevision || 1);
             })
             .map(this.coerceToEvent);
+    }
+
+    async queryEvents(params: QueryEventsParams): Promise<TEvent[]> {
+        return queryEventsFilter(this.events.map(this.coerceToEvent), params);
     }
 }
 
