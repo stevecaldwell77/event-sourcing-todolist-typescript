@@ -11,7 +11,7 @@ type EventInput<TPayload> = {
     eventNumber?: number;
 };
 
-type EventValue = EventInput<Record<string, unknown>> & {
+export type EventValue = EventInput<Record<string, unknown>> & {
     eventName: string;
     collectionType: string;
 };

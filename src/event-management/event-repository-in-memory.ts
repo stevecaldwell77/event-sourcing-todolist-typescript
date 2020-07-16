@@ -2,7 +2,7 @@ import assert from 'assert';
 import autoBind from 'auto-bind';
 import { assert as assertIs } from '@sindresorhus/is/dist';
 import { EventRepository } from './event-repository';
-import { IEvent, CoerceToEvent } from './event';
+import { IEvent, EventValue, CoerceToEvent } from './event';
 
 const getEventNumber = (event: unknown): number => {
     assertIs.object(event);
@@ -11,15 +11,22 @@ const getEventNumber = (event: unknown): number => {
     return event.eventNumber;
 };
 
+const filterForCollection = (
+    events: EventValue[],
+    collectionType: string,
+    collectionId: string,
+): EventValue[] =>
+    events.filter(
+        (event) =>
+            event.collectionType === collectionType &&
+            event.collectionId === collectionId,
+    );
+
 class EventRepositoryInMemory<TEvent extends IEvent>
     implements EventRepository<TEvent> {
     coerceToEvent: CoerceToEvent<TEvent>;
 
-    // events format: { [collectionType]: [collectionId]: [{event}, ...]}
-    private events: Record<
-        string,
-        Record<string, Record<string, unknown>[]>
-    > = {};
+    private events: EventValue[] = [];
 
     constructor(params: { coerceToEvent: CoerceToEvent<TEvent> }) {
         this.coerceToEvent = params.coerceToEvent;
@@ -29,10 +36,13 @@ class EventRepositoryInMemory<TEvent extends IEvent>
     saveEvent(event: TEvent): void {
         const { collectionId } = event;
         const collectionType = event.getCollectionType();
-        this.events[collectionType] = this.events[collectionType] || {};
-        const events = this.events[collectionType][collectionId] || [];
+        const prevEvents = filterForCollection(
+            this.events,
+            collectionType,
+            collectionId,
+        );
 
-        const lastEvent = events[events.length - 1];
+        const lastEvent = prevEvents[prevEvents.length - 1];
         let expectedRevision: number;
         if (lastEvent) {
             expectedRevision = getEventNumber(lastEvent) + 1;
@@ -46,8 +56,7 @@ class EventRepositoryInMemory<TEvent extends IEvent>
             'out of order event',
         );
 
-        events.push(event.valueOf());
-        this.events[collectionType][collectionId] = events;
+        this.events.push(event.valueOf());
     }
 
     async saveEvents(events: TEvent[]): Promise<void> {
@@ -59,8 +68,7 @@ class EventRepositoryInMemory<TEvent extends IEvent>
         collectionId: string,
         startingRevision?: number,
     ): Promise<TEvent[]> {
-        const allEvents = this.events[collectionType]?.[collectionId] || [];
-        return allEvents
+        return filterForCollection(this.events, collectionType, collectionId)
             .filter((event) => {
                 return getEventNumber(event) >= (startingRevision || 1);
             })
