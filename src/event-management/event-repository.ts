@@ -12,7 +12,7 @@ export type SaveEvents<TEvent extends IEvent> = {
     (events: TEvent[]): Promise<void>;
 };
 
-export interface EventGateway<TEvent extends IEvent> {
+export interface EventRepository<TEvent extends IEvent> {
     getEvents: GetEvents;
     saveEvents: SaveEvents<TEvent>;
 }

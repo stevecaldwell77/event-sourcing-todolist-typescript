@@ -1,6 +1,6 @@
 import { AssertType } from './assert';
 
-export interface SnapshotGateway {
+export interface SnapshotRepository {
     getSnapshot<TEntity>(
         collectionType: string,
         assertEntity: AssertType<TEntity>,

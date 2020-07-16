@@ -1,8 +1,8 @@
 import autoBind from 'auto-bind';
 import { AssertType } from './assert';
-import { SnapshotGateway } from './snapshot-gateway';
+import { SnapshotRepository } from './snapshot-repository';
 
-class SnapshotGatewayInMemory implements SnapshotGateway {
+class SnapshotRepositoryInMemory implements SnapshotRepository {
     private records: Record<string, unknown> = {};
 
     constructor() {
@@ -35,4 +35,4 @@ class SnapshotGatewayInMemory implements SnapshotGateway {
     }
 }
 
-export default SnapshotGatewayInMemory;
+export default SnapshotRepositoryInMemory;

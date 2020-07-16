@@ -1,8 +1,8 @@
 import autoBind from 'auto-bind';
 import { IEvent, CoerceToEvent } from './event';
 import { IEntity } from './entity';
-import { EventGateway, GetEvents, SaveEvents } from './event-gateway';
-import { SnapshotGateway } from './snapshot-gateway';
+import { EventRepository, GetEvents, SaveEvents } from './event-repository';
+import { SnapshotRepository } from './snapshot-repository';
 import { AssertType } from './assert';
 
 type GetEntitySourceDataOptions = {
@@ -10,22 +10,22 @@ type GetEntitySourceDataOptions = {
 };
 
 abstract class EventService<TEvent extends IEvent> {
-    eventGateway: EventGateway<TEvent>;
-    snapshotGateway: SnapshotGateway;
+    eventRepository: EventRepository<TEvent>;
+    snapshotRepository: SnapshotRepository;
     coerceToEvent: CoerceToEvent<TEvent>;
     getEvents: GetEvents;
     saveEvents: SaveEvents<TEvent>;
 
     constructor(params: {
-        eventGateway: EventGateway<TEvent>;
-        snapshotGateway: SnapshotGateway;
+        eventRepository: EventRepository<TEvent>;
+        snapshotRepository: SnapshotRepository;
         coerceToEvent: CoerceToEvent<TEvent>;
     }) {
-        this.eventGateway = params.eventGateway;
-        this.snapshotGateway = params.snapshotGateway;
+        this.eventRepository = params.eventRepository;
+        this.snapshotRepository = params.snapshotRepository;
         this.coerceToEvent = params.coerceToEvent;
-        this.getEvents = this.eventGateway.getEvents;
-        this.saveEvents = this.eventGateway.saveEvents;
+        this.getEvents = this.eventRepository.getEvents;
+        this.saveEvents = this.eventRepository.saveEvents;
         autoBind(this);
     }
 
@@ -38,7 +38,7 @@ abstract class EventService<TEvent extends IEvent> {
         const noSnapshot = options?.noSnapshot;
         const snapshot = noSnapshot
             ? undefined
-            : await this.snapshotGateway.getSnapshot(
+            : await this.snapshotRepository.getSnapshot(
                   collectionType,
                   assertEntity,
                   collectionId,

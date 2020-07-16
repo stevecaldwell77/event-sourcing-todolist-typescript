@@ -1,7 +1,7 @@
 import assert from 'assert';
 import autoBind from 'auto-bind';
 import { assert as assertIs } from '@sindresorhus/is/dist';
-import { EventGateway } from './event-gateway';
+import { EventRepository } from './event-repository';
 import { IEvent } from './event';
 
 const getEventNumber = (event: unknown): number => {
@@ -11,8 +11,8 @@ const getEventNumber = (event: unknown): number => {
     return event.eventNumber;
 };
 
-class EventGatewayInMemory<TEvent extends IEvent>
-    implements EventGateway<TEvent> {
+class EventRepositoryInMemory<TEvent extends IEvent>
+    implements EventRepository<TEvent> {
     // events format: { [collectionType]: [collectionId]: [{event}, ...]}
     private events: Record<
         string,
@@ -63,4 +63,4 @@ class EventGatewayInMemory<TEvent extends IEvent>
     }
 }
 
-export default EventGatewayInMemory;
+export default EventRepositoryInMemory;

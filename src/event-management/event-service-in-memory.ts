@@ -1,13 +1,13 @@
 import { IEvent, CoerceToEvent } from './event';
 import EventService from './event-service';
-import EventGatewayInMemory from './event-gateway-in-memory';
-import SnapshotGatewayInMemory from './snapshot-gateway-in-memory';
+import EventRepositoryInMemory from './event-repository-in-memory';
+import SnapshotRepositoryInMemory from './snapshot-repository-in-memory';
 
 class EventServiceInMemory<TEvent extends IEvent> extends EventService<TEvent> {
     constructor(params: { coerceToEvent: CoerceToEvent<TEvent> }) {
         super({
-            eventGateway: new EventGatewayInMemory<TEvent>(),
-            snapshotGateway: new SnapshotGatewayInMemory(),
+            eventRepository: new EventRepositoryInMemory<TEvent>(),
+            snapshotRepository: new SnapshotRepositoryInMemory(),
             coerceToEvent: params.coerceToEvent,
         });
     }
