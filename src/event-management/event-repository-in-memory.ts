@@ -2,7 +2,7 @@ import assert from 'assert';
 import autoBind from 'auto-bind';
 import { assert as assertIs } from '@sindresorhus/is/dist';
 import { EventRepository } from './event-repository';
-import { IEvent } from './event';
+import { IEvent, CoerceToEvent } from './event';
 
 const getEventNumber = (event: unknown): number => {
     assertIs.object(event);
@@ -13,13 +13,16 @@ const getEventNumber = (event: unknown): number => {
 
 class EventRepositoryInMemory<TEvent extends IEvent>
     implements EventRepository<TEvent> {
+    coerceToEvent: CoerceToEvent<TEvent>;
+
     // events format: { [collectionType]: [collectionId]: [{event}, ...]}
     private events: Record<
         string,
         Record<string, Record<string, unknown>[]>
     > = {};
 
-    constructor() {
+    constructor(params: { coerceToEvent: CoerceToEvent<TEvent> }) {
+        this.coerceToEvent = params.coerceToEvent;
         autoBind(this);
     }
 
@@ -55,11 +58,13 @@ class EventRepositoryInMemory<TEvent extends IEvent>
         collectionType: string,
         collectionId: string,
         startingRevision?: number,
-    ): Promise<Record<string, unknown>[]> {
+    ): Promise<TEvent[]> {
         const allEvents = this.events[collectionType]?.[collectionId] || [];
-        return allEvents.filter((event) => {
-            return getEventNumber(event) >= (startingRevision || 1);
-        });
+        return allEvents
+            .filter((event) => {
+                return getEventNumber(event) >= (startingRevision || 1);
+            })
+            .map(this.coerceToEvent);
     }
 }
 

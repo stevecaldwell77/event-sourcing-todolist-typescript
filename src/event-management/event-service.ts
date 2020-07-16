@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import { IEvent, CoerceToEvent } from './event';
+import { IEvent } from './event';
 import { IEntity } from './entity';
 import { EventRepository, GetEvents, SaveEvents } from './event-repository';
 import { SnapshotRepository } from './snapshot-repository';
@@ -12,18 +12,15 @@ type GetEntitySourceDataOptions = {
 abstract class EventService<TEvent extends IEvent> {
     eventRepository: EventRepository<TEvent>;
     snapshotRepository: SnapshotRepository;
-    coerceToEvent: CoerceToEvent<TEvent>;
-    getEvents: GetEvents;
+    getEvents: GetEvents<TEvent>;
     saveEvents: SaveEvents<TEvent>;
 
     constructor(params: {
         eventRepository: EventRepository<TEvent>;
         snapshotRepository: SnapshotRepository;
-        coerceToEvent: CoerceToEvent<TEvent>;
     }) {
         this.eventRepository = params.eventRepository;
         this.snapshotRepository = params.snapshotRepository;
-        this.coerceToEvent = params.coerceToEvent;
         this.getEvents = this.eventRepository.getEvents;
         this.saveEvents = this.eventRepository.saveEvents;
         autoBind(this);
@@ -44,12 +41,11 @@ abstract class EventService<TEvent extends IEvent> {
                   collectionId,
               );
         const startingRevision = snapshot ? snapshot.revision + 1 : undefined;
-        const rawEvents = await this.getEvents(
+        const events = await this.getEvents(
             collectionType,
             collectionId,
             startingRevision,
         );
-        const events = rawEvents.map(this.coerceToEvent);
         return { snapshot, events };
     }
 }

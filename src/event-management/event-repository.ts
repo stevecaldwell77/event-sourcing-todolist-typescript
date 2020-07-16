@@ -1,11 +1,11 @@
-import { IEvent } from './event';
+import { IEvent, CoerceToEvent } from './event';
 
-export interface GetEvents {
+export interface GetEvents<TEvent extends IEvent> {
     (
         collectionType: string,
         collectionId: string,
         startingRevision?: number,
-    ): Promise<Record<string, unknown>[]>;
+    ): Promise<TEvent[]>;
 }
 
 export type SaveEvents<TEvent extends IEvent> = {
@@ -13,6 +13,7 @@ export type SaveEvents<TEvent extends IEvent> = {
 };
 
 export interface EventRepository<TEvent extends IEvent> {
-    getEvents: GetEvents;
+    coerceToEvent: CoerceToEvent<TEvent>;
+    getEvents: GetEvents<TEvent>;
     saveEvents: SaveEvents<TEvent>;
 }
