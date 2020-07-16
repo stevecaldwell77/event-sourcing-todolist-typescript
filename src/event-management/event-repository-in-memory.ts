@@ -1,6 +1,5 @@
 import assert from 'assert';
 import autoBind from 'auto-bind';
-import { assert as assertIs } from '@sindresorhus/is/dist';
 import {
     EventRepository,
     QueryEventsParams,
@@ -8,10 +7,8 @@ import {
 } from './event-repository';
 import { IEvent, EventValue, CoerceToEvent } from './event';
 
-const getEventNumber = (event: unknown): number => {
-    assertIs.object(event);
+const getEventNumber = (event: IEvent | EventValue): number => {
     if (!event.eventNumber) throw new Error('Unexpected, event missing number');
-    assertIs.number(event.eventNumber);
     return event.eventNumber;
 };
 
@@ -26,6 +23,20 @@ const filterForCollection = (
             event.collectionId === collectionId,
     );
 
+const getNextRevision = (events: EventValue[]): number => {
+    if (events.length === 0) return 1;
+    const lastEvent = events[events.length - 1];
+    return getEventNumber(lastEvent) + 1;
+};
+
+const assertEventOrder = (event: IEvent, events: EventValue[]): void => {
+    assert.strictEqual(
+        getEventNumber(event),
+        getNextRevision(events),
+        'out of order event',
+    );
+};
+
 class EventRepositoryInMemory<TEvent extends IEvent>
     implements EventRepository<TEvent> {
     coerceToEvent: CoerceToEvent<TEvent>;
@@ -38,28 +49,12 @@ class EventRepositoryInMemory<TEvent extends IEvent>
     }
 
     saveEvent(event: TEvent): void {
-        const { collectionId } = event;
-        const collectionType = event.getCollectionType();
         const prevEvents = filterForCollection(
             this.events,
-            collectionType,
-            collectionId,
+            event.getCollectionType(),
+            event.collectionId,
         );
-
-        const lastEvent = prevEvents[prevEvents.length - 1];
-        let expectedRevision: number;
-        if (lastEvent) {
-            expectedRevision = getEventNumber(lastEvent) + 1;
-        } else {
-            expectedRevision = 1;
-        }
-
-        assert.strictEqual(
-            getEventNumber(event),
-            expectedRevision,
-            'out of order event',
-        );
-
+        assertEventOrder(event, prevEvents);
         this.events.push(event.valueOf());
     }
 
@@ -73,10 +68,10 @@ class EventRepositoryInMemory<TEvent extends IEvent>
         startingRevision?: number,
     ): Promise<TEvent[]> {
         return filterForCollection(this.events, collectionType, collectionId)
+            .map(this.coerceToEvent)
             .filter((event) => {
                 return getEventNumber(event) >= (startingRevision || 1);
-            })
-            .map(this.coerceToEvent);
+            });
     }
 
     async queryEvents(params: QueryEventsParams): Promise<TEvent[]> {
