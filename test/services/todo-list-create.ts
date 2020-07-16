@@ -14,7 +14,7 @@ test('TodoListService.create(): successful creation', async (t) => {
 
     const listId = getId();
     const getEvents = () =>
-        todoListService.eventStore.getEvents(todoListCollectionType, listId);
+        todoListService.eventService.getEvents(todoListCollectionType, listId);
 
     t.deepEqual(await getEvents(), [], 'no events initially');
 

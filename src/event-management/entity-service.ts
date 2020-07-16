@@ -2,7 +2,7 @@ import autoBind from 'auto-bind';
 import { IEvent } from './event';
 import { IEntity } from './entity';
 import { CreateCommand, Command } from './command';
-import EventStore from './event-store';
+import EventService from './event-service';
 import { AssertType } from './assert';
 import { Authorization } from './authorization';
 
@@ -25,7 +25,7 @@ abstract class EntityService<
     TEntityEvent extends TEvent,
     TAgent
 > {
-    eventStore: EventStore<TEvent>;
+    eventService: EventService<TEvent>;
     abstract collectionType: string;
     abstract isEntityEvent: IsEntityEvent<TEvent, TEntityEvent>;
     abstract buildFromEvents: BuildFromEvents<TEntity, TEntityEvent>;
@@ -33,8 +33,8 @@ abstract class EntityService<
     abstract authorization: Authorization<TAgent, TEntity>;
     abstract createCommand: CreateCommand<TEvent, TAgent, TCreateCommandParams>;
 
-    constructor(params: { eventStore: EventStore<TEvent> }) {
-        this.eventStore = params.eventStore;
+    constructor(params: { eventService: EventService<TEvent> }) {
+        this.eventService = params.eventService;
         autoBind(this);
     }
 
@@ -76,7 +76,7 @@ abstract class EntityService<
             event.eventNumber = eventNumber;
         }
 
-        await this.eventStore.saveEvents(events);
+        await this.eventService.saveEvents(events);
         return this._buildFromEvents(params.entity, events);
     }
 
@@ -89,7 +89,7 @@ abstract class EntityService<
         const {
             snapshot,
             events,
-        } = await this.eventStore.getEntitySourceData(
+        } = await this.eventService.getEntitySourceData(
             this.collectionType,
             this.assertEntity,
             entityId,

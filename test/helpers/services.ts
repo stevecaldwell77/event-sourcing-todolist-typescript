@@ -1,7 +1,14 @@
+import EventServiceInMemory from 'src/event-management/event-service-in-memory';
 import TodoListService from 'src/services/todo-list';
 import UserService from 'src/services/user';
-import createEventStore from './event-store';
+import { coerceToEvent } from 'src/events/event-mapper';
 
-const eventStore = createEventStore();
-export const todoListService = new TodoListService({ eventStore });
-export const userService = new UserService({ eventStore });
+export const eventService = new EventServiceInMemory({
+    coerceToEvent: coerceToEvent,
+});
+
+export const todoListService = new TodoListService({
+    eventService: eventService,
+});
+
+export const userService = new UserService({ eventService: eventService });

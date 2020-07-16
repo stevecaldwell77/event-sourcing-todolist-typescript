@@ -11,7 +11,7 @@ test('UserService: create() and get()', async (t) => {
     const userId = getId();
     const email = 'jdoe@example.com';
     const getEvents = () =>
-        userService.eventStore.getEvents(userCollectionType, userId);
+        userService.eventService.getEvents(userCollectionType, userId);
 
     t.deepEqual(await getEvents(), [], 'no events initially');
 

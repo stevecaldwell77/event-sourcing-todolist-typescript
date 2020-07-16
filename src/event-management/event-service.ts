@@ -9,7 +9,7 @@ type GetEntitySourceDataOptions = {
     noSnapshot?: boolean;
 };
 
-abstract class EventStore<TEvent extends IEvent> {
+abstract class EventService<TEvent extends IEvent> {
     eventGateway: EventGateway<TEvent>;
     snapshotGateway: SnapshotGateway;
     coerceToEvent: CoerceToEvent<TEvent>;
@@ -54,4 +54,4 @@ abstract class EventStore<TEvent extends IEvent> {
     }
 }
 
-export default EventStore;
+export default EventService;
